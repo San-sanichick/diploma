@@ -1,9 +1,9 @@
 import { createStore } from 'vuex';
-import User from '@/types/User';
+import UserInterface from '@/types/User';
 
 export default createStore({
     state: {
-        user: {} as User | null
+        user: null as UserInterface | null
     },
     getters: {
         isLogged(state): boolean {
@@ -13,12 +13,14 @@ export default createStore({
     mutations: {
         logIn(state, payload) {
             state.user = payload.user;
+            console.log(state.user);
         },
         logOut(state) {
             state.user = null;
         }
     },
     actions: {
+
     },
     modules: {
     }

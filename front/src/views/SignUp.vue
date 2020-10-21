@@ -1,24 +1,26 @@
 <template>
-    <div>
-        <h1>Регистрация</h1>
-        <hr>
-        <form action="" method="post" @submit.prevent="submitHandler">
-            <div>
-                <label for="email">e-mail</label>
-                <input id="email" type="email" name="email" v-model="form.email">
-            </div>
-            <div>
-                <label for="pass">Пароль</label>
-                <input id="pass" type="password" name="pass" v-model="form.password">
-            </div>
-            <div>
-                <label for="pass-repeat">Повторите пароль</label>
-                <input id="pass-repeat" type="password" name="pass-repeat" v-model="form.passwordRepeat">
-            </div>
-            <div>
-                <input type="submit" value="Зарегистрироваться">
-            </div>
-        </form>
+    <div class="wrapper">
+        <div class="auth-wrapper">
+            <h1>Регистрация</h1>
+            <hr>
+            <form action="" method="post" @submit.prevent="submitHandler">
+                <div class="form-row">
+                    <label for="email">e-mail</label>
+                    <input id="email" type="email" name="email" v-model="form.email">
+                </div>
+                <div class="form-row">
+                    <label for="pass">Пароль</label>
+                    <input id="pass" type="password" name="pass" v-model="form.password">
+                </div>
+                <div class="form-row">
+                    <label for="pass-repeat">Повторите пароль</label>
+                    <input id="pass-repeat" type="password" name="pass-repeat" v-model="form.passwordRepeat">
+                </div>
+                <div class="button-wrapper">
+                    <input class="signup-submit"  type="submit" value="Зарегистрироваться">
+                </div>
+            </form>
+        </div>
     </div>
 </template>
 
@@ -38,7 +40,71 @@
             async submitHandler() {
                 const dataToSend = JSON.stringify(this.form);
                 console.log(dataToSend);
+                this.$router.push('/auth/login');
             }
         }
     })
 </script>
+
+<style lang="scss" scoped>
+    @import "../assets/scss/config.scss";
+
+    .wrapper {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+
+        .auth-wrapper {
+            width: 40%;
+
+            .form-row {
+                margin-top: 15px;
+                width: 100%;
+                display: flex;
+                flex-flow: column;
+                
+                label {
+                    text-align: start;
+                }
+
+                input {
+                    border: 2px solid $darkViolet;
+                    border-radius: 8px;
+                    height: 30px;
+                }
+            }
+
+            hr {
+                width: 100%;
+                border: none;
+                color: black;
+                background-color: black;
+                height: 1px;
+            }
+
+            .button-wrapper {
+                margin-top: 20px;
+
+                .signup-submit {
+                    font-family: Open Sans, Arial, sans-serif;
+                    font-size: 16pt;
+                    width: 100%;
+                    height: 38px;
+                    background-color: $darkViolet;
+                    outline: none;
+                    color: white;
+                    border: 2px solid $darkViolet;
+                    border-radius: 8px;
+                    appearance: none;
+
+                    &:hover,
+                    &:focus {
+                        background: $violet;
+                    }
+                }
+            }
+        }
+    }
+</style>
