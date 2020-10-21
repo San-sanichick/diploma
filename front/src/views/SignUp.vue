@@ -59,6 +59,11 @@
         .auth-wrapper {
             width: 40%;
 
+            h1 {
+                font-size: 36pt;
+                margin: 0;
+            }
+
             .form-row {
                 margin-top: 15px;
                 width: 100%;

@@ -11,7 +11,7 @@
                 <div class="form-row">
                     <div class="header-row">
                         <label for="pass">пароль</label>
-                        <router-link to="/forgot-password">Забыли пароль</router-link>
+                        <router-link to="/forgot-password">Забыли пароль?</router-link>
                     </div>
                     <input id="pass" type="password" name="pass" v-model="form.password">
                 </div>
@@ -80,6 +80,11 @@
 
         .auth-wrapper {
             width: 40%;
+
+            h1 {
+                font-size: 36pt;
+                margin: 0;
+            }
 
             .form-row {
                 margin-top: 15px;
