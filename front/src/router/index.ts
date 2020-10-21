@@ -2,9 +2,18 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 const routes: Array<RouteRecordRaw> = [
     {
-        path: '/projects',
-        name: 'Проекты',
-        component: () => import('../views/ProjectList.vue'),
+        path: "/:userId",
+        component: () => import("../views/User.vue"),
+        children: [
+            {
+                path: "projects",
+                component: () => import('../views/User/ProjectList.vue')
+            },
+            {
+                path: "project/:id",
+                component: () => import('../views/User/ProjectExplorer.vue')
+            }
+        ],
         meta: {
             requiresAuth: true
         }
@@ -23,7 +32,7 @@ const routes: Array<RouteRecordRaw> = [
         path: "/:pathMatch(.*)*",
         name: "404",
         component: () => import('../views/404.vue')
-    }
+    },
 ]
 
 const router = createRouter({

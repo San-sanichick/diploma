@@ -20,12 +20,18 @@
                 <td> {{el.files}} </td>
             </tr>
         </table>
+
+        <teleport to="body">
+            <div v-if="showCreateProject">
+                <p>kek</p>
+            </div>
+        </teleport>
     </div>
 </template>
 
 <script lang="ts">
     import { defineComponent } from 'vue';
-    import Project from "../types/Project";
+    import Project from "../../types/Project";
 
     export default defineComponent({
         data() {
@@ -52,12 +58,14 @@
                         dateOfLastChange: new Date(),
                         files: 45
                     },
-                ] as Project[]
+                ] as Project[],
+                showCreateProject: false
             }
         },
         methods: {
             createNewProject() {
                 console.log("да да да дааа");
+                this.showCreateProject = true;
             }
         }
     })

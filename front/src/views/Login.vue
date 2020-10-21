@@ -59,7 +59,7 @@
         methods: {
             submitHandler() {
                 this.logIn(this.form);
-                this.$router.push('/');
+                this.$router.push('/1/projects');
             }
         }
     })
@@ -96,7 +96,7 @@
                 }
 
                 input {
-                    border: 2px solid $darkViolet;
+                    border: 2px solid $darkPrimary;
                     border-radius: 8px;
                     height: 30px;
                 }
@@ -135,16 +135,16 @@
                     font-size: 16pt;
                     width: 100%;
                     height: 38px;
-                    background-color: $darkViolet;
+                    background-color: $darkPrimary;
                     outline: none;
                     color: white;
-                    border: 2px solid $darkViolet;
+                    border: 2px solid $darkPrimary;
                     border-radius: 8px;
                     appearance: none;
 
                     &:hover,
                     &:focus {
-                        background: $violet;
+                        background: $primary;
                     }
                 }
             }
