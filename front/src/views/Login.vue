@@ -31,36 +31,39 @@
 </template>
 
 <script lang="ts">
-    import { computed, defineComponent } from 'vue';
+    import { computed, defineComponent, ref } from 'vue';
     import { useStore } from 'vuex';
+    import { useRouter } from 'vue-router';
     import UserInterface from '../types/User';
 
     export default defineComponent({
         setup() {
             const 
                 store = useStore(),
-                currentUser = computed(() => store.state.user);
-
-            const logIn = (user: UserInterface) => {
-                store.commit("logIn", {user});
-            }
-
-            return { currentUser, logIn }
-        },
-        data() {
-            return {
-                form: {
+                router = useRouter(),
+                currentUser = computed(() => store.state.user),
+                form = ref({
                     email: "",
                     password: "",
                     remember: false
-                } as UserInterface
+                });
+            
+            const logIn = (user: UserInterface) => {
+                const temp: UserInterface = {
+                    id: 0,
+                    email: user.email,
+                    password: user.password,
+                    remember: user.remember
+                };
+                store.commit("logIn", {user: temp});
             }
-        },
-        methods: {
-            submitHandler() {
-                this.logIn(this.form);
-                this.$router.push('/1/projects');
+
+            const submitHandler = () => {
+                logIn(form.value);
+                router.push(`/${store.getters.getUser.id}/projects`)
             }
+
+            return { currentUser, logIn, form, submitHandler }
         }
     })
 </script>

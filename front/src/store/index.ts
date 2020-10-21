@@ -7,15 +7,35 @@ export default createStore({
     },
     getters: {
         isLogged(state): boolean {
+            const localStorageString = localStorage.getItem("user");
+            // const user = JSON.parse(localStorageString != null ? localStorageString : "");
+            // 
+            let user = null;
+            if (typeof localStorageString === "string" && localStorageString.length !== 0) {
+                user = JSON.parse(localStorageString);
+            }
+            state.user = user;
             return state.user !== null;
+        },
+        getUser(state): UserInterface | null {
+            const localStorageString = localStorage.getItem("user");
+            // const user = JSON.parse(localStorageString != null ? localStorageString : "");
+            // state.user = user;
+            let user = null;
+            if (typeof localStorageString === "string" && localStorageString.length !== 0) {
+                user = JSON.parse(localStorageString);
+            }
+            state.user = user;
+            return state.user;
         }
     },
     mutations: {
         logIn(state, payload) {
+            localStorage.setItem("user", JSON.stringify(payload.user));
             state.user = payload.user;
-            console.log(state.user);
         },
         logOut(state) {
+            localStorage.setItem("user", "");
             state.user = null;
         }
     },

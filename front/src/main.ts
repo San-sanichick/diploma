@@ -17,9 +17,8 @@ router.beforeEach((to, from, next) => {
         }
         next(from.path);
     } else if (to.path === '/auth/logout') {
-        if (!store.getters.isLogged) {
+        if (store.getters.isLogged) {
             store.commit("logOut");
-            
         }
         next('/auth/login');
         return;
