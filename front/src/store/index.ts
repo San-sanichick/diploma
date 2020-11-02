@@ -8,8 +8,6 @@ export default createStore({
     getters: {
         isLogged(state): boolean {
             const localStorageString = localStorage.getItem("user");
-            // const user = JSON.parse(localStorageString != null ? localStorageString : "");
-            // 
             let user = null;
             if (typeof localStorageString === "string" && localStorageString.length !== 0) {
                 user = JSON.parse(localStorageString);
@@ -19,8 +17,6 @@ export default createStore({
         },
         getUser(state): UserInterface | null {
             const localStorageString = localStorage.getItem("user");
-            // const user = JSON.parse(localStorageString != null ? localStorageString : "");
-            // state.user = user;
             let user = null;
             if (typeof localStorageString === "string" && localStorageString.length !== 0) {
                 user = JSON.parse(localStorageString);

@@ -5,28 +5,15 @@
                 Проекты
             </h3>
             <div></div>
-            <button @click="showCreateProject = !showCreateProject">Создать проект</button>
+            <div class="page-header-buttons">
+                <button class="create-project" @click="showCreateProject = !showCreateProject"></button>
+                <button class="table-mode" @click="displayMode = 'ProjectListTable'"></button>
+                <button class="grid-mode" @click="displayMode = 'ProjectListGrid'"></button>
+            </div>
         </div>
 
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr class="table-head">
-                        <th>Имя проекта</th>
-                        <th>Дата создания</th>
-                        <th>Последние изменения</th>
-                        <th>Количество файлов</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr v-for="el in list" :key="el.id" class="table-row">
-                        <td> <router-link :to="`project/${el.id}`">{{el.name}}</router-link> </td>
-                        <td> {{el.dateOfCreation}} </td>
-                        <td> {{el.dateOfLastChange}} </td>
-                        <td> {{el.files}} </td>
-                    </tr>
-                </tbody>
-            </table>
+        <div class="project-list-wrapper">
+            <component :is="displayMode" :projects="list"></component>
         </div>
 
         <teleport to="body">
@@ -35,7 +22,7 @@
                     <h3>Создать</h3>
                     <form @submit.prevent="createNewProject">
                         <label for="project-name">Название</label>
-                        <input type="text" name="project-name" id="project-name">
+                        <input type="text" name="project-name" id="project-name" value="">
                         <input type="submit" class="submit-button" value="Создать">
                     </form>
                 </div>
@@ -47,8 +34,14 @@
 <script lang="ts">
     import { defineComponent } from 'vue';
     import Project from "../../types/Project";
+    import ProjectListGrid from "../../components/ProjectListGrid.vue";
+    import ProjectListTable from "../../components/ProjectListTable.vue";
 
     export default defineComponent({
+        components: {
+            ProjectListGrid,
+            ProjectListTable
+        },
         data() {
             return {
                 list: [
@@ -130,12 +123,25 @@
                         files: 45
                     },
                 ] as Project[],
-                showCreateProject: false
+                showCreateProject: false,
+                displayMode: "ProjectListGrid"
             }
         },
         methods: {
-            createNewProject() {
-                console.log("да да да дааа");
+            createNewProject(e: Event) {
+                console.log(e.target);
+                const form = new FormData(e.target as HTMLFormElement);
+                form.forEach((el, key) => {
+                    // console.log(key, el)
+                    this.list.push({
+                        id: this.list[this.list.length - 1].id + 1,
+                        name: el,
+                        dateOfCreation: new Date(),
+                        dateOfLastChange: new Date(),
+                        files: 0
+                    } as Project)
+                });
+                // for (const pair of f)
                 this.showCreateProject = !this.showCreateProject;
             },
             closePopUp(e: Event) {
@@ -149,7 +155,7 @@
     })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     @import "../../assets/scss/config.scss";
 
     .create-project-popup {
@@ -216,111 +222,57 @@
     }
 
     .page {
-        padding: 0 10%;
+        padding: 0 7% 5% 7%;
 
         .page-header {
             margin: 20px 0;
             display: grid;
             grid-template-columns: max-content auto max-content;
+            align-items: center;
 
             h3 {
                 font-size: 24pt;
+                margin: 10px 0;
             }
 
-            button {
-                height: 40px;
-                width: 300px;
-                align-self: center;
+            .page-header-buttons {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
 
-                font-family: Open Sans, Arial, sans-serif;
-                font-size: 16pt;
-                background-color: $darkPrimary;
-                outline: none;
-                color: white;
-                border: 2px solid $darkPrimary;
-                border-radius: 8px;
-                appearance: none;
 
-                &:hover,
-                &:focus {
-                    background: $primary;
-                }
-            }
-        }
+                button {
+                    height: 40px;
+                    width: 40px;
+                    align-self: center;
 
-        .table-wrapper {
-            height: 65vh;
-            overflow: auto;
-
-            table {
-                width: 100%;
-                height: 500px;
-                // border: 1px solid $darkPrimary;
-                // border-radius: 8px 8px 0 0;
-                border-spacing: 0;
-
-                td {
-                    padding: 0;
+                    font-family: Open Sans, Arial, sans-serif;
+                    font-size: 16pt;
+                    // background-color: white;
+                    border: none;
                     
-                }
-
-                .table-head {
-                    border: 1px solid $darkPrimary;
-                    border-radius: 8px 8px 0 0;
-                    background-color: $darkPrimary;
-                    height: max-content;
+                    background-size: contain;
+                    background-repeat: no-repeat;
+                    outline: none;
                     color: white;
-                    font-weight: 600;
+                    appearance: none;
 
-                    th {
-                        position: sticky;
-                        top: 0;
-                        z-index: 2000;
-                        background-color: $darkPrimary;
-                        border: 1px solid $darkPrimary;
-                        padding-top:20px;
-                        padding-bottom:20px;
-                        padding-right:0px;  
-                    }
-
-                    th:first-child {
-                        border-radius: 8px 0 0 0;
-                        padding-left:20px;
-                        padding-right:0;
-                    }
-
-                    th:last-child {
-                        border-radius: 0 8px 0 0;
-                        padding-left:0px;
-                        padding-right:20px;
+                    &:hover,
+                    &:focus {
+                        cursor: pointer;
                     }
                 }
 
-                tbody {
-                    .table-row {
-                        width: 100%;
-                        height: max-content;
-                        font-weight: 600;
+                .create-project {
+                    background-image: url("../../assets/addProjectButton.svg");
+                }
 
-                        td {
-                            padding-top:20px;
-                            padding-bottom:20px;
-                            padding-right:0px;  
-                            border-bottom: 1px solid $darkPrimary;
-                        }
+                .table-mode {
+                    background-image: url("../../assets/tableMode.svg");
+                }
 
-                        td:first-child {
-                            padding-left:20px;
-                            padding-right:0;
-                            border-left: 1px solid $darkPrimary;
-                        }
-
-                        td:last-child {
-                            padding-left:0px;
-                            padding-right:20px;
-                            border-right: 1px solid $darkPrimary;
-                        }
-                    }
+                .grid-mode {
+                    background-image: url("../../assets/gridMode.svg");
                 }
             }
         }
