@@ -1,5 +1,6 @@
 <template>
     <div>
+        <!-- TODO maybe refactor into actual table but css tho :(( -->
         <div class="project-table">
             <div class="project-table-header">
                 <div class="table-row table-header">

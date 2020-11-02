@@ -27,6 +27,7 @@ export default createStore({
     },
     mutations: {
         logIn(state, payload) {
+            // TODO: this is where the call to backend is to see if user is valid
             localStorage.setItem("user", JSON.stringify(payload.user));
             state.user = payload.user;
         },

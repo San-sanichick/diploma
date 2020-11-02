@@ -11,12 +11,12 @@
 
 <script lang="ts">
     import { defineComponent, computed } from 'vue';
-    import { useStore } from 'vuex';
+    import { useStore }              from 'vuex';
 
     export default defineComponent({
         setup() {
             const 
-                store = useStore(),
+                store       = useStore(),
                 currentUser = computed(() => store.state.user);
 
             return { currentUser }
