@@ -1,6 +1,5 @@
 <template>
     <div>
-        
         <div class="page-header">
             <button @click="goBack">back</button>
             <h3>
@@ -11,10 +10,9 @@
 </template>
 
 <script lang="ts">
-    import { computed, defineComponent, ref } from 'vue';
+    import { defineComponent } from 'vue';
     import { useStore } from 'vuex';
     import { useRouter } from 'vue-router';
-    import UserInterface from '../../types/User';
 
     export default defineComponent({
         setup() {

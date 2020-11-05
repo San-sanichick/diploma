@@ -1,17 +1,18 @@
 <template>
     <div class="header">
+        <div class="logo">logo here</div>
         <div class="user">
             <span>{{ currentUser.email }}</span>
             <div class="img"></div>
             <router-link to="/auth/logout">выход</router-link>
         </div>
     </div>
-    <router-view></router-view>
+    <router-view class="page"></router-view>
 </template>
 
 <script lang="ts">
     import { defineComponent, computed } from 'vue';
-    import { useStore }              from 'vuex';
+    import { useStore }                  from 'vuex';
 
     export default defineComponent({
         setup() {
@@ -27,14 +28,27 @@
 <style lang="scss" scoped>
     @import "../assets/scss/config.scss";
     .header {
-        height: 60px;
+        top: 0;
+        position: fixed;
+        width: 100%;
+        box-sizing: border-box;
+        // height: 70px;
+        display: grid;
+        grid-template-columns: auto max-content;
+        align-items: center;
+        // justify-content: center;
         padding: 5px 10px;
         background-color: $darkPrimary;
         color: white;
+        z-index: 1000;
+
+        .logo {
+            justify-self: start;
+        }
 
         .user {
             display: grid;
-            float: right;
+            // float: right;
             grid-template-columns: max-content auto auto;
             gap: 10px;
             align-items: center;
@@ -55,4 +69,6 @@
             }
         }
     }
+
+    
 </style>

@@ -1,27 +1,31 @@
 <template>
     <div class="project-grid">
         <div class="project" v-for="project in projects" :key="project.id" tabindex="0">
-            <div @dblclick="$router.push(`project/${project.id}`)">
+            <div @dblclick="$emit('project-clicked', project.id)" @contextmenu.prevent="$refs['context-menu'].openMenu($event, project.id);">
                 <div class="project-image"></div>
                 <div class="project-info">
                     <h3> {{project.name}} </h3>
-                    <div>s</div>
                     <p>Изменено: {{project.dateOfLastChange}} </p>
                 </div>
             </div>
         </div>
     </div>
+    <ContextMenu ref="context-menu" />
 </template>
 
 <script lang="ts">
     import { defineComponent } from 'vue';
+    import ContextMenu from "../components/ContextMenu.vue";
 
     export default defineComponent({
+        components: {
+            ContextMenu
+        },
         props: {
             projects: {
                 type: Array
             }
-        }
+        },
     })
 </script>
 
@@ -46,10 +50,17 @@
                 }
 
                 .project-info {
+                    -moz-user-select: -moz-none;
+                    -webkit-user-select: none;
+                    user-select: none;
                     text-align: left;
                     display: grid;
-                    grid-template-columns: max-content max-content;
+                    grid-template-columns: max-content;
                     margin: 0 10px;
+
+                    p {
+                        color: #ccc;
+                    }
                 }
             &:hover,
             &:focus {                

@@ -13,22 +13,23 @@
         </div>
 
         <div class="project-list-wrapper">
-            <component :is="displayMode" :projects="list"></component>
+            <component :is="displayMode" :projects="list" @project-clicked="openProject"></component>
         </div>
-
-        <teleport to="body">
-            <div v-if="showCreateProject" class="create-project-popup" @click="closePopUp">
-                <div class="popup">
-                    <h3>Создать</h3>
-                    <form @submit.prevent="createNewProject">
-                        <label for="project-name">Название</label>
-                        <input type="text" name="project-name" id="project-name" value="">
-                        <input type="submit" class="submit-button" value="Создать">
-                    </form>
-                </div>
-            </div>
-        </teleport>
     </div>
+
+    
+    <teleport to="body">
+        <div v-if="showCreateProject" class="create-project-popup" @click="closePopUp">
+            <div class="popup">
+                <h3>Создать</h3>
+                <form @submit.prevent="createNewProject">
+                    <label for="project-name">Название</label>
+                    <input type="text" name="project-name" id="project-name" value="">
+                    <input type="submit" class="submit-button" value="Создать">
+                </form>
+            </div>
+        </div>
+    </teleport>
 </template>
 
 <script lang="ts">
@@ -129,10 +130,8 @@
         },
         methods: {
             createNewProject(e: Event) {
-                console.log(e.target);
                 const form = new FormData(e.target as HTMLFormElement);
-                form.forEach((el, key) => {
-                    // console.log(key, el)
+                form.forEach((el) => {
                     this.list.push({
                         id              : this.list[this.list.length - 1].id + 1,
                         name            : el,
@@ -141,7 +140,6 @@
                         files           : 0
                     } as Project)
                 });
-                // for (const pair of f)
                 this.showCreateProject = !this.showCreateProject;
             },
             closePopUp(e: Event) {
@@ -150,6 +148,9 @@
                 if (target.className === "create-project-popup") {
                     this.showCreateProject = !this.showCreateProject;
                 }
+            },
+            openProject(id: number) {
+                this.$router.push(`project/${id}`);
             }
         }
     })
@@ -222,7 +223,8 @@
     }
 
     .page {
-        padding: 0 7% 5% 7%;
+        // margin-top: 90px;
+        padding: 90px 7% 5% 7%;
 
         .page-header {
             margin: 20px 0;
@@ -248,7 +250,6 @@
 
                     font-family: Open Sans, Arial, sans-serif;
                     font-size: 16pt;
-                    // background-color: white;
                     border: none;
                     
                     background-size: contain;
@@ -257,9 +258,10 @@
                     color: white;
                     appearance: none;
 
-                    &:hover,
-                    &:focus {
+                    &:hover{
                         cursor: pointer;
+                        border-radius: 8px;
+                        box-shadow: inset 0 0 0 1px $primary;
                     }
                 }
 
@@ -276,5 +278,10 @@
                 }
             }
         }
+
+        // .project-list-wrapper {
+        //     height: 70vh;
+        //     overflow-y: auto;
+        // }
     }
 </style>
