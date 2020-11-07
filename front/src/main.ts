@@ -25,8 +25,9 @@ router.beforeEach((to, from, next) => {
         }
         next('/auth/login');
         return;
-    } else if (to.path === '/') {               // redirect to default page if logged in
-        next('/projects');
+    } else if (to.path === '/') {   
+        const userId = store.getters.getUser.id;            // redirect to default page if logged in
+        next(`/${userId}/projects`);
         return; 
     } else {    // in all other cases let user go where he wants
         next();

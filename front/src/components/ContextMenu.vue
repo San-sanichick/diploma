@@ -1,9 +1,8 @@
 <template>
-    <div v-if="showMenu" class="context-menu" @clickout="closeMenu" :style="{left: `${xPos}px`, top: `${yPos}px`}">
-        <ul>
-            <li>option 1</li>
-            <li>option 2</li>
-        </ul>
+    <div v-if="showMenu" class="context-menu" :style="{left: `${xPos}px`, top: `${yPos}px`}">
+        <slot :id="id">
+
+        </slot>
     </div>
 </template>
 
@@ -37,10 +36,14 @@
             setId(id: number): void {
                 this.id = id;
             },
-            closeMenu(e: Event): void {
-                const target = e.target as HTMLElement;
+            closeMenu(e: Event | undefined): void {
+                if (e) {
+                    const target = e.target as HTMLElement;
                 
-                if (!this.$el.contains(target)) {
+                    if (!this.$el.contains(target)) {
+                        this.showMenu = false;
+                    }
+                } else {
                     this.showMenu = false;
                 }
             }
@@ -48,7 +51,8 @@
     })
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
+    @import "../assets/scss/config.scss";
     .context-menu {
         position: fixed;
         background-color: black;
@@ -64,7 +68,7 @@
                  padding: 10px 5px;
 
                 &:hover {
-                    background-color: #ccc;
+                    background-color: rgba($color: $lightPrimary, $alpha: 0.5);
                     cursor: pointer;
                 }
              }

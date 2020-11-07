@@ -8,6 +8,11 @@
         </div>
     </div>
     <router-view class="page"></router-view>
+    <!-- <router-view v-slot="{ Component }" :key="$route.fullPath">
+        <keep-alive max="5">
+            <component :is="Component"></component>
+        </keep-alive>
+    </router-view> -->
 </template>
 
 <script lang="ts">
@@ -69,6 +74,4 @@
             }
         }
     }
-
-    
 </style>

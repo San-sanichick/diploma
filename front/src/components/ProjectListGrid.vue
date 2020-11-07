@@ -10,7 +10,15 @@
             </div>
         </div>
     </div>
-    <ContextMenu ref="context-menu" />
+    <ContextMenu ref="context-menu">
+        <template v-slot:default="slotProps">
+            <ul>
+                <li @click="$emit('open-project', slotProps.id)">Открыть</li>
+                <li @click="$emit('setup-project', slotProps.id); $refs['context-menu'].closeMenu()">Настройки</li>
+                <li @click="$emit('delete-project', slotProps.id)">Удалить</li>
+            </ul>
+        </template>
+    </ContextMenu>
 </template>
 
 <script lang="ts">
@@ -18,6 +26,7 @@
     import ContextMenu from "../components/ContextMenu.vue";
 
     export default defineComponent({
+        emits: ["project-clicked", "open-project", "setup-project", "delete-project"],
         components: {
             ContextMenu
         },
@@ -25,7 +34,7 @@
             projects: {
                 type: Array
             }
-        },
+        }
     })
 </script>
 

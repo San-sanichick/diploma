@@ -7,13 +7,20 @@
             <div></div>
             <div class="page-header-buttons">
                 <button class="create-project" @click="showCreateProject = !showCreateProject"></button>
-                <button class="table-mode" @click="displayMode = 'ProjectListTable'"></button>
-                <button class="grid-mode" @click="displayMode = 'ProjectListGrid'"></button>
+                <button class="table-mode" :class="{'table-mode-active': displayMode == 'ProjectListTable'}" @click="displayMode = 'ProjectListTable'"></button>
+                <button class="grid-mode" :class="{'grid-mode-active': displayMode == 'ProjectListGrid'}" @click="displayMode = 'ProjectListGrid'"></button>
             </div>
         </div>
 
         <div class="project-list-wrapper">
-            <component :is="displayMode" :projects="list" @project-clicked="openProject"></component>
+            <component 
+                :is="displayMode" 
+                :projects="list" 
+                @project-clicked="openProject" 
+                @open-project="openProject"
+                @delete-project="deleteProject"
+                >
+            </component>
         </div>
     </div>
 
@@ -150,7 +157,15 @@
                 }
             },
             openProject(id: number) {
-                this.$router.push(`project/${id}`);
+                console.log(id);
+                // this.$router.push(`project/${id}`);
+                this.$router.push({
+                    path: `project/${id}`
+                })
+            },
+            deleteProject(id: number) {
+                console.log(id);
+                this.list = this.list.filter(el => el.id !== id);
             }
         }
     })
@@ -252,6 +267,7 @@
                     font-size: 16pt;
                     border: none;
                     
+                    background: none;
                     background-size: contain;
                     background-repeat: no-repeat;
                     outline: none;
@@ -260,21 +276,36 @@
 
                     &:hover{
                         cursor: pointer;
+                        background-color: rgba(235, 235, 235, 0.493);
+                    }
+                    &:active {
+                        box-shadow: inset 0 0 0 2px $primary;
                         border-radius: 8px;
-                        box-shadow: inset 0 0 0 1px $primary;
                     }
                 }
 
                 .create-project {
                     background-image: url("../../assets/addProjectButton.svg");
+
+                    &:active {
+                        background-image: url("../../assets/addProjectButton_hover.svg");
+                    }
                 }
 
                 .table-mode {
                     background-image: url("../../assets/tableMode.svg");
                 }
 
+                .table-mode-active {
+                    background-image: url("../../assets/tableMode_hover.svg");
+                }
+
                 .grid-mode {
                     background-image: url("../../assets/gridMode.svg");
+                }
+
+                .grid-mode-active {
+                    background-image: url("../../assets/gridMode_hover.svg");
                 }
             }
         }

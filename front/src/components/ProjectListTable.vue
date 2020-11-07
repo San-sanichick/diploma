@@ -11,7 +11,14 @@
                 </div>
             </div>
             <div class="project-table-body">
-                 <div class="table-row" v-for="project in projects" :key="project.id" @dblclick="$emit('project-clicked', project.id)" tabindex="0">
+                 <div class="table-row" 
+                    v-for="project in projects" 
+                    :key="project.id" 
+                    @dblclick="$emit('project-clicked', project.id)"
+                    @contextmenu.prevent="$refs['context-menu'].openMenu($event, project.id);" 
+                    tabindex="0"
+                    >
+                    
                     <div class="table-cell"> {{project.name}} </div>
                     <div class="table-cell"> {{project.dateOfCreation}} </div>
                     <div class="table-cell"> {{project.dateOfLastChange}} </div>
@@ -20,11 +27,27 @@
             </div>
         </div>
     </div>
+
+    <ContextMenu ref="context-menu">
+        <template v-slot:default="slotProps">
+            <ul>
+                <li @click="$emit('open-project', slotProps.id)">Открыть</li>
+                <li @click="$emit('setup-project', slotProps.id)">Настройки</li>
+                <li @click="$emit('delete-project', slotProps.id)">Удалить</li>
+            </ul>
+        </template>
+    </ContextMenu>
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
+    import { defineComponent } from 'vue';
+    import ContextMenu from "../components/ContextMenu.vue";
+
     export default defineComponent({
+        emits: ["project-clicked", "open-project", "setup-project", "delete-project"],
+        components: {
+            ContextMenu
+        },
         props: {
             projects: {
                 type: Array
