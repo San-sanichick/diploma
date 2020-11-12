@@ -48,18 +48,18 @@
                     remember: false
                 });
             
-            const logIn = (user: UserInterface) => {
+            const logIn = async (user: UserInterface) => {
                 const temp: UserInterface = {
                     id: 0,
                     email: user.email,
                     password: user.password,
                     remember: user.remember
                 };
-                store.commit("logIn", {user: temp});
+                await store.dispatch("logIn", {user: temp});
             }
 
-            const submitHandler = () => {
-                logIn(form.value);
+            async function submitHandler() {
+                await logIn(form.value);
                 router.push(`/${store.getters.getUser.id}/projects`)
             }
 

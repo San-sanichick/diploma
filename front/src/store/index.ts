@@ -1,4 +1,5 @@
 import { createStore } from 'vuex';
+import axios from "axios";
 import UserInterface from '@/types/User';
 
 export default createStore({
@@ -26,8 +27,7 @@ export default createStore({
         }
     },
     mutations: {
-        logIn(state, payload) {
-            // TODO: this is where the call to backend is to see if user is valid
+        async setUser(state, payload) {
             localStorage.setItem("user", JSON.stringify(payload.user));
             state.user = payload.user;
         },
@@ -37,7 +37,15 @@ export default createStore({
         }
     },
     actions: {
-
+        async logIn(context, payload) {
+            try {
+                const res = await axios.get(`http://localhost:3000/api/users/${payload.user.email}`);
+                const user = res.data;
+                context.commit("setUser", {user});
+            } catch (err) {
+                console.error(err);
+            }
+        }
     },
     modules: {
     }
