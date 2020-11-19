@@ -14,8 +14,8 @@
                  <div class="table-row" 
                     v-for="project in projects" 
                     :key="project.id" 
-                    @dblclick="$emit('project-clicked', project.id)"
-                    @contextmenu.prevent="$refs['context-menu'].openMenu($event, project.id);" 
+                    @dblclick="$emit('project-clicked', project._id)"
+                    @contextmenu.prevent="$refs['context-menu'].openMenu($event, project._id);" 
                     tabindex="0"
                     >
                     
@@ -66,7 +66,6 @@
             top: 70px;
 
             .table-header {
-                // padding-top: 70px;
                 background-color: white;
                 
                 &:hover {

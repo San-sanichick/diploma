@@ -37,6 +37,7 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
+    import { useStore } from 'vuex';
     import axios               from "axios";
     import Project             from "../../types/Project";
     import ProjectListGrid     from "../../components/ProjectListGrid.vue";
@@ -60,26 +61,46 @@
                 displayMode      : "ProjectListGrid"
             }
         },
+        computed: {
+            user() {
+                const store = useStore();
+                return store.getters.getUser;
+            }
+        },
         created() {
             this.fetchProjects();
         },
         methods: {
             async fetchProjects(): Promise<void> {
                 try {
-                    const res = await axios.get("http://localhost:3000/api/projects");
+                    const res = await axios.get(`http://localhost:3000/api/projects/${this.user.id}`);
                     this.list = res.data;
                 } catch (err) {
                     console.error(err);
                 }
             },
-            createNewProject(name: string) {
+            async createNewProject(name: string) {
                 this.list.push({
-                    id              : this.list[this.list.length - 1].id + 1,
+                    id              : this.list.length !== 0 ? +this.list[this.list.length - 1].id + 1 : 0,
                     name            : name,
                     dateOfCreation  : new Date(),
                     dateOfLastChange: new Date(),
                     files           : 0
                 } as Project)
+
+                try {
+                    const data = {
+                        name,
+                        publicAccess: false
+                    }
+
+                    const dataToSend = JSON.stringify(data);
+
+                    const res = await axios.post(`http://localhost:3000/api/projects/${this.user.id}`, { body: dataToSend });
+                    console.log(res.data);
+                } catch (err) {
+                    console.error(err);
+                }
 
                 this.showPopUp = !this.showPopUp;
             },
@@ -95,7 +116,7 @@
                     document.body.style.overflowY = document.body.style.overflowY === "" ? "hidden" : "";
                 }
             },
-            openProject(id: number) {
+            openProject(id: string) {
                 console.log(id);
                 // this.$router.push(`project/${id}`);
                 this.$router.push({

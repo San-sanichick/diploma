@@ -15,7 +15,7 @@
                 xPos: 0,
                 yPos: 0,
                 showMenu: false,
-                id: 0
+                id: ""
             }
         },
         mounted() {
@@ -27,13 +27,13 @@
             // document.addEventListener("contextmenu", this.closeMenu);
         },
         methods: {
-            openMenu(e: MouseEvent, id: number): void {
+            openMenu(e: MouseEvent, id: string): void {
                 this.id = id;
                 this.xPos = e.clientX,
                 this.yPos = e.clientY;
                 this.showMenu = !this.showMenu;
             },
-            setId(id: number): void {
+            setId(id: string): void {
                 this.id = id;
             },
             closeMenu(e: Event | undefined): void {

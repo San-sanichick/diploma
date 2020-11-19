@@ -1,7 +1,7 @@
 <template>
     <div class="project-grid">
         <div class="project" v-for="project in projects" :key="project.id" tabindex="0">
-            <div @dblclick="$emit('project-clicked', project.id)" @contextmenu.prevent="$refs['context-menu'].openMenu($event, project.id);">
+            <div @dblclick="$emit('project-clicked', project._id)" @contextmenu.prevent="$refs['context-menu'].openMenu($event, project._id);">
                 <div class="project-image"></div>
                 <div class="project-info">
                     <h3> {{project.name}} </h3>

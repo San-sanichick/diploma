@@ -5,22 +5,20 @@ import { UserModel } from "../db/UserModel";
 const projectsApi = Router();
 
 // Create project
-projectsApi.put("/:id", async (req, res) => {
+projectsApi.post("/:id", async (req, res) => {
     try {
+        const data = JSON.parse(req.body.body);
+
         const project: Project = {
-            name: req.body.name,
+            name: data.name,
             dateOfCreation: new Date(),
             dateOfLastChange: new Date(),
             files: 0,
-            publicAccess: req.body.publicAccess
+            publicAccess: data.publicAccess
         };
 
-        // const newProject = await ProjectModel.create(project);
-
         let user = await UserModel.findById(req.params.id).exec();
-        console.log(user);
         if (user !== null && user !== undefined && user.projects !== undefined) {
-            // user.projects.push(project);
             user.projects.push(new ProjectModel(project));
 
             const updUser = await user.save();
@@ -41,7 +39,6 @@ projectsApi.put("/:id", async (req, res) => {
 
 projectsApi.get("/:id", async (req, res) => {
     try {
-        // const project = await ProjectModel.findById(req.params.id);
         const user = await UserModel.findById(req.params.id);
 
         if (user !== null && user !== undefined) {

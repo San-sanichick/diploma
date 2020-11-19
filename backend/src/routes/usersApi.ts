@@ -6,13 +6,14 @@ const usersApi = Router();
 // Create user
 usersApi.post("/", async (req, res) => {
     try {
+        const data = JSON.parse(req.body.body);
         const user = {
-            email: req.body.email,
-            password: req.body.password
+            email: data.email,
+            password: data.password
         };
     
         const {_id: id} = await UserModel.create(user);
-        res.status(200).json({msh: `User ${id} Created`});
+        res.status(200).json({msg: `User ${id} Created`});
     } catch (err) {
         console.error(err);
         res.status(400).json({msg: `An error has occured: ${err}`});
@@ -31,12 +32,21 @@ usersApi.get("/", async (req, res) => {
 });
 
 // Read specific user
-usersApi.get("/:email", async (req, res) => {
+usersApi.get("/login", async (req, res) => {
     try {
-        const user = await UserModel.findOne({email: req.params.email});
+        // console.log(req.params);
+        const user = await UserModel.findOne({ 
+            email: req.query.email as string,
+            password: req.query.password as string
+         });
 
         if (user !== null) {
-            res.status(200).json(user);
+            res.status(200).json({
+                email   : user.email,
+                password: user.password,
+                avatar  : user.avatar,
+                id      : user._id
+            });
         } else {
             res.status(404).json({
                 msg: "User not found"

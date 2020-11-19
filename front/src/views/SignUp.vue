@@ -25,7 +25,9 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
+    import { defineComponent } from 'vue';
+    import axios from "axios";
+
     export default defineComponent({
         data() {
             return {
@@ -38,9 +40,34 @@
         },
         methods: {
             async submitHandler() {
-                const dataToSend = JSON.stringify(this.form);
-                console.log(dataToSend);
+                // const config = {
+                //     headers: {
+                //         "Accept": "application/json, text/javascript, */*, q=0.01",
+                //         "X-Requested-With": "XMLHttpRequest",
+                //         "Contant-Type": "application/json"
+                //     }
+                // }
+
+                try {
+                    if (this.IsCorrectPassword()) {
+                        const data = {
+                            email   : this.form.email, 
+                            password: this.form.password
+                        }
+                        const dataToSend = JSON.stringify(data);
+                        console.log(dataToSend);
+
+                        const res = await axios.post("http://localhost:3000/api/users", { body: dataToSend });
+                        console.log(res.data);
+                    }
+                } catch (err) {
+                    console.error(err);
+                }
+                
                 this.$router.push('/auth/login');
+            },
+            IsCorrectPassword(): boolean {
+                return this.form.password === this.form.passwordRepeat;
             }
         }
     })
