@@ -1,11 +1,9 @@
-import { model, Schema, Types, Model, Document } from "mongoose";
-import { prop, getModelForClass, Ref } from "@typegoose/typegoose";
+import { prop, getModelForClass } from "@typegoose/typegoose";
 import { Project } from "./ProjectModel";
 
 class User {
     @prop({required: true})
     public email?: string;
-
 
     @prop({required: true})
     public password?: string;

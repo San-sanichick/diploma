@@ -44,7 +44,7 @@ export default createStore({
                 //     password: payload.user.password
                 // });
                 const res = await axios.get(`http://localhost:3000/api/users/login?email=${payload.user.email}&password=${payload.user.password}`);
-                const user = res.data;
+                const user = res.data.data;
                 context.commit("setUser", {user});
             } catch (err) {
                 console.error(err);
