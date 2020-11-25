@@ -1,5 +1,4 @@
-import { UserModel } from "../db/UserModel";
-
+import { UserModel, User } from "../db/models/UserModel";
 interface UserInterface {
     email   : string;
     password: string;
@@ -12,8 +11,10 @@ interface Result {
 }
 
 export default class UserController {
-    constructor() {
+    // private _model: User;
 
+    constructor() {
+        // this._model = new UserModel();
     }
 
     /**

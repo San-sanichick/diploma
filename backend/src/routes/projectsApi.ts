@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { Project, ProjectModel } from "../db/ProjectModel";
-import { UserModel } from "../db/UserModel";
+import { Project, ProjectModel } from "../db/models/ProjectModel";
+import { UserModel } from "../db/models/UserModel";
 
 const projectsApi = Router();
 
@@ -19,7 +19,8 @@ projectsApi.post("/:id", async (req, res) => {
 
         let user = await UserModel.findById(req.params.id).exec();
         if (user !== null && user !== undefined && user.projects !== undefined) {
-            user.projects.push(new ProjectModel(project));
+            // Well I'll be damned, it actually works
+            user.projects.push(await ProjectModel.create(project));
 
             const updUser = await user.save();
 
@@ -41,13 +42,10 @@ projectsApi.get("/:id", async (req, res) => {
     try {
         const user = await UserModel.findById(req.params.id);
 
-        if (user !== null && user !== undefined) {
-            const project = user.projects;
-            res.status(200).json(project);
-        } else {
-            res.status(404).json({msg: "User not found"});
+        if (user !== null) {
+            const populated = await user.populate("projects").execPopulate();
+            res.status(200).json(populated.projects);
         }
-        
     } catch (err) {
         console.error(err);
     }

@@ -1,4 +1,4 @@
-import { prop, getModelForClass } from "@typegoose/typegoose";
+import { prop, getModelForClass, Ref } from "@typegoose/typegoose";
 import { Project } from "./ProjectModel";
 
 class User {
@@ -11,10 +11,10 @@ class User {
     @prop({default: "todd.jpg"})
     public avatar?: string;
 
-    @prop({type: () => Project, required: false})
-    public projects?: Project[];
+    @prop({ref: Project, required: false})
+    public projects?: Ref<Project>[];
 }
 
 const UserModel = getModelForClass(User);
 
-export {UserModel};
+export { UserModel, User };

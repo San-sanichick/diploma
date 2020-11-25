@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { UserModel } from "../db/UserModel";
 import UserController from "../controllers/UserController";
 
 const usersApi = Router();
@@ -18,6 +17,7 @@ usersApi.post("/", async (req, res) => {
 
 // Read users
 usersApi.get("/", async (req, res) => {
+    console.log("ahahah");
     const result = await userController.GetAllUsers();
     res.status(result.status).json({msg: result.msg, data: result.data});
 });
