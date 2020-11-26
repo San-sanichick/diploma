@@ -14,6 +14,7 @@
 
         <div class="project-list-wrapper">
             <component 
+                v-if="list.length !== 0"
                 :is="displayMode" 
                 :projects="list" 
                 @project-clicked="openProject" 
@@ -22,6 +23,9 @@
                 @delete-project="deleteProject"
                 >
             </component>
+            <div v-else>
+                Нет проектов :(
+            </div>
         </div>
     </div>
 
@@ -74,19 +78,19 @@
             async fetchProjects(): Promise<void> {
                 try {
                     const res = await axios.get(`http://localhost:3000/api/projects/${this.user.id}`);
-                    this.list = res.data;
+                    this.list = res.data.data;
                 } catch (err) {
                     console.error(err);
                 }
             },
             async createNewProject(name: string) {
-                this.list.push({
-                    id              : this.list.length !== 0 ? +this.list[this.list.length - 1].id + 1 : 0,
-                    name            : name,
-                    dateOfCreation  : new Date(),
-                    dateOfLastChange: new Date(),
-                    files           : 0
-                } as Project)
+                // this.list.push({
+                //     id              : this.list.length !== 0 ? +this.list[this.list.length - 1].id + 1 : 0,
+                //     name            : name,
+                //     dateOfCreation  : new Date(),
+                //     dateOfLastChange: new Date(),
+                //     files           : 0
+                // } as Project)
 
                 try {
                     const data = {
@@ -97,7 +101,8 @@
                     const dataToSend = JSON.stringify(data);
 
                     const res = await axios.post(`http://localhost:3000/api/projects/${this.user.id}`, { body: dataToSend });
-                    console.log(res.data);
+                    console.log(res.data.data);
+                    this.list.push(res.data.data);
                 } catch (err) {
                     console.error(err);
                 }
@@ -120,7 +125,7 @@
                 console.log(id);
                 // this.$router.push(`project/${id}`);
                 this.$router.push({
-                    path: `project/${id}`
+                    path: `projects/${id}`
                 })
             },
             deleteProject(id: number) {

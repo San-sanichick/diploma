@@ -10,7 +10,7 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import('../views/User/ProjectList.vue')
             },
             {
-                path: "project/:id",
+                path: "projects/:id",
                 component: () => import('../views/User/ProjectExplorer.vue')
             }
         ],

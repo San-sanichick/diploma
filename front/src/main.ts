@@ -6,6 +6,7 @@ import store from './store';
 // Programmed routing
 router.beforeEach((to, from, next) => {
     // Checking if user is logged
+    console.log(to.path);
     if (to.matched.some(record => record.meta.requiresAuth)) {        
         if (store.getters.isLogged) {
             next();

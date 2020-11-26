@@ -11,6 +11,9 @@ class User {
     @prop({default: "todd.jpg"})
     public avatar?: string;
 
+    @prop({default: new Date(), required: true})
+    public dateOfSignUp?: Date;
+
     @prop({ref: Project, required: false})
     public projects?: Ref<Project>[];
 }

@@ -39,13 +39,13 @@ export default createStore({
     actions: {
         async logIn(context, payload) {
             try {
-                // const dataToSend = JSON.stringify({
-                //     email   : payload.user.email,
-                //     password: payload.user.password
-                // });
                 const res = await axios.get(`http://localhost:3000/api/users/login?email=${payload.user.email}&password=${payload.user.password}`);
-                const user = res.data.data;
-                context.commit("setUser", {user});
+                if (res.data.data) {
+                    const user = res.data.data;
+                    context.commit("setUser", {user});
+                } else {
+                    console.log(res.data.msg);
+                }
             } catch (err) {
                 console.error(err);
             }

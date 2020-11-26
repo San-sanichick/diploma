@@ -11,13 +11,13 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
-    import { useStore } from 'vuex';
-    import { useRouter } from 'vue-router';
+    import { useStore }        from 'vuex';
+    import { useRouter }       from 'vue-router';
 
     export default defineComponent({
         setup() {
             const  
-                store = useStore(),
+                store  = useStore(),
                 router = useRouter();
 
             const goBack = () => {
