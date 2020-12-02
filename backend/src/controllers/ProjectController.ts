@@ -36,6 +36,7 @@ export default class ProjectController {
     
             if (user !== null) {
                 const populated = await user.populate("projects").execPopulate();
+                
                 res.status(200).json({msg: "Successfully retrieved list of projects", data: populated.projects})
             }
         } catch (err) {
@@ -44,6 +45,6 @@ export default class ProjectController {
     }
 
     public async deleteProject(req: Request, res: Response) {
-        
+        res.status(200).json({msg: `deleted... SIKE`});
     }
 }

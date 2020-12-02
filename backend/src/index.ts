@@ -2,8 +2,9 @@ import express, { Application, Request, Response, NextFunction } from "express";
 import mongoose from "mongoose";
 import cors from 'cors';
 // import usersApi from "./routes/usersApi";
-import { UserRoutes } from "./routes/UserRoutes"
-import projectsApi from "./routes/projectsApi";
+import { UserRoutes } from "./routes/UserRoutes";
+import { ProjectRoutes } from "./routes/ProjectRoutes";
+// import projectsApi from "./routes/projectsApi";
 import config from "./config/config";
 
 class App {
@@ -38,7 +39,7 @@ class App {
 
     private setRoutes() {
         this._app.use("/api/users", new UserRoutes().router);
-        this._app.use("/api/projects", projectsApi);
+        this._app.use("/api/projects", new ProjectRoutes().router);
 
         this._app.get("/", (req, res) => {
             res.send("kek");

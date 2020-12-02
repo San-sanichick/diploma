@@ -1,6 +1,5 @@
 import bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
-import passport from "passport";
 import "../passport/passportHandler";
 import { Request, Response } from "express";
 import { UserModel, User } from "../db/models/UserModel";
@@ -14,15 +13,26 @@ interface UserInterface {
 export default class UserController {
     public async createUser(req: Request, res: Response): Promise<void> {
         try {
-            const data = JSON.parse(req.body.body);
+            // const data = JSON.parse(req.body.body);
+            const data = req.body;
+            console.log("hahahaha");
+
             const hashedPassword = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10));
+            
+            console.log(hashedPassword);
             const user = {
                 email: data.email,
                 password: hashedPassword
             };
-            const {_id: id} = await UserModel.create(user);
-            // req.body.scope;
-            res.status(200).json({msg: `User ${id} Created`});
+            const newUser = await UserModel.create(user);
+
+            const token = jwt.sign({
+                email: data.email,
+                scope: data.scope
+            },
+            config.JWT_SECRET);
+
+            res.status(200).json({msg: `User ${newUser._id} Created`, data: token});
         } catch (err) {
             console.error(err);
             res.status(400).json({msg: `User wasn't created`});
@@ -42,23 +52,21 @@ export default class UserController {
     public async findUser(req: Request, res: Response): Promise<void> {
         try {
             const found = await UserModel.findOne({ 
-                email: req.body.email as string,
-                password: req.body.password as string
+                email: req.query.email as string,
+                password: req.query.password as string
             });
 
             if (found !== null) {
-
-
                 res.status(200).json({msg: "User found", data: {
+                    id: found._id,
                     email : found.email,
+                    username: found.username,
                     avatar: found.avatar,
                     dateOfSignUp: found.dateOfSignUp
                 }});
             } else {
                 throw new Error("User not found");
             }
-
-            
         } catch (err) {
             console.error(err);
             res.status(404).json({msg: `User not found`});

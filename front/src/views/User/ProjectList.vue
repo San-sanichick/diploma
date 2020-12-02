@@ -37,6 +37,10 @@
             </div>
         </div>
     </teleport>
+
+    <teleport to="body">
+        <FlashMessage :data="flashMsgData" @close-flash="flashMsgData = null" />
+    </teleport>
 </template>
 
 <script lang="ts">
@@ -46,23 +50,27 @@
     import Project             from "../../types/Project";
     import ProjectListGrid     from "../../components/ProjectListGrid.vue";
     import ProjectListTable    from "../../components/ProjectListTable.vue";
+    import config from "../../config/config";
 
     import createProject from "../../components/popups/createProject.vue";
     import setUpProject  from "../../components/popups/setUpProject.vue";
+    import FlashMessage  from "../../components/FlashMessage.vue";
 
     export default defineComponent({
         components: {
             ProjectListGrid,
             ProjectListTable,
             createProject,
-            setUpProject
+            setUpProject,
+            FlashMessage
         },
         data() {
             return {
                 list             : [] as Project[],
                 showPopUp        : false,
                 currentPopUp     : "createProject",
-                displayMode      : "ProjectListGrid"
+                displayMode      : "ProjectListGrid",
+                flashMsgData     : null as any
             }
         },
         computed: {
@@ -77,21 +85,13 @@
         methods: {
             async fetchProjects(): Promise<void> {
                 try {
-                    const res = await axios.get(`http://localhost:3000/api/projects/${this.user.id}`);
+                    const res = await axios.get(`http://localhost:${config.apiPort}/api/projects/${this.user.id}`);
                     this.list = res.data.data;
                 } catch (err) {
                     console.error(err);
                 }
             },
             async createNewProject(name: string) {
-                // this.list.push({
-                //     id              : this.list.length !== 0 ? +this.list[this.list.length - 1].id + 1 : 0,
-                //     name            : name,
-                //     dateOfCreation  : new Date(),
-                //     dateOfLastChange: new Date(),
-                //     files           : 0
-                // } as Project)
-
                 try {
                     const data = {
                         name,
@@ -100,11 +100,19 @@
 
                     const dataToSend = JSON.stringify(data);
 
-                    const res = await axios.post(`http://localhost:3000/api/projects/${this.user.id}`, { body: dataToSend });
-                    console.log(res.data.data);
+                    const res = await axios.post(`http://localhost:${config.apiPort}/api/projects/${this.user.id}`, { body: dataToSend });
+                    console.log(res.data.msg);
+                    this.flashMsgData = {
+                        message: res.data.msg,
+                        status: "success"
+                    }
                     this.list.push(res.data.data);
                 } catch (err) {
                     console.error(err);
+                    this.flashMsgData = {
+                        message: err,
+                        status: "fail"
+                    }
                 }
 
                 this.showPopUp = !this.showPopUp;
@@ -128,9 +136,31 @@
                     path: `projects/${id}`
                 })
             },
-            deleteProject(id: number) {
+            async deleteProject(id: number) {
                 console.log(id);
-                this.list = this.list.filter(el => el.id !== id);
+                // this.list = this.list.filter(el => el._id !== id);
+
+                try {
+                    const data = {
+                        id
+                    }
+
+                    const dataToSend = JSON.stringify(data);
+
+                    const res = await axios.delete(`http://localhost:${config.apiPort}/api/projects/${this.user.id}`);
+                    console.log(res.data.msg);
+                    this.flashMsgData = {
+                        message: res.data.msg,
+                        status: "success"
+                    }
+                } catch (err) {
+                    console.error(err);
+                    this.flashMsgData = {
+                        message: err,
+                        status: "fail"
+                    }
+                }
+
             }
         }
     })
@@ -151,8 +181,6 @@
         align-items: center;
         justify-content: center;
         z-index: 9000;
-
-        
     }
 
     .page {

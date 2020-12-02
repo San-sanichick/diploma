@@ -2,12 +2,12 @@
     <div class="header">
         <div class="logo">logo here</div>
         <div class="user">
-            <span>{{ currentUser.email }}</span>
+            <span>{{ currentUser.username ?? currentUser.email }}</span>
             <div class="img"></div>
             <router-link to="/auth/logout">выход</router-link>
         </div>
     </div>
-    <router-view class="page"></router-view>
+    <router-view></router-view>
     <!-- <router-view v-slot="{ Component }" :key="$route.fullPath">
         <keep-alive max="5">
             <component :is="Component"></component>

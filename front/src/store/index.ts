@@ -1,6 +1,7 @@
 import { createStore } from 'vuex';
 import axios from "axios";
 import UserInterface from '@/types/User';
+import config from "../config/config";
 
 export default createStore({
     state: {
@@ -39,7 +40,7 @@ export default createStore({
     actions: {
         async logIn(context, payload) {
             try {
-                const res = await axios.get(`http://localhost:3000/api/users/login?email=${payload.user.email}&password=${payload.user.password}`);
+                const res = await axios.get(`http://localhost:${config.apiPort}/api/users/login?email=${payload.user.email}&password=${payload.user.password}`);
                 if (res.data.data) {
                     const user = res.data.data;
                     context.commit("setUser", {user});

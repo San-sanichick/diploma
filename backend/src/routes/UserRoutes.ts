@@ -13,6 +13,7 @@ export class UserRoutes {
 
     private routes() {
         this.router.get("/", this.userController.getAllUsers);
+        this.router.get("/login", this.userController.findUser);
         this.router.post("/", this.userController.createUser);
         // this.router.
     }

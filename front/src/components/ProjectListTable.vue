@@ -13,7 +13,7 @@
             <div class="project-table-body">
                  <div class="table-row" 
                     v-for="project in projects" 
-                    :key="project.id" 
+                    :key="project._id" 
                     @dblclick="$emit('project-clicked', project._id)"
                     @contextmenu.prevent="$refs['context-menu'].openMenu($event, project._id);" 
                     tabindex="0"
