@@ -57,7 +57,7 @@ export default class UserController {
             });
 
             if (found !== null) {
-                res.status(200).json({msg: "User found", data: {
+                res.status(200).json({msg: "Пользователь найден", data: {
                     id: found._id,
                     email : found.email,
                     username: found.username,
@@ -65,11 +65,11 @@ export default class UserController {
                     dateOfSignUp: found.dateOfSignUp
                 }});
             } else {
-                throw new Error("User not found");
+                throw new Error("Логин или пароль не верны");
             }
         } catch (err) {
             console.error(err);
-            res.status(404).json({msg: `User not found`});
+            res.status(404).json({msg: `Логин или пароль не верны`});
         }
     }
 }

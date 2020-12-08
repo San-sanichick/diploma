@@ -2,6 +2,9 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router';
 import store from './store';
+import FlashMessage, { FlashMessagePlugin } from "@smartweb/vue-flash-message";
+
+import CustomFlashMessage from "./components/CustomFlashMessage.vue";
 
 // Programmed routing
 router.beforeEach((to, from, next) => {
@@ -35,4 +38,17 @@ router.beforeEach((to, from, next) => {
     }
 });
 
-createApp(App).use(store).use(router).mount('#app')
+declare module "@vue/runtime-core" {
+    interface ComponentCustomProperties {
+        $flashMessage: FlashMessagePlugin;
+    }
+}
+
+const app = createApp(App);
+
+app.use(store).use(router).use(FlashMessage, {
+    name: 'flashMessage',
+    tag: 'FlashMessage',
+    time: 10000,
+    strategy: 'single'
+}).mount('#app');

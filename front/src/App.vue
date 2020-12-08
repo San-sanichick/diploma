@@ -1,5 +1,6 @@
 <template>
     <router-view />
+    <FlashMessage position="right bottom"/>
 </template>
 
 <style lang="scss">
@@ -10,8 +11,6 @@
 
     #app {
         font-family: Open Sans, Arial, sans-serif;
-        // -webkit-font-smoothing: antialiased;
-        // -moz-osx-font-smoothing: grayscale;
         text-align: center;
         color: black;
         height: 100%;

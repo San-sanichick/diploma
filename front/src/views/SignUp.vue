@@ -40,14 +40,6 @@
         },
         methods: {
             async submitHandler() {
-                // const config = {
-                //     headers: {
-                //         "Accept": "application/json, text/javascript, */*, q=0.01",
-                //         "X-Requested-With": "XMLHttpRequest",
-                //         "Contant-Type": "application/json"
-                //     }
-                // }
-
                 try {
                     if (this.IsCorrectPassword()) {
                         const data = {
@@ -59,12 +51,18 @@
 
                         const res = await axios.post("http://localhost:3000/api/users", { body: dataToSend });
                         console.log(res.data);
+                        this.$router.push('/auth/login');
+                    } else {
+                        throw new Error("Пароли не совпадают");
                     }
                 } catch (err) {
                     console.error(err);
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: "/img/fail.4d3891d7.svg",
+                        text: err
+                    });
                 }
-                
-                this.$router.push('/auth/login');
             },
             IsCorrectPassword(): boolean {
                 return this.form.password === this.form.passwordRepeat;

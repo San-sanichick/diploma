@@ -23,10 +23,10 @@ export default class ProjectController {
                 
                 const updUser = await user.save();
     
-                res.status(200).json({msg: `Project ${newProject.name} created successfully!`, data: newProject});
+                res.status(200).json({msg: `Проект "${newProject.name}" был успешно создан!`, data: newProject});
             }
         } catch (err) {
-            res.status(400).json({msg: `An error has occured: ${err}`});
+            res.status(400).json({msg: `Произошла ошибка: ${err}`});
         }
     }
 
@@ -37,10 +37,10 @@ export default class ProjectController {
             if (user !== null) {
                 const populated = await user.populate("projects").execPopulate();
                 
-                res.status(200).json({msg: "Successfully retrieved list of projects", data: populated.projects})
+                res.status(200).json({msg: "Успешно получен список проектов", data: populated.projects})
             }
         } catch (err) {
-            res.status(400).json({msg: `An error has occured: ${err}`});
+            res.status(400).json({msg: `Произошла ошибка: ${err}`});
         }
     }
 

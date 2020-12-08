@@ -37,16 +37,13 @@
             </div>
         </div>
     </teleport>
-
-    <teleport to="body">
-        <FlashMessage :data="flashMsgData" @close-flash="flashMsgData = null" />
-    </teleport>
 </template>
 
 <script lang="ts">
     import { defineComponent } from 'vue';
     import { useStore } from 'vuex';
     import axios               from "axios";
+
     import Project             from "../../types/Project";
     import ProjectListGrid     from "../../components/ProjectListGrid.vue";
     import ProjectListTable    from "../../components/ProjectListTable.vue";
@@ -54,23 +51,22 @@
 
     import createProject from "../../components/popups/createProject.vue";
     import setUpProject  from "../../components/popups/setUpProject.vue";
-    import FlashMessage  from "../../components/FlashMessage.vue";
+
+    // import CustomFlashMessage from "../../components/CustomFlashMessage.vue";
 
     export default defineComponent({
         components: {
             ProjectListGrid,
             ProjectListTable,
             createProject,
-            setUpProject,
-            FlashMessage
+            setUpProject
         },
         data() {
             return {
                 list             : [] as Project[],
                 showPopUp        : false,
                 currentPopUp     : "createProject",
-                displayMode      : "ProjectListGrid",
-                flashMsgData     : null as any
+                displayMode      : "ProjectListGrid"
             }
         },
         computed: {
@@ -89,6 +85,11 @@
                     this.list = res.data.data;
                 } catch (err) {
                     console.error(err);
+                    this.$flashMessage.show({
+                        type: 'error',
+                        // title: "Ошибка",
+                        text: err
+                    });
                 }
             },
             async createNewProject(name: string) {
@@ -102,17 +103,21 @@
 
                     const res = await axios.post(`http://localhost:${config.apiPort}/api/projects/${this.user.id}`, { body: dataToSend });
                     console.log(res.data.msg);
-                    this.flashMsgData = {
-                        message: res.data.msg,
-                        status: "success"
-                    }
+
+
+                    this.$flashMessage.show({
+                        type: 'success',
+                        image: "/img/success.a5668cb3.svg",
+                        text: res.data.msg
+                    });
                     this.list.push(res.data.data);
                 } catch (err) {
                     console.error(err);
-                    this.flashMsgData = {
-                        message: err,
-                        status: "fail"
-                    }
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: "/img/fail.4d3891d7.svg",
+                        text: err
+                    });
                 }
 
                 this.showPopUp = !this.showPopUp;
@@ -149,19 +154,21 @@
 
                     const res = await axios.delete(`http://localhost:${config.apiPort}/api/projects/${this.user.id}`);
                     console.log(res.data.msg);
-                    this.flashMsgData = {
-                        message: res.data.msg,
-                        status: "success"
-                    }
+
+                    this.$flashMessage.show({
+                        type: 'success',
+                        image: require("../../assets/flashMessage/success.svg"),
+                        text: res.data.msg
+                    });
                 } catch (err) {
                     console.error(err);
-                    this.flashMsgData = {
-                        message: err,
-                        status: "fail"
-                    }
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: require("../../assets/flashMessage/fail.svg"),
+                        text: err
+                    });
                 }
-
-            }
+            },
         }
     })
 </script>

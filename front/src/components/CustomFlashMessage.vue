@@ -1,13 +1,11 @@
 <template>
-    <transition name="flash-slide">
-        <div v-if="data != null" class="flash-message">
-            <div class="flash-container">
-                <div> {{data.status}} </div>
-                <div> {{data.message}} </div>
-                <div class='flash-mes-close' @click="closeMessage">close</div>
-            </div>
+    <div v-if="data != null" class="flash-message">
+        <div class="flash-container">
+            <div :class="data.status"></div>
+            <div class="flash-mes-text"> {{data.message}} </div>
+            <div class='flash-mes-close' @click="closeMessage"></div>
         </div>
-    </transition>
+    </div>
 </template>
 
 <script lang="ts">
@@ -39,6 +37,10 @@
             padding: 8px;
             display: flex;
             flex-flow: row;
+
+            .success {
+                background-image: url("../assets/flashMessage/success.svg");
+            }
 
             .flash-mes-close {
                 cursor: pointer;
