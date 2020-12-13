@@ -84,6 +84,7 @@ export default createStore({
         },
         async logOut(context) {
             context.commit("removeUser");
+            context.commit("removeToken");
         }
     },
     modules: {

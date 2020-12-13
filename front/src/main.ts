@@ -52,17 +52,30 @@ router.beforeEach(async (to, from, next) => {
 
 const refreshAuthLogic = async (failedRequest: any) => {
     const refreshToken = localStorage.getItem("refreshToken");
-    if (refreshToken !== undefined) {
+    if (refreshToken !== "undefined") {
         const tokenRefreshResponse = await axios.post("/token/refresh", {refreshToken});
         store.commit("setToken", {token: tokenRefreshResponse.data.token, refreshToken});
         failedRequest.response.config.headers["Authorization"] = "Bearer " + tokenRefreshResponse.data.token;
         return Promise.resolve();
     } else {
+        store.dispatch("logOut");
+        router.push("/auth/login/");
         return Promise.reject();
     }
 }
 
 createAuthRefreshInterceptor(axios, refreshAuthLogic);
+
+axios.interceptors.response.use(res => {
+        return res;
+    },
+    err => {
+        if (err && err.response && err.response.status === 401) {
+            router.push("/auth/login/");
+            return Promise.reject(err);
+        }
+    }
+)
 
 declare module "@vue/runtime-core" {
     interface State {
