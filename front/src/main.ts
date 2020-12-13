@@ -51,8 +51,10 @@ router.beforeEach(async (to, from, next) => {
 });
 
 const refreshAuthLogic = async (failedRequest: any) => {
-    const tokenRefreshResponse = await axios.post("/token/refresh");
-    store.commit("setToken", tokenRefreshResponse.data.token);
+    const refreshToken = localStorage.getItem("refreshToken");
+    const tokenRefreshResponse = await axios.post("/token/refresh", {refreshToken});
+    store.commit("setToken", {token: tokenRefreshResponse.data.token, refreshToken});
+    failedRequest.response.config.headers["Authorization"] = "Bearer " + tokenRefreshResponse.data.token;
     return Promise.resolve();
 }
 

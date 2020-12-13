@@ -81,7 +81,7 @@ export default createStore({
                 console.error(err);
             }
         },
-        async logOut(context, payload) {
+        async logOut(context) {
             context.commit("removeUser");
         }
     },
