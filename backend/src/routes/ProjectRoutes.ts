@@ -1,5 +1,7 @@
 import { Router } from "express";
+import passport from "passport";
 import ProjectController from "../controllers/ProjectController";
+import "../passport/passportHandler";
 
 export class ProjectRoutes {
     public router: Router;
@@ -12,8 +14,8 @@ export class ProjectRoutes {
     }
 
     private routes() {
-        this.router.get("/:id", this.projectController.getAllProjects);
-        this.router.post("/:id", this.projectController.createProject);
-        this.router.delete("/:id", this.projectController.deleteProject);
+        this.router.get(   "/",    passport.authenticate("jwt", {session: false}), this.projectController.getAllProjects);
+        this.router.post(  "/",    passport.authenticate("jwt", {session: false}), this.projectController.createProject);
+        this.router.delete("/:id", passport.authenticate("jwt", {session: false}), this.projectController.deleteProject);
     }
 }

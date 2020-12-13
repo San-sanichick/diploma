@@ -32,39 +32,59 @@
 
 <script lang="ts">
     import { computed, defineComponent, ref } from 'vue';
-    import { useStore } from 'vuex';
+    import store from 'vuex';
     import { useRouter } from 'vue-router';
+    import axios from "axios";
+    import config from "../config/config";
     import UserInterface from '../types/User';
 
     export default defineComponent({
-        setup() {
-            const 
-                store = useStore(),
-                router = useRouter(),
-                currentUser = computed(() => store.state.user),
-                form = ref({
+        data() {
+            return {
+                form: {
                     email: "",
                     password: "",
                     remember: false
-                });
-            
-            const logIn = async (user: UserInterface) => {
-                const temp: UserInterface = {
-                    id: 0,
-                    email: user.email,
-                    password: user.password,
-                    remember: user.remember
-                };
-                await store.dispatch("logIn", {user: temp});
+                },
+                router: useRouter()
             }
+        },
+        computed: {
+            // user() {
+            //     const store = useStore();
+            //     return store.getters.getUser;
+            // }
+        },
+        methods: {
+            async logIn(user: UserInterface) {
+                try {
+                    const res = await axios.get(`http://localhost:${config.apiPort}/api/users/login?email=${user.email}&password=${user.password}`);
 
-            async function submitHandler() {
-                await logIn(form.value);
-                router.push(`/${store.getters.getUser.id}/projects`)
+                    console.log(res.data);
+                    return res.data.data;
+                } catch (err) {
+                    console.error(err);
+                    throw new Error("HAHAHA");
+                }
+            },
+            async submitHandler() {
+                let user = {};
+                try {
+                    user = await this.logIn(this.form);
+
+                    this.$store.commit("setUser", {user});
+
+                    this.$router.push(`/${this.$store.getters.getUser.id}/projects`);
+                } catch (err) {
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: require("../assets/flashMessage/fail.svg"),
+                        text: err
+                    });
+                }
             }
-
-            return { currentUser, logIn, form, submitHandler }
         }
+
     })
 </script>
 

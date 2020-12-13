@@ -41,7 +41,6 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
-    import { useStore } from 'vuex';
     import axios               from "axios";
 
     import Project             from "../../types/Project";
@@ -71,8 +70,7 @@
         },
         computed: {
             user() {
-                const store = useStore();
-                return store.getters.getUser;
+                return this.$store.getters.getUser;
             }
         },
         created() {
@@ -107,7 +105,7 @@
 
                     this.$flashMessage.show({
                         type: 'success',
-                        image: "/img/success.a5668cb3.svg",
+                        image: require("../../assets/flashMessage/success.svg"),
                         text: res.data.msg
                     });
                     this.list.push(res.data.data);
@@ -115,7 +113,7 @@
                     console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "/img/fail.4d3891d7.svg",
+                        image: require("../../assets/flashMessage/fail.svg"),
                         text: err
                     });
                 }

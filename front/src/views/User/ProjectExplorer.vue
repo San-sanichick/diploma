@@ -1,9 +1,9 @@
 <template>
-    <div>
+    <div class="page">
         <div class="page-header">
             <button @click="goBack">back</button>
             <h3>
-                {{ $route.params.id }}
+                {{ id }}
             </h3>
         </div>
     </div>
@@ -11,20 +11,27 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
-    import { useStore }        from 'vuex';
-    import { useRouter }       from 'vue-router';
 
     export default defineComponent({
-        setup() {
-            const  
-                store  = useStore(),
-                router = useRouter();
-
-            const goBack = () => {
-                router.push(`/${store.getters.getUser.id}/projects`);
+        data() {
+            return {
+                id: this.$route.params.id
             }
-
-            return { goBack }
+        },
+        mounted(){
+            console.log(this.$route.params.id);
+        },
+        methods: {
+            goBack() {
+                this.$router.push(`/${this.$store.getters.getUser.id}/projects`);
+            }
         }
     })
 </script>
+
+<style lang="scss">
+    .page {
+        padding: 90px 7% 5% 7%;
+
+    }
+</style>

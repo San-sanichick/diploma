@@ -1,10 +1,13 @@
 import { createApp } from 'vue';
+import {Router, createRouter} from "vue-router";
+import {Store, createStore} from "vuex";
 import App from './App.vue';
 import router from './router';
 import store from './store';
 import FlashMessage, { FlashMessagePlugin } from "@smartweb/vue-flash-message";
 
-import CustomFlashMessage from "./components/CustomFlashMessage.vue";
+// import CustomFlashMessage from "./components/CustomFlashMessage.vue";
+import UserInterface from '@/types/User';
 
 // Programmed routing
 router.beforeEach((to, from, next) => {
@@ -39,8 +42,14 @@ router.beforeEach((to, from, next) => {
 });
 
 declare module "@vue/runtime-core" {
+    interface State {
+        user: UserInterface | null;
+    }
+
     interface ComponentCustomProperties {
         $flashMessage: FlashMessagePlugin;
+        $router: Router;
+        $store: Store<State>;
     }
 }
 

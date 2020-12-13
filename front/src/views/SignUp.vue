@@ -27,6 +27,7 @@
 <script lang="ts">
     import { defineComponent } from 'vue';
     import axios from "axios";
+    import config from "../config/config";
 
     export default defineComponent({
         data() {
@@ -47,9 +48,9 @@
                             password: this.form.password
                         }
                         const dataToSend = JSON.stringify(data);
-                        console.log(dataToSend);
+                        console.log("hahah");
 
-                        const res = await axios.post("http://localhost:3000/api/users", { body: dataToSend });
+                        const res = await axios.post(`http://localhost:${config.apiPort}/api/users/signUp`, { body: dataToSend });
                         console.log(res.data);
                         this.$router.push('/auth/login');
                     } else {
@@ -59,7 +60,7 @@
                     console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "/img/fail.4d3891d7.svg",
+                        image: require("../assets/flashMessage/success.svg"),
                         text: err
                     });
                 }

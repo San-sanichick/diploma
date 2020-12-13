@@ -28,7 +28,7 @@ export default createStore({
         }
     },
     mutations: {
-        async setUser(state, payload) {
+        setUser(state, payload) {
             localStorage.setItem("user", JSON.stringify(payload.user));
             state.user = payload.user;
         },

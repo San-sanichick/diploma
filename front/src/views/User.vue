@@ -16,16 +16,13 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent, computed } from 'vue';
-    import { useStore }                  from 'vuex';
+    import { defineComponent } from 'vue';
 
     export default defineComponent({
-        setup() {
-            const 
-                store       = useStore(),
-                currentUser = computed(() => store.state.user);
-
-            return { currentUser }
+        computed: {
+            currentUser() {
+                return this.$store.getters.getUser;
+            }
         }
     })
 </script>

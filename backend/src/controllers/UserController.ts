@@ -1,6 +1,10 @@
 import bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import "../passport/passportHandler";
+
+import * as fs from "fs";
+import path from "path";
+
 import { Request, Response } from "express";
 import { UserModel, User } from "../db/models/UserModel";
 import config from "../config/config";
@@ -14,25 +18,35 @@ export default class UserController {
     public async createUser(req: Request, res: Response): Promise<void> {
         try {
             // const data = JSON.parse(req.body.body);
-            const data = req.body;
-            console.log("hahahaha");
+            const data = JSON.parse(req.body.body);
+            console.log(data);
 
             const hashedPassword = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10));
             
             console.log(hashedPassword);
             const user = {
                 email: data.email,
+                username: data.email,
                 password: hashedPassword
             };
             const newUser = await UserModel.create(user);
 
-            const token = jwt.sign({
-                email: data.email,
-                scope: data.scope
-            },
-            config.JWT_SECRET);
+            // const token = jwt.sign({
+            //     email: data.email,
+            //     scope: data.scope
+            // },
+            // config.JWT_SECRET);
 
-            res.status(200).json({msg: `User ${newUser._id} Created`, data: token});
+            const p = path.join(__dirname, `../../UserProjects/${newUser._id}/`)
+            fs.mkdir(p, (err)=> {
+                if (err) {
+                    console.log(err);
+                } else {
+                    console.log(`Created new user folder ${newUser._id}`);
+                }
+            });
+
+            res.status(200).json({msg: `User ${newUser._id} Created`});
         } catch (err) {
             console.error(err);
             res.status(400).json({msg: `User wasn't created`});
@@ -49,24 +63,59 @@ export default class UserController {
         }
     }
 
-    public async findUser(req: Request, res: Response): Promise<void> {
+    public async loginUser(req: Request, res: Response): Promise<void> {
+        
+        
+        const
+            email    = req.body.email,
+            password = req.body.password;
         try {
             const found = await UserModel.findOne({ 
-                email: req.query.email as string,
-                password: req.query.password as string
+                email: email
             });
-
+            
             if (found !== null) {
-                res.status(200).json({msg: "Пользователь найден", data: {
-                    id: found._id,
-                    email : found.email,
-                    username: found.username,
-                    avatar: found.avatar,
-                    dateOfSignUp: found.dateOfSignUp
-                }});
+                const isMatch = await bcrypt.compare(password, found.password as string);
+                
+                if (isMatch) {
+                    const payload = {
+                        id: found._id,
+                        username: found.username || found.email
+                    }
+                    
+                    jwt.sign(
+                        payload, 
+                        config.JWT_SECRET,
+                        {
+                            expiresIn: "1m"
+                        },
+                        (err, token) => {
+                            res.status(200).json({
+                                msg: "Successfully found user",
+                                data: "Bearer " + token
+                            })
+                        }
+                    )
+                } else {
+                    res.status(400).json({
+                        msg: "Incorrect password"
+                    })
+                } 
             } else {
-                throw new Error("Логин или пароль не верны");
+                throw new Error("User not found");
             }
+
+            // if (found !== null) {
+            //     res.status(200).json({msg: "Пользователь найден", data: {
+            //         id: found._id,
+            //         email : found.email,
+            //         username: found.username,
+            //         avatar: found.avatar,
+            //         dateOfSignUp: found.dateOfSignUp
+            //     }});
+            // } else {
+            //     throw new Error("Логин или пароль не верны");
+            // }
         } catch (err) {
             console.error(err);
             res.status(404).json({msg: `Логин или пароль не верны`});
