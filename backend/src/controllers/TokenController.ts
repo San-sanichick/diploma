@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { verify, sign } from "jsonwebtoken";
 import config from "../config/config";
+import { getToken } from "../utils/utils";
 
 export default class TokenController {
     public async genToken(req: Request, res: Response) {
@@ -8,7 +9,6 @@ export default class TokenController {
         refreshToken = refreshToken.split(" ")[1];
         verify(refreshToken, config.REFRESH_TOKEN_SECRET, (err: any, decoded: any) => {
             if (err) {
-                console.log("kekkeke");
                 res.status(401).json({msg: "Unauthorized"});
             }
             if (decoded) {
@@ -21,7 +21,6 @@ export default class TokenController {
                     if (error) {
                         res.status(401).json({msg: "Unathorized"});
                     }
-                    console.log(token);
                     res.status(200).json({
                         token  : "Bearer " + token,
                         success: true

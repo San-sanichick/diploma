@@ -79,6 +79,7 @@ export default createStore({
                 }
             } catch (err) {
                 console.error(err);
+                throw new Error(err);
             }
         },
         async logOut(context) {
