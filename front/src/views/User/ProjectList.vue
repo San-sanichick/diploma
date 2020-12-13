@@ -46,12 +46,10 @@
     import Project             from "../../types/Project";
     import ProjectListGrid     from "../../components/ProjectListGrid.vue";
     import ProjectListTable    from "../../components/ProjectListTable.vue";
-    import config from "../../config/config";
+    // import config from "../../config/config";
 
     import createProject from "../../components/popups/createProject.vue";
     import setUpProject  from "../../components/popups/setUpProject.vue";
-
-    // import CustomFlashMessage from "../../components/CustomFlashMessage.vue";
 
     export default defineComponent({
         components: {
@@ -62,10 +60,10 @@
         },
         data() {
             return {
-                list             : [] as Project[],
-                showPopUp        : false,
-                currentPopUp     : "createProject",
-                displayMode      : "ProjectListGrid"
+                list        : [] as Project[],
+                showPopUp   : false,
+                currentPopUp: "createProject",
+                displayMode : "ProjectListGrid"
             }
         },
         computed: {
@@ -79,13 +77,14 @@
         methods: {
             async fetchProjects(): Promise<void> {
                 try {
-                    const res = await axios.get(`http://localhost:${config.apiPort}/api/projects/${this.user.id}`);
+                    console.log(axios.defaults.headers.common["Authorization"]);
+                    const res = await axios.get(`/projects/`);
                     this.list = res.data.data;
                 } catch (err) {
                     console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
-                        // title: "Ошибка",
+                        image: require("../../assets/flashMessage/fail.svg"),
                         text: err
                     });
                 }
@@ -99,9 +98,8 @@
 
                     const dataToSend = JSON.stringify(data);
 
-                    const res = await axios.post(`http://localhost:${config.apiPort}/api/projects/${this.user.id}`, { body: dataToSend });
+                    const res = await axios.post(`/projects/`, { body: dataToSend });
                     console.log(res.data.msg);
-
 
                     this.$flashMessage.show({
                         type: 'success',
@@ -141,16 +139,13 @@
             },
             async deleteProject(id: number) {
                 console.log(id);
-                // this.list = this.list.filter(el => el._id !== id);
-
                 try {
-                    const data = {
-                        id
-                    }
+                    // const data = {
+                    //     id
+                    // }
 
-                    const dataToSend = JSON.stringify(data);
-
-                    const res = await axios.delete(`http://localhost:${config.apiPort}/api/projects/${this.user.id}`);
+                    // const dataToSend = JSON.stringify(data);
+                    const res = await axios.delete(`/projects/`);
                     console.log(res.data.msg);
 
                     this.$flashMessage.show({

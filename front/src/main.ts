@@ -1,34 +1,43 @@
 import { createApp } from 'vue';
-import {Router, createRouter} from "vue-router";
-import {Store, createStore} from "vuex";
+import {Router} from "vue-router";
+import {Store} from "vuex";
 import App from './App.vue';
+import axios from "axios";
+import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import router from './router';
 import store from './store';
 import FlashMessage, { FlashMessagePlugin } from "@smartweb/vue-flash-message";
 
-// import CustomFlashMessage from "./components/CustomFlashMessage.vue";
 import UserInterface from '@/types/User';
+import config from "./config/config";
+
+axios.defaults.baseURL = config.API_URI;
+
+// AxiosAuthRefreshRequestConfig
 
 // Programmed routing
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
     // Checking if user is logged
     console.log(to.path);
     if (to.matched.some(record => record.meta.requiresAuth)) {        
-        if (store.getters.isLogged) {
+        if (await store.getters.isLogged) {
             next();
             return;
         }
         // if not, redirect him to login page
         next('/auth/login');
     } else if (to.path === '/auth/login' || to.path === '/auth/signup') { // if user is logged then he can't go to signup/login pages
-        if (!store.getters.isLogged) {
+        if (! await store.getters.isLogged) {
             next();
             return;
+        } else if (from.path === to.path) {
+            const userId = await store.getters.getUser.id;
+            next(`/${userId}/projects`);
         }
         next(from.path);
     } else if (to.path === '/auth/logout') {    // if user is going to logout, then call logout routine
         if (store.getters.isLogged) {           // and redirect him to login page
-            store.commit("logOut");
+            await store.dispatch("logOut");
         }
         next('/auth/login');
         return;
@@ -40,6 +49,14 @@ router.beforeEach((to, from, next) => {
         next();
     }
 });
+
+const refreshAuthLogic = async (failedRequest: any) => {
+    const tokenRefreshResponse = await axios.post("/token/refresh");
+    store.commit("setToken", tokenRefreshResponse.data.token);
+    return Promise.resolve();
+}
+
+createAuthRefreshInterceptor(axios, refreshAuthLogic);
 
 declare module "@vue/runtime-core" {
     interface State {

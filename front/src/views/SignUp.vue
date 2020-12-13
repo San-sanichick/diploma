@@ -27,7 +27,7 @@
 <script lang="ts">
     import { defineComponent } from 'vue';
     import axios from "axios";
-    import config from "../config/config";
+    import { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
 
     export default defineComponent({
         data() {
@@ -47,10 +47,8 @@
                             email   : this.form.email, 
                             password: this.form.password
                         }
-                        const dataToSend = JSON.stringify(data);
-                        console.log("hahah");
 
-                        const res = await axios.post(`http://localhost:${config.apiPort}/api/users/signUp`, { body: dataToSend });
+                        const res = await axios.post(`/users/signUp`, data, { skipAuthRefresh: true } as AxiosAuthRefreshRequestConfig);
                         console.log(res.data);
                         this.$router.push('/auth/login');
                     } else {

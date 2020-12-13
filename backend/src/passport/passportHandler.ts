@@ -11,7 +11,7 @@ const
 
 let opts: any = {};
 opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
-opts.secretOrKey = config.JWT_SECRET;
+opts.secretOrKey = config.ACCESS_TOKEN_SECRET;
 
 passport.use(
     new JwtStrategy(opts, async (jwt_payload, done) => {

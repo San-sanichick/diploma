@@ -1,11 +1,10 @@
 import express, { Application, Request, Response, NextFunction } from "express";
-import mongoose from "mongoose";
-import cors from 'cors';
-// import usersApi from "./routes/usersApi";
-import { UserRoutes } from "./routes/UserRoutes";
+import mongoose          from "mongoose";
+import cors              from 'cors';
+import { UserRoutes }    from "./routes/UserRoutes";
 import { ProjectRoutes } from "./routes/ProjectRoutes";
-// import projectsApi from "./routes/projectsApi";
-import config from "./config/config";
+import { TokenRoutes }   from "./routes/TokenRoutes";
+import config            from "./config/config";
 
 class App {
     private static _instance: App;
@@ -38,8 +37,9 @@ class App {
     }
 
     private setRoutes() {
-        this._app.use("/api/users", new UserRoutes().router);
-        this._app.use("/api/projects", new ProjectRoutes().router);
+        this._app.use("/api/users",         new UserRoutes().router);
+        this._app.use("/api/projects",      new ProjectRoutes().router);
+        this._app.use("/api/token/refresh", new TokenRoutes().router);
 
         this._app.get("/", (req, res) => {
             res.send("kek");

@@ -1,5 +1,5 @@
 const config = {
-    apiPort: 5000
+    API_URI: "http://localhost:5000/api"
 }
 
 export default config;

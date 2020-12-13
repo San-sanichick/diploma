@@ -31,12 +31,8 @@
 </template>
 
 <script lang="ts">
-    import { computed, defineComponent, ref } from 'vue';
-    import store from 'vuex';
+    import { defineComponent } from 'vue';
     import { useRouter } from 'vue-router';
-    import axios from "axios";
-    import config from "../config/config";
-    import UserInterface from '../types/User';
 
     export default defineComponent({
         data() {
@@ -49,38 +45,14 @@
                 router: useRouter()
             }
         },
-        computed: {
-            // user() {
-            //     const store = useStore();
-            //     return store.getters.getUser;
-            // }
-        },
         methods: {
-            async logIn(user: UserInterface) {
+            async submitHandler() {
+                console.log(this.form);
                 try {
-                    const res = await axios.get(`http://localhost:${config.apiPort}/api/users/login?email=${user.email}&password=${user.password}`);
-
-                    console.log(res.data);
-                    return res.data.data;
+                    await this.$store.dispatch("logIn", this.form);
+                    this.$router.push(`/${this.$store.getters.getUser._id}/projects`);
                 } catch (err) {
                     console.error(err);
-                    throw new Error("HAHAHA");
-                }
-            },
-            async submitHandler() {
-                let user = {};
-                try {
-                    user = await this.logIn(this.form);
-
-                    this.$store.commit("setUser", {user});
-
-                    this.$router.push(`/${this.$store.getters.getUser.id}/projects`);
-                } catch (err) {
-                    this.$flashMessage.show({
-                        type: 'error',
-                        image: require("../assets/flashMessage/fail.svg"),
-                        text: err
-                    });
                 }
             }
         }

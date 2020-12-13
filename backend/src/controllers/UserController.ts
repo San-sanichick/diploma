@@ -17,9 +17,7 @@ interface UserInterface {
 export default class UserController {
     public async createUser(req: Request, res: Response): Promise<void> {
         try {
-            // const data = JSON.parse(req.body.body);
-            const data = JSON.parse(req.body.body);
-            console.log(data);
+            const data = req.body;
 
             const hashedPassword = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10));
             
@@ -30,12 +28,6 @@ export default class UserController {
                 password: hashedPassword
             };
             const newUser = await UserModel.create(user);
-
-            // const token = jwt.sign({
-            //     email: data.email,
-            //     scope: data.scope
-            // },
-            // config.JWT_SECRET);
 
             const p = path.join(__dirname, `../../UserProjects/${newUser._id}/`)
             fs.mkdir(p, (err)=> {
@@ -64,11 +56,13 @@ export default class UserController {
     }
 
     public async loginUser(req: Request, res: Response): Promise<void> {
-        
-        
         const
             email    = req.body.email,
-            password = req.body.password;
+            password = req.body.password,
+            remember = req.body.remember;
+
+        // req.is
+
         try {
             const found = await UserModel.findOne({ 
                 email: email
@@ -79,23 +73,32 @@ export default class UserController {
                 
                 if (isMatch) {
                     const payload = {
-                        id: found._id,
+                        id      : found._id,
                         username: found.username || found.email
                     }
                     
-                    jwt.sign(
-                        payload, 
-                        config.JWT_SECRET,
-                        {
-                            expiresIn: "1m"
-                        },
-                        (err, token) => {
-                            res.status(200).json({
-                                msg: "Successfully found user",
-                                data: "Bearer " + token
-                            })
-                        }
-                    )
+                    const token = jwt.sign(payload, config.ACCESS_TOKEN_SECRET, {expiresIn: config.ACCESS_TOKEN_LIFE});
+
+                    if (remember) {
+                        const refreshToken = jwt.sign(payload, config.REFRESH_TOKEN_SECRET, {expiresIn: config.REFRESH_TOKEN_LIFE});
+
+                        res.status(200).json({
+                            msg : "Successfully found user",
+                            data: {
+                                token       : "Bearer " + token,
+                                refreshToken: "JWT " + refreshToken,
+                                user        : found
+                            }
+                        });
+                    } else {
+                        res.status(200).json({
+                            msg : "Successfully found user",
+                            data: {
+                                token: "Bearer " + token,
+                                user : found
+                            }
+                        });
+                    }
                 } else {
                     res.status(400).json({
                         msg: "Incorrect password"

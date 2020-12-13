@@ -15,7 +15,7 @@ export default class ProjectController {
         const token = getToken(req.headers);
 
         if (token) {
-            const decoded = verify(token, config.JWT_SECRET) as any;
+            const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
             console.log(decoded);
 
             const data = JSON.parse(req.body.body);
@@ -57,50 +57,49 @@ export default class ProjectController {
                             console.log(`Created new project folder ${newProject._id}`);
                         }
                     });
-        
                     res.status(200).json({msg: `Проект "${newProject.name}" был успешно создан!`, data: newProject});
                 }
             } catch (err) {
                 res.status(400).json({msg: `Произошла ошибка: ${err}`});
             }
         } else {
-            res.status(403).json({msg: "Access denied"});
+            res.status(401).json({msg: "Access denied"});
         }
     }
 
+
     public async getAllProjects(req: Request, res: Response) {
         const token = getToken(req.headers);
-
+        console.log("kkkkk");
         if (token) {
-            const decoded = verify(token, config.JWT_SECRET) as any;
+            const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
             console.log(decoded);
 
             try {
                 const user = await UserModel.findById(decoded.id);
-        
+    
                 if (user !== null) {
                     const populated = await user.populate("projects").execPopulate();
-                    
                     res.status(200).json({msg: "Успешно получен список проектов", data: populated.projects})
                 }
             } catch (err) {
                 res.status(400).json({msg: `Произошла ошибка: ${err}`});
             }
         } else {
-            res.status(403).json({msg: "Access denied"});
+            res.status(401).json({msg: "Access denied"});
         }
     }
+
 
     public async deleteProject(req: Request, res: Response) {
         const token = getToken(req.headers);
 
         if (token) {
-            const decoded = verify(token, config.JWT_SECRET) as any;
+            const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
             console.log(decoded);
-
             res.status(200).json({msg: `deleted... SIKE`});
         } else {
-            res.status(403).json({msg: "Access denied"});
+            res.status(401).json({msg: "Access denied"});
         }
     }
 }
