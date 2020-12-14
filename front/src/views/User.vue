@@ -2,17 +2,22 @@
     <div class="header">
         <div class="logo">logo here</div>
         <div class="user">
-            <span>{{ currentUser.username ?? currentUser.email }}</span>
-            <div class="img"></div>
+            <div class="user-button">
+                <span>{{ currentUser.username ?? currentUser.email }}</span>
+
+                <div v-if="currentUser.avatar !== ''" class="img" :style="{
+                        backgroundImage: 'url(' + require(`../assets/placeholders/${currentUser.avatar}`) + ')'
+                    }"
+                    >
+                    </div>
+                <div v-else class="img">
+                    {{ currentUser.email[0] }}
+                </div>
+            </div>
             <router-link to="/auth/logout">выход</router-link>
         </div>
     </div>
     <router-view></router-view>
-    <!-- <router-view v-slot="{ Component }" :key="$route.fullPath">
-        <keep-alive max="5">
-            <component :is="Component"></component>
-        </keep-alive>
-    </router-view> -->
 </template>
 
 <script lang="ts">
@@ -39,7 +44,7 @@
         grid-template-columns: auto max-content;
         align-items: center;
         // justify-content: center;
-        padding: 5px 10px;
+        padding: 0px 50px;
         background-color: $darkPrimary;
         color: white;
         z-index: 1000;
@@ -51,15 +56,30 @@
         .user {
             display: grid;
             // float: right;
-            grid-template-columns: max-content auto auto;
+            grid-template-columns: max-content auto;
             gap: 10px;
             align-items: center;
             justify-content: center;
 
+            .user-button {
+                display: grid;
+                padding: 5px 10px;
+                grid-template-columns: max-content auto;
+                gap: 10px;
+                align-items: center;
+                justify-content: center;
+                user-select: none;
+
+                &:hover {
+                    background-color: rgba($color: #000000, $alpha: 0.2);
+                    cursor: pointer;
+                }
+            }
+
             .img {
                 width: 52px;
                 height: 52px;
-                background-image: url("../assets/placeholders/todd.jpg");
+                // background-image: url("../assets/placeholders/todd.jpg");
                 background-size: contain;
                 background-repeat: no-repeat;
                 border: 4px solid $primary;

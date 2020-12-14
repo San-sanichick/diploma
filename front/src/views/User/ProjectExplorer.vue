@@ -23,7 +23,7 @@
         },
         methods: {
             goBack() {
-                this.$router.push(`/${this.$store.getters.getUser.id}/projects`);
+                this.$router.push(`/${this.$store.getters.getUser._id}/projects`);
             }
         }
     })

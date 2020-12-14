@@ -1,6 +1,7 @@
 import express, { Application, Request, Response, NextFunction } from "express";
 import mongoose          from "mongoose";
 import cors              from 'cors';
+import dotenv            from "dotenv";
 import { UserRoutes }    from "./routes/UserRoutes";
 import { ProjectRoutes } from "./routes/ProjectRoutes";
 import { TokenRoutes }   from "./routes/TokenRoutes";
@@ -12,12 +13,13 @@ class App {
     private readonly _port: number | string;
 
     private constructor(port: number | string = process.env.PORT || config.port) {
+        dotenv.config();
         this._app = express();
         this._port = port;
 
         this._app.use(cors({
             origin: config.frontOrigin
-        }))
+        }));
         
         this.setMiddlewares();
 

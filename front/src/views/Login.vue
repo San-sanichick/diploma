@@ -10,7 +10,7 @@
                 </div>
                 <div class="form-row">
                     <div class="header-row">
-                        <label for="pass">пароль</label>
+                        <label for="pass">Пароль</label>
                         <router-link to="/forgot-password">Забыли пароль?</router-link>
                     </div>
                     <input id="pass" type="password" name="pass" v-model="form.password">
@@ -48,6 +48,7 @@
         methods: {
             async submitHandler() {
                 console.log(this.form);
+
                 try {
                     await this.$store.dispatch("logIn", this.form);
                     this.$router.push(`/${this.$store.getters.getUser._id}/projects`);
@@ -55,7 +56,7 @@
                     console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
-                        image: require("../assets/flashMessage/success.svg"),
+                        image: require("../assets/flashMessage/fail.svg"),
                         text: err
                     });
                 }
@@ -88,16 +89,23 @@
                 width: 100%;
                 display: flex;
                 flex-flow: column;
-                
+
                 label {
                     text-align: start;
+                    font-size: 14pt;
                 }
-
+                
                 .header-row {
                     width: 100%;
                     display: grid;
-
+                    align-items: center;
                     grid-template-columns: auto max-content;
+                
+                    a {
+                        text-decoration: none;
+                        text-align: center;
+                        color: $gray;
+                    }
                 }
 
                 input {
@@ -111,9 +119,22 @@
                 margin-top: 15px;
                 display: flex;
                 flex-flow: row;
+                align-items: center;
                 
+                a {
+                    text-decoration: none;
+                    color: $gray;
+                }
+
                 label {
+                    font-size: 14pt;
                     text-align: start;
+                }
+
+                input {
+                    // padding: 5px;
+                    width:20px;
+                    height: 20px;
                 }
 
                 .header-row {
@@ -121,6 +142,7 @@
                     display: flex;
                     flex-flow: row;
                     align-content: space-between;
+                    align-items: center;
                 }
             }
 

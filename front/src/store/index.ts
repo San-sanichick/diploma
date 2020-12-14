@@ -43,7 +43,6 @@ export default createStore({
     },
     mutations: {
         async setUser(state, payload) {
-            console.log(payload);
             localStorage.setItem("user", JSON.stringify(payload.user));
             state.user = payload.user;
         },
@@ -69,13 +68,12 @@ export default createStore({
             try {
                 // const dataToSend = JSON.stringify(payload);
                 const res = await axios.post(`/users/login`, payload, { skipAuthRefresh: true } as AxiosAuthRefreshRequestConfig);
-                console.log(res.data);
                 const user = res.data.data.user;
                 if (user) {
                     context.commit("setUser", res.data.data);
                     context.commit("setToken", res.data.data);
                 } else {
-                    console.log(res.data.msg);
+                    console.log(res.data.data.msg);
                 }
             } catch (err) {
                 console.error(err);

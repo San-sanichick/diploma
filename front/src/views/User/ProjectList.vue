@@ -77,7 +77,6 @@
         methods: {
             async fetchProjects(): Promise<void> {
                 try {
-                    console.log(axios.defaults.headers.common["Authorization"]);
                     const res = await axios.get(`/projects/`);
                     this.list = res.data.data;
                 } catch (err) {
@@ -99,7 +98,6 @@
                     const dataToSend = JSON.stringify(data);
 
                     const res = await axios.post(`/projects/`, { body: dataToSend });
-                    console.log(res.data.msg);
 
                     this.$flashMessage.show({
                         type: 'success',
