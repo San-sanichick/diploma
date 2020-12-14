@@ -102,24 +102,22 @@ export default class ProjectController {
     }
 
     public async getAllProjects(req: Request, res: Response) {
-        const token = getToken(req.headers);
-        console.log("kkkkk");
-        if (token) {
-            const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
-            console.log(decoded);
+        try {
+            const token = getToken(req.headers);
+            if (token) {
+                const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
 
-            try {
                 const user = await UserModel.findById(decoded.id);
     
                 if (user !== null) {
                     const populated = await user.populate("projects").execPopulate();
                     res.status(200).json({msg: "Успешно получен список проектов", data: populated.projects})
+                } else {
+                    throw new Error("Пользователь не найден");
                 }
-            } catch (err) {
-                res.status(400).json({msg: `Произошла ошибка: ${err}`});
             }
-        } else {
-            res.status(401).json({msg: "Access denied"});
+        } catch (err) {
+            res.status(400).json({msg: `Произошла ошибка: ${err}`});
         }
     }
 
@@ -156,7 +154,7 @@ export default class ProjectController {
                         // we need to remove the project folder when we're done
                         const dir = await del( [ `UserProjects/${user._id}/${project._id}` ] );
                         console.log(dir);
-                        
+
                         res.status(200).json({msg: `Проект ${project!.name} был успешно удалён`, data: populated.projects})
                     }
                 }
