@@ -3,9 +3,9 @@
         <div class="logo">logo here</div>
         <div class="user">
             <div class="user-button" @click="openPopUp">
-                <span>{{ currentUser.username ?? currentUser.email }}</span>
+                <span>{{ (currentUser.username !== "" && currentUser.username !== null) ? currentUser.username : currentUser.email }}</span>
 
-                <UserAvatar :name="currentUser.username ?? currentUser.email" />
+                <UserAvatar :name="(currentUser.username !== '' && currentUser.username !== null) ? currentUser.username : currentUser.email" />
             </div>
             <router-link to="/auth/logout">
                 <div class="user-logout"></div>

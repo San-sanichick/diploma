@@ -17,7 +17,7 @@
         },
         computed: {
             letter(): string {
-                return this.name[0].toUpperCase();
+                return this.name[0]?.toUpperCase();
             }
         }
     })

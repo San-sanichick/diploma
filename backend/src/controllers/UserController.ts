@@ -67,14 +67,15 @@ export default class UserController {
                     decoded = jwt.verify(token, config.ACCESS_TOKEN_SECRET) as any,
                     data = req.body;
 
-                const user = await UserModel.findByIdAndUpdate(decoded.id, {
-                    "$set": {
-                        username: data.username,
-                        email   : data.email
-                    }
-                }, {useFindAndModify: false});
+                const user = await UserModel.findById(decoded.id);
 
+                console.log(user);
                 if (user) {
+
+                    user.username = data.username;
+                    user.email = data.email;
+                    user.save();
+
                     const payload = {
                         id      : user._id,
                         username: user.username || user.email

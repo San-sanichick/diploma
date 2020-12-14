@@ -150,17 +150,13 @@ export default class ProjectController {
                     )
                     if (user !== null) {
                         console.log("HAHAHAHA");
-                        const p = path.posix.join(__dirname, `../../UserProjects/${user._id}/${project._id}`);
 
-                        const dir = await del([p]);
-                        // fs.rm(p, {recursive: true}, (err) => {
-                        //     console.error(err);
-                        //     if (err) {
-                        //         throw new Error(err.message);
-                        //     }
-                        // });
-                        console.log(dir);
                         const populated = await user.populate("projects").execPopulate();
+
+                        // we need to remove the project folder when we're done
+                        const dir = await del( [ `UserProjects/${user._id}/${project._id}` ] );
+                        console.log(dir);
+                        
                         res.status(200).json({msg: `Проект ${project!.name} был успешно удалён`, data: populated.projects})
                     }
                 }
