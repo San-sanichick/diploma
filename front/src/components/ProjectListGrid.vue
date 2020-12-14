@@ -1,11 +1,11 @@
 <template>
     <div class="project-grid">
         <div class="project" v-for="project in projects" :key="project._id" tabindex="0">
-            <div @dblclick="$emit('project-clicked', project._id)" @contextmenu.prevent="$refs['context-menu'].openMenu($event, project._id);">
+            <div @dblclick="$emit('project-clicked', project._id)" @contextmenu.prevent="$refs['context-menu'].openMenu($event, project);">
                 <div class="project-image"></div>
                 <div class="project-info">
                     <h3> {{project.name}} </h3>
-                    <p>Изменено: {{project.dateOfLastChange}} </p>
+                    <p>Изменено: {{$filters.dateFilter(project.dateOfLastChange)}} </p>
                 </div>
             </div>
         </div>
@@ -13,9 +13,9 @@
     <ContextMenu ref="context-menu">
         <template v-slot:default="slotProps">
             <ul>
-                <li @click="$emit('open-project', slotProps.id)">Открыть</li>
-                <li @click="$emit('setup-project', slotProps.id); $refs['context-menu'].closeMenu()">Настройки</li>
-                <li @click="$emit('delete-project', slotProps.id)">Удалить</li>
+                <li @click="$emit('open-project', slotProps.project._id)">Открыть</li>
+                <li @click="$emit('setup-project', slotProps.project); $refs['context-menu'].closeMenu()">Настройки</li>
+                <li @click="$emit('delete-project', slotProps.project._id); $refs['context-menu'].closeMenu()">Удалить</li>
             </ul>
         </template>
     </ContextMenu>

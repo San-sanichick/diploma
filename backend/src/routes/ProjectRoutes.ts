@@ -14,8 +14,9 @@ export class ProjectRoutes {
     }
 
     private routes() {
-        this.router.get(   "/",    passport.authenticate("jwt", {session: false}), this.projectController.getAllProjects);
-        this.router.post(  "/",    passport.authenticate("jwt", {session: false}), this.projectController.createProject);
-        this.router.delete("/:id", passport.authenticate("jwt", {session: false}), this.projectController.deleteProject);
+        this.router.post(  "/create",     passport.authenticate("jwt", {session: false}), this.projectController.createProject);
+        this.router.get(   "/get_all",    passport.authenticate("jwt", {session: false}), this.projectController.getAllProjects);
+        this.router.patch( "/update",     passport.authenticate("jwt", {session: false}), this.projectController.updateProject);
+        this.router.delete("/delete/:id", passport.authenticate("jwt", {session: false}), this.projectController.deleteProject);
     }
 }

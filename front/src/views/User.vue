@@ -2,32 +2,58 @@
     <div class="header">
         <div class="logo">logo here</div>
         <div class="user">
-            <div class="user-button">
+            <div class="user-button" @click="openPopUp">
                 <span>{{ currentUser.username ?? currentUser.email }}</span>
 
-                <div v-if="currentUser.avatar !== ''" class="img" :style="{
-                        backgroundImage: 'url(' + require(`../assets/placeholders/${currentUser.avatar}`) + ')'
-                    }"
-                    >
-                    </div>
-                <div v-else class="img">
-                    {{ currentUser.email[0] }}
-                </div>
+                <UserAvatar :name="currentUser.username ?? currentUser.email" />
             </div>
-            <router-link to="/auth/logout">выход</router-link>
+            <router-link to="/auth/logout">
+                <div class="user-logout"></div>
+            </router-link>
         </div>
     </div>
     <router-view></router-view>
+
+    <teleport to="body">
+        <div class="popup" v-if="showPopUp" @click="closePopUp">
+            <UserSettings :user="currentUser" @close-popup="showPopUp = !showPopUp"/>
+        </div>
+    </teleport>
 </template>
 
 <script lang="ts">
     import { defineComponent } from 'vue';
+    import UserAvatar from "../components/user/userAvatar.vue";
+    import UserSettings from "../components/popups/userSettings.vue";
 
     export default defineComponent({
+        components: {
+            UserAvatar,
+            UserSettings
+        },
+        data() {
+            return {
+                showPopUp: false
+            }
+        },
         computed: {
             currentUser() {
                 return this.$store.getters.getUser;
             }
+        },
+        methods: {
+            openPopUp() {
+                this.showPopUp = !this.showPopUp;
+                document.body.style.overflowY = document.body.style.overflowY === "" ? "hidden" : "";
+            },
+            closePopUp(e: Event) {
+                const target = e.target as HTMLElement;
+                
+                if (target.className === "popup") {
+                    this.showPopUp = !this.showPopUp;
+                    document.body.style.overflowY = document.body.style.overflowY === "" ? "hidden" : "";
+                }
+            },
         }
     })
 </script>
@@ -39,12 +65,10 @@
         position: fixed;
         width: 100%;
         box-sizing: border-box;
-        // height: 70px;
         display: grid;
         grid-template-columns: auto max-content;
         align-items: center;
-        // justify-content: center;
-        padding: 0px 50px;
+        padding: 0px 30px;
         background-color: $darkPrimary;
         color: white;
         z-index: 1000;
@@ -55,7 +79,6 @@
 
         .user {
             display: grid;
-            // float: right;
             grid-template-columns: max-content auto;
             gap: 10px;
             align-items: center;
@@ -63,7 +86,7 @@
 
             .user-button {
                 display: grid;
-                padding: 5px 10px;
+                padding: 10px 10px;
                 grid-template-columns: max-content auto;
                 gap: 10px;
                 align-items: center;
@@ -75,20 +98,32 @@
                     cursor: pointer;
                 }
             }
-
-            .img {
-                width: 52px;
-                height: 52px;
-                // background-image: url("../assets/placeholders/todd.jpg");
-                background-size: contain;
-                background-repeat: no-repeat;
-                border: 4px solid $primary;
-                border-radius: 50%;
-            }
             a {
                 text-decoration: none;
                 color: white;
+
+                .user-logout {
+                    background-image: url("../assets/logOut.svg");
+                    background-repeat: no-repeat;
+                    background-size: cover;
+                    width: 30px;
+                    height: 30px;
+                }
             }
         }
+    }
+
+    .popup {
+        font-family: Open Sans, Arial, sans-serif;
+        position: fixed;
+        height: 100vh;
+        width: 100vw;
+        background-color: rgba($color: #000000, $alpha: 0.5);
+        top: 0;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: center;
+        z-index: 9000;
     }
 </style>

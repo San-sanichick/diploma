@@ -1,4 +1,5 @@
 import { Router } from "express";
+import passport from "passport";
 import UserController from "../controllers/UserController";
 
 export class UserRoutes {
@@ -12,9 +13,9 @@ export class UserRoutes {
     }
 
     private routes() {
-        this.router.get("/", this.userController.getAllUsers);
-        this.router.post("/login", this.userController.loginUser);
-        this.router.post("/signUp", this.userController.createUser);
-        // this.router.
+        this.router.get(  "/",       this.userController.getAllUsers);
+        this.router.patch("/update", passport.authenticate("jwt", {session: false}), this.userController.updateUser);
+        this.router.post( "/login",  this.userController.loginUser);
+        this.router.post( "/signUp", this.userController.createUser);
     }
 }

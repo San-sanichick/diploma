@@ -1,37 +1,64 @@
 <template>
-    <div class="create-wrapper">
-        <h3>Создать</h3>
+    <div class="user-settings-wrapper">
+        <h3>Настройки пользователя</h3>
         <form @submit.prevent="submitHandler">
             <div class="form-row">
-                <label for="name">Название</label>
-                <input type="text" name="name" id="name" v-model="form.name">
+                <label for="user-name">Имя</label>
+                <input type="text" name="user-name" id="user-name" v-model="form.username">
             </div>
-            <div class="form-row checkbox">
-                <div>
-                    <input type="checkbox" name="access" id="access" v-model="form.access">
-                    <label for="access">Открыть внешний доступ к проекту</label>
-                </div>
+            <div class="form-row">
+                <label for="user-email">e-mail</label>
+                <input type="email" name="user-email" id="user-email" v-model="form.email">
             </div>
-            <input type="submit" class="submit-button" value="Создать">
+            <input type="submit" class="submit-button" value="Сохранить">
         </form>
     </div>
 </template>
 
 <script lang="ts">
     import { defineComponent } from 'vue';
+    import axios from "axios";
 
     export default defineComponent({
+        props: ["user"],
         data() {
             return {
                 form: {
-                    name: "New Project",
-                    access: false
+                    username: "",
+                    email: ""
                 }
             }
         },
+        mounted() {
+            this.form.username = this.user.username;
+            this.form.email    = this.user.email;
+        },
         methods: {
-            submitHandler() {
-                this.$emit("create-project", this.form);
+            async submitHandler() {
+                if (this.form.username !== this.user.username || this.form.email !== this.user.email) {
+                    try {
+                        const res = await axios.patch("/users/update", this.form);
+                        console.log(res.data.data);
+                        this.$store.dispatch("updateUser", res.data.data);
+
+                        this.$flashMessage.show({
+                            type: 'success',
+                            image: require("../../assets/flashMessage/success.svg"),
+                            text: res.data.msg
+                        });
+                    } catch (err) {
+                        console.error(err);
+                        this.$flashMessage.show({
+                            type: 'error',
+                            image: require("../../assets/flashMessage/fail.svg"),
+                            text: err
+                        });
+                    } finally {
+                        this.$emit("close-popup");
+                    }
+                } else {
+                    this.$emit("close-popup");
+                }
             }
         }
     })
@@ -40,10 +67,10 @@
 <style lang="scss" scoped>
     @import "../../assets/scss/config.scss";
 
-    .create-wrapper {
+    .user-settings-wrapper {
         align-self: center;
         background-color: white;
-        padding: 0px 40px 40px 40px;
+        padding: 0px 20px 40px 20px;
         border-radius: 8px;
         width: 50%;
 
@@ -57,6 +84,7 @@
 
             .form-row {
                 width: 100%;
+                margin-bottom: 10px;
                 display: flex;
                 flex-flow: column;
 
@@ -73,32 +101,6 @@
                     height: 30px;
                 }
             }
-
-            .checkbox {
-                margin-top: 10px;
-                width: 100%;
-                display: flex;
-                flex-flow: column;
-
-                div {
-                    margin: 10px 0px;
-                    display: flex;
-                    flex-flow: row;
-                    align-items: center;
-
-                    label {
-                        margin-left: 10px;
-                        text-align: start;
-                        font-size: 14pt;
-                    }
-
-                    input {
-                        width:20px;
-                        height: 20px;
-                    }
-                }
-            }
-
 
             label {
                 text-align: start;

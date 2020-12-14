@@ -52,7 +52,9 @@ export default createStore({
         },
         async setToken(state, payload) {
             localStorage.setItem("jwt", payload.token);
-            localStorage.setItem("refreshToken", payload.refreshToken);
+            if (payload.refreshToken) {
+                localStorage.setItem("refreshToken", payload.refreshToken);
+            }
             state.jwt  = payload.token;
             axios.defaults.headers.common["Authorization"] = state.jwt;
         },
@@ -79,6 +81,11 @@ export default createStore({
                 console.error(err);
                 throw new Error(err);
             }
+        },
+        async updateUser(context, payload) {
+            console.log(payload);
+            context.commit("setUser", payload);
+            context.commit("setToken", payload);
         },
         async logOut(context) {
             context.commit("removeUser");

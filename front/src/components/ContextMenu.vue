@@ -1,6 +1,6 @@
 <template>
     <div v-if="showMenu" class="context-menu" :style="{left: `${xPos}px`, top: `${yPos}px`}">
-        <slot :id="id">
+        <slot :project="project">
 
         </slot>
     </div>
@@ -15,7 +15,7 @@
                 xPos: 0,
                 yPos: 0,
                 showMenu: false,
-                id: ""
+                project: {}
             }
         },
         mounted() {
@@ -27,15 +27,15 @@
             // document.addEventListener("contextmenu", this.closeMenu);
         },
         methods: {
-            openMenu(e: MouseEvent, id: string): void {
-                this.id = id;
+            openMenu(e: MouseEvent, project: object): void {
+                this.project = project;
                 this.xPos = e.clientX,
                 this.yPos = e.clientY;
                 this.showMenu = !this.showMenu;
             },
-            setId(id: string): void {
-                this.id = id;
-            },
+            // setId(id: string): void {
+            //     this.id = id;
+            // },
             closeMenu(e: Event | undefined): void {
                 if (e) {
                     const target = e.target as HTMLElement;

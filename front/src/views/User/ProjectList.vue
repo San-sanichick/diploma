@@ -19,7 +19,7 @@
                 :projects="list" 
                 @project-clicked="openProject" 
                 @open-project="openProject"
-                @setup-project="currentPopUp='setUpProject'; openPopUp()"
+                @setup-project="currentPopUp='setUpProject'; openPopUp($event)"
                 @delete-project="deleteProject"
                 >
             </component>
@@ -33,7 +33,7 @@
     <teleport to="body">
         <div v-if="showPopUp" class="popup" @click="closePopUp">
             <div class="popup">
-                <component :is="currentPopUp" @create-project="createNewProject"></component>
+                <component :is="currentPopUp" @create-project="createNewProject" @setup-project="setUpProject" :project="selectedProject"></component>
             </div>
         </div>
     </teleport>
@@ -46,7 +46,6 @@
     import Project             from "../../types/Project";
     import ProjectListGrid     from "../../components/ProjectListGrid.vue";
     import ProjectListTable    from "../../components/ProjectListTable.vue";
-    // import config from "../../config/config";
 
     import createProject from "../../components/popups/createProject.vue";
     import setUpProject  from "../../components/popups/setUpProject.vue";
@@ -60,10 +59,11 @@
         },
         data() {
             return {
-                list        : [] as Project[],
-                showPopUp   : false,
-                currentPopUp: "createProject",
-                displayMode : "ProjectListGrid"
+                list           : [] as Project[],
+                showPopUp      : false,
+                currentPopUp   : "createProject",
+                displayMode    : "ProjectListGrid",
+                selectedProject: 0
             }
         },
         computed: {
@@ -77,7 +77,7 @@
         methods: {
             async fetchProjects(): Promise<void> {
                 try {
-                    const res = await axios.get(`/projects/`);
+                    const res = await axios.get(`/projects/get_all`);
                     this.list = res.data.data;
                 } catch (err) {
                     console.error(err);
@@ -88,17 +88,14 @@
                     });
                 }
             },
-            async createNewProject(name: string) {
+            async createNewProject(project: any) {
                 try {
                     const data = {
-                        name,
-                        publicAccess: false
+                        name: project.name,
+                        publicAccess: project.access
                     }
 
-                    const dataToSend = JSON.stringify(data);
-
-                    const res = await axios.post(`/projects/`, { body: dataToSend });
-
+                    const res = await axios.post("/projects/create", data);
                     this.$flashMessage.show({
                         type: 'success',
                         image: require("../../assets/flashMessage/success.svg"),
@@ -116,7 +113,32 @@
 
                 this.showPopUp = !this.showPopUp;
             },
-            openPopUp() {
+            async setUpProject(project: never) {
+                try {
+                    const res = await axios.patch("/projects/update", project);
+                    const updated = res.data.data;
+
+                    const old = this.list.find(pr => pr._id === updated._id) as Project;
+                    this.list.splice(this.list.indexOf(old), 1, updated);
+
+                    this.$flashMessage.show({
+                        type: 'success',
+                        image: require("../../assets/flashMessage/success.svg"),
+                        text: res.data.msg
+                    });
+                } catch (err) {
+                    console.error(err);
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: require("../../assets/flashMessage/fail.svg"),
+                        text: err
+                    });
+                }
+
+                this.showPopUp = !this.showPopUp;
+            },
+            openPopUp(id: number) {
+                this.selectedProject = id;
                 this.showPopUp = !this.showPopUp;
                 document.body.style.overflowY = document.body.style.overflowY === "" ? "hidden" : "";
             },
@@ -138,13 +160,10 @@
             async deleteProject(id: number) {
                 console.log(id);
                 try {
-                    // const data = {
-                    //     id
-                    // }
+                    const res = await axios.delete(`/projects/delete/${id}`);
+                    // console.log(res.data.msg);
 
-                    // const dataToSend = JSON.stringify(data);
-                    const res = await axios.delete(`/projects/`);
-                    console.log(res.data.msg);
+                    this.list = res.data.data;
 
                     this.$flashMessage.show({
                         type: 'success',
@@ -183,7 +202,7 @@
 
     .page {
         // margin-top: 90px;
-        padding: 90px 7% 5% 7%;
+        padding: 65px 7% 5% 7%;
 
         .page-header {
             margin: 20px 0;

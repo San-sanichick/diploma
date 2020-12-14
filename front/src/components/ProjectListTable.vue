@@ -5,7 +5,7 @@
             <div class="project-table-header">
                 <div class="table-row table-header">
                     <div class="table-cell">Название</div>
-                    <div class="table-cell">Дата создания</div>
+                    <div class="table-cell">Время создания</div>
                     <div class="table-cell">Последнее изменение</div>
                     <div class="table-cell">Количество файлов</div>
                 </div>
@@ -15,14 +15,14 @@
                     v-for="project in projects" 
                     :key="project._id" 
                     @dblclick="$emit('project-clicked', project._id)"
-                    @contextmenu.prevent="$refs['context-menu'].openMenu($event, project._id);" 
+                    @contextmenu.prevent="$refs['context-menu'].openMenu($event, project);" 
                     tabindex="0"
                     >
                     
-                    <div class="table-cell"> {{project.name}} </div>
-                    <div class="table-cell"> {{project.dateOfCreation}} </div>
-                    <div class="table-cell"> {{project.dateOfLastChange}} </div>
-                    <div class="table-cell"> {{project.files}} </div>
+                    <div class="table-cell"> {{ project.name }} </div>
+                    <div class="table-cell"> {{ $filters.dateFilter(project.dateOfCreation) }} </div>
+                    <div class="table-cell"> {{ $filters.dateFilter(project.dateOfLastChange) }} </div>
+                    <div class="table-cell"> {{ project.files }} </div>
                 </div>
             </div>
         </div>
@@ -31,9 +31,9 @@
     <ContextMenu ref="context-menu">
         <template v-slot:default="slotProps">
             <ul>
-                <li @click="$emit('open-project', slotProps.id)">Открыть</li>
-                <li @click="$emit('setup-project', slotProps.id)">Настройки</li>
-                <li @click="$emit('delete-project', slotProps.id)">Удалить</li>
+                <li @click="$emit('open-project', slotProps.project.id)">Открыть</li>
+                <li @click="$emit('setup-project', slotProps.project); $refs['context-menu'].closeMenu()">Настройки</li>
+                <li @click="$emit('delete-project', slotProps.project.id)">Удалить</li>
             </ul>
         </template>
     </ContextMenu>

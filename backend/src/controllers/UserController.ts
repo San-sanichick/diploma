@@ -8,6 +8,7 @@ import path from "path";
 import { Request, Response } from "express";
 import { UserModel, User } from "../db/models/UserModel";
 import config from "../config/config";
+import { getToken } from "../utils/utils";
 
 interface UserInterface {
     email   : string;
@@ -15,6 +16,12 @@ interface UserInterface {
 }
 
 export default class UserController {
+    /**
+     * Create user function, makes a call to model to create a new user,
+     * if successful, sends new User as JSON to client, else sends error message
+     * @param req express request object
+     * @param res express response object
+     */
     public async createUser(req: Request, res: Response): Promise<void> {
         try {
             const data = req.body;
@@ -45,6 +52,57 @@ export default class UserController {
         }
     }
 
+    /**
+     * Update user function, makes a call to User model and updates the corespnding user if found
+     * and sends the updated user to client if successful, else sends error message
+     * @param req express request object
+     * @param res express response object
+     */
+    public async updateUser(req: Request, res: Response): Promise<void> {
+        try {
+            const token = getToken(req.headers);
+
+            if (token) {
+                const 
+                    decoded = jwt.verify(token, config.ACCESS_TOKEN_SECRET) as any,
+                    data = req.body;
+
+                const user = await UserModel.findByIdAndUpdate(decoded.id, {
+                    "$set": {
+                        username: data.username,
+                        email   : data.email
+                    }
+                }, {useFindAndModify: false});
+
+                if (user) {
+                    const payload = {
+                        id      : user._id,
+                        username: user.username || user.email
+                    }
+                    
+                    const token = jwt.sign(payload, config.ACCESS_TOKEN_SECRET, {expiresIn: config.ACCESS_TOKEN_LIFE});
+    
+                    
+                    res.status(200).json({
+                        msg : "User updated",
+                        data: {
+                            token: "Bearer " + token,
+                            user
+                        }
+                    });
+                } else {
+                    throw new Error("Ошибка при обновлении настроек пользователя");
+                }
+            } else {
+                res.status(401).json({msg: "Unathorized"});
+            }
+        } catch (err) {
+            console.error(err);
+            res.status(400).json({msg: err});
+        }
+    }
+
+
     public async getAllUsers(req: Request, res: Response): Promise<void> {
         try {
             const users = await UserModel.find();
@@ -54,6 +112,7 @@ export default class UserController {
             res.status(400).json({msg: `User wasn't created`});
         }
     }
+
 
     public async loginUser(req: Request, res: Response): Promise<void> {
         const
@@ -100,124 +159,17 @@ export default class UserController {
                         });
                     }
                 } else {
-                    res.status(400).json({
-                        msg: "Incorrect password"
-                    })
+                    // res.status(400).json({
+                    //     msg: "Incorrect password"
+                    // })
+                    throw new Error("Неверный пароль");
                 } 
             } else {
-                throw new Error("User not found");
+                throw new Error("Пользователь не найден");
             }
-
-            // if (found !== null) {
-            //     res.status(200).json({msg: "Пользователь найден", data: {
-            //         id: found._id,
-            //         email : found.email,
-            //         username: found.username,
-            //         avatar: found.avatar,
-            //         dateOfSignUp: found.dateOfSignUp
-            //     }});
-            // } else {
-            //     throw new Error("Логин или пароль не верны");
-            // }
         } catch (err) {
             console.error(err);
-            res.status(404).json({msg: `Логин или пароль не верны`});
+            res.status(404).json({msg: err});
         }
     }
 }
-
-// interface Result {
-//     data? : Object; 
-//     msg   : string;
-//     status: number;
-// }
-
-// export default class UserController {
-//     // private _model: User;
-
-//     constructor() {
-//         // this._model = new UserModel();
-//     }
-
-//     /**
-//      * CreateUser
-//      * Creates a new user
-//      */
-//     public async CreateUser(user: UserInterface): Promise<Result> {
-//         let result: Result = {msg: "", status: 0};
-//         try {
-//             const {_id: id} = await UserModel.create(user);
-//             result = {msg: `User ${id} Created`, status: 200};
-//         } catch (err) {
-//             console.error(err);
-//             result = {msg: `An error has occured: ${err}`, status: 400};
-//         } finally {
-//             return result;
-//         }
-//     }
-
-//     /**
-//      * async GetAllUsers
-//      */
-//     public async GetAllUsers() {
-//         let result: Result = {msg: "", status: 0};
-
-//         try {
-//             const users = await UserModel.find();
-//             result.msg = "List of users";
-//             result.status = 200;
-//             result.data = users;
-//         } catch (err) {
-//             console.error(err);
-//             result.msg = `An error has occured: ${err}`;
-//             result.status = 400;
-//         } finally {
-//             return result;
-//         }
-//     }
-
-//     /**
-//      * FindUser
-//      */
-//     public async FindUser(user: UserInterface): Promise<Result> {
-//         let result: Result = {msg: "", status: 0};
-
-//         try {
-//             // console.log(req.params);
-//             const found = await UserModel.findOne({ 
-//                 email: user.email as string,
-//                 password: user.password as string
-//              });
-    
-//             if (found !== null) {
-//                 result = {
-//                     data: {
-//                         email   : found.email,
-//                         password: found.password,
-//                         avatar  : found.avatar,
-//                         id      : found._id
-//                     },
-//                     msg: "User found",
-//                     status: 200
-//                 };
-//             } else {
-//                 result = {
-//                     msg: `User with email ${user.email} not found`,
-//                     status: 404
-//                 };
-//             }
-//         } catch (err) {
-//             console.error(err);
-//             result = {msg: `An error has occured: ${err}`, status: 400};
-//         } finally {
-//             return result;
-//         }
-//     }
-
-//     /**
-//      * UpdateUser
-//      */
-//     public async UpdateUser(id: number) {
-//         console.log(id);
-//     }
-// }
