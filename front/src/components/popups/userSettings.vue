@@ -38,7 +38,6 @@
                 if (this.form.username !== this.user.username || this.form.email !== this.user.email) {
                     try {
                         const res = await axios.patch("/users/update", this.form);
-                        console.log(res.data.data);
                         this.$store.dispatch("updateUser", res.data.data);
 
                         this.$flashMessage.show({

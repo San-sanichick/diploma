@@ -83,7 +83,6 @@ export default createStore({
             }
         },
         async updateUser(context, payload) {
-            console.log(payload);
             context.commit("setUser", payload);
             context.commit("setToken", payload);
         },

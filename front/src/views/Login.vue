@@ -47,9 +47,7 @@
         },
         methods: {
             async submitHandler() {
-                console.log(this.form);
-
-                try {
+                 try {
                     await this.$store.dispatch("logIn", this.form);
                     this.$router.push(`/${this.$store.getters.getUser._id}/projects`);
                 } catch (err) {

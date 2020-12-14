@@ -88,7 +88,7 @@
                     });
                 }
             },
-            async createNewProject(project: any) {
+            async createNewProject(project: {name: string; access: boolean}) {
                 try {
                     const data = {
                         name: project.name,

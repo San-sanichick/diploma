@@ -10,6 +10,7 @@ import { UserModel, User } from "../db/models/UserModel";
 import config from "../config/config";
 import { getToken } from "../utils/utils";
 
+
 interface UserInterface {
     email   : string;
     password: string;
@@ -82,10 +83,9 @@ export default class UserController {
                     }
                     
                     const token = jwt.sign(payload, config.ACCESS_TOKEN_SECRET, {expiresIn: config.ACCESS_TOKEN_LIFE});
-    
                     
                     res.status(200).json({
-                        msg : "User updated",
+                        msg : "Настройки пользователя сохранены",
                         data: {
                             token: "Bearer " + token,
                             user
@@ -120,8 +120,6 @@ export default class UserController {
             email    = req.body.email,
             password = req.body.password,
             remember = req.body.remember;
-
-        // req.is
 
         try {
             const found = await UserModel.findOne({ 
@@ -160,9 +158,6 @@ export default class UserController {
                         });
                     }
                 } else {
-                    // res.status(400).json({
-                    //     msg: "Incorrect password"
-                    // })
                     throw new Error("Неверный пароль");
                 } 
             } else {
@@ -170,7 +165,7 @@ export default class UserController {
             }
         } catch (err) {
             console.error(err);
-            res.status(404).json({msg: err});
+            res.status(400).json({msg: err});
         }
     }
 }
