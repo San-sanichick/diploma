@@ -1,13 +1,13 @@
-import { Router } from "express";
-import passport from "passport";
+import { Router }     from "express";
+import passport       from "passport";
 import UserController from "../controllers/UserController";
 
 export class UserRoutes {
-    public router: Router;
+    public router        : Router;
     public userController: UserController;
 
     constructor() {
-        this.router = Router();
+        this.router         = Router();
         this.userController = new UserController();
         this.routes();
     }

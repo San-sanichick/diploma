@@ -9,12 +9,13 @@ import config            from "./config/config";
 
 class App {
     private static _instance: App;
-    private _app: Application;
-    private readonly _port: number | string;
+    private _app            : Application;
+    private readonly _port  : number | string;
 
-    private constructor(port: number | string = process.env.PORT || config.port) {
+    
+    private constructor(port: number | string = config.port) {
         dotenv.config();
-        this._app = express();
+        this._app  = express();
         this._port = port;
 
         this._app.use(cors({
@@ -35,7 +36,7 @@ class App {
 
     public async init() {
         await this.connectToDB();
-        this._app.listen(this._port, () => console.log(`Boy I sure am listenning on port ${this._port}`));
+        this._app.listen(this._port, () => console.log(`Server is running on port ${this._port}`));
     }
 
     private setRoutes() {
@@ -71,26 +72,3 @@ class App {
 
 const app = App.Instance;
 app.init();
-
-// const app = express();
-
-// // CORS
-// app.use(cors());
-// app.options('*', cors());  // enable pre-flight
-
-// // Body Parser
-// app.use(express.json());
-// app.use(express.urlencoded({extended: false}));
-
-// mongoose.connect(config.db.address, { useNewUrlParser: true, useUnifiedTopology: true, dbName: config.db.name});
-
-
-// // Routes
-// app.use("/api/users", usersApi);
-// app.use("/api/projects", projectsApi);
-
-// const PORT = process.env.PORT || config.port;
-
-// app.listen(PORT, () => {
-//     console.log(`oh boi i sure am running on port ${PORT}`);
-// });

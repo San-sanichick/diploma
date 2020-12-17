@@ -1,6 +1,6 @@
 <template>
     <div class="header">
-        <div class="logo">logo here</div>
+        <div class="logo"></div>
         <div class="user">
             <div class="user-button" @click="openPopUp">
                 <span>{{ (currentUser.username !== "" && currentUser.username !== null) ? currentUser.username : currentUser.email }}</span>
@@ -75,6 +75,11 @@
 
         .logo {
             justify-self: start;
+            background-image: url("../assets/logo.svg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            width: 50px;
+            height: 50px;
         }
 
         .user {

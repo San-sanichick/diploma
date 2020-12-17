@@ -33,9 +33,6 @@
                 this.yPos = e.clientY;
                 this.showMenu = !this.showMenu;
             },
-            // setId(id: string): void {
-            //     this.id = id;
-            // },
             closeMenu(e: Event | undefined): void {
                 if (e) {
                     const target = e.target as HTMLElement;

@@ -1,5 +1,5 @@
 import { prop, getModelForClass, Ref } from "@typegoose/typegoose";
-import { Project } from "./ProjectModel";
+import { Project }                     from "./ProjectModel";
 
 class User {
     @prop({required: true})

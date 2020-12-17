@@ -1,5 +1,5 @@
 const config = {
-    port: 5000,
+    port: process.env.PORT || 5000,
     db: {
         address: "mongodb://localhost:27017/",
         name: "test"

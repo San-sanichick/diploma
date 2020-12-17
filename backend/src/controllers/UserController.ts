@@ -1,20 +1,14 @@
-import bcrypt from "bcrypt";
+import bcrypt   from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import "../passport/passportHandler";
 
 import * as fs from "fs";
-import path from "path";
+import path    from "path";
 
 import { Request, Response } from "express";
-import { UserModel, User } from "../db/models/UserModel";
-import config from "../config/config";
-import { getToken } from "../utils/utils";
-
-
-interface UserInterface {
-    email   : string;
-    password: string;
-}
+import { UserModel, User }   from "../db/models/UserModel";
+import config                from "../config/config";
+import { getToken }          from "../utils/utils";
 
 export default class UserController {
     /**
@@ -31,7 +25,7 @@ export default class UserController {
             
             console.log(hashedPassword);
             const user = {
-                email: data.email,
+                email   : data.email,
                 username: data.email,
                 password: hashedPassword
             };
@@ -66,7 +60,7 @@ export default class UserController {
             if (token) {
                 const 
                     decoded = jwt.verify(token, config.ACCESS_TOKEN_SECRET) as any,
-                    data = req.body;
+                    data    = req.body;
 
                 const user = await UserModel.findById(decoded.id);
 

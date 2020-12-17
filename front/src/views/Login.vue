@@ -11,7 +11,7 @@
                 <div class="form-row">
                     <div class="header-row">
                         <label for="pass">Пароль</label>
-                        <router-link to="/forgot-password">Забыли пароль?</router-link>
+                        <!-- <router-link to="/forgot-password">Забыли пароль?</router-link> -->
                     </div>
                     <input id="pass" type="password" name="pass" v-model="form.password">
                 </div>

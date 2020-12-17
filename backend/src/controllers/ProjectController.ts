@@ -17,7 +17,6 @@ export default class ProjectController {
         const token = getToken(req.headers);;
         if (token) {
             const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
-            // console.log(decoded);
 
             const data = req.body;
             console.log(data);
@@ -51,7 +50,7 @@ export default class ProjectController {
                         });
                     }
 
-                    const p = path.join(__dirname, `../../UserProjects/${updUser._id}/${newProject._id}`)
+                    const p = path.join(__dirname, `../../UserProjects/${updUser._id}/${newProject._id}`);
                     fs.mkdir(p, (err)=> {
                         if (err) {
                             console.log(err);
@@ -68,6 +67,7 @@ export default class ProjectController {
             res.status(401).json({msg: "Access denied"});
         }
     }
+
 
     public async updateProject(req: Request, res: Response) {
         const token = getToken(req.headers);
@@ -89,7 +89,7 @@ export default class ProjectController {
                         res.status(200).json({
                             msg: `Настройки проекта ${project.name} успешно обновлены`,
                             data: project
-                        })
+                        });
                     }
                 }
 
@@ -111,7 +111,7 @@ export default class ProjectController {
     
                 if (user !== null) {
                     const populated = await user.populate("projects").execPopulate();
-                    res.status(200).json({msg: "Успешно получен список проектов", data: populated.projects})
+                    res.status(200).json({msg: "Успешно получен список проектов", data: populated.projects});
                 } else {
                     throw new Error("Пользователь не найден");
                 }
