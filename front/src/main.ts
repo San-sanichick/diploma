@@ -96,6 +96,7 @@ declare module "@vue/runtime-core" {
 
 const app = createApp(App);
 
+// ! IMPORTANT SHIT
 app.config.globalProperties.$filters = {
     dateFilter(date: string) {
         return moment(date).format("HH:mm:ss, DD/MM/YYYY");

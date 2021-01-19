@@ -6,7 +6,7 @@ import { AxiosAuthRefreshRequestConfig } from "axios-auth-refresh";
 export default createStore({
     state: {
         user: null as UserInterface | null,
-        jwt: ""
+        jwt : ""
     },
     getters: {
         isLogged(state): boolean {
@@ -55,7 +55,7 @@ export default createStore({
             if (payload.refreshToken) {
                 localStorage.setItem("refreshToken", payload.refreshToken);
             }
-            state.jwt  = payload.token;
+            state.jwt = payload.token;
             axios.defaults.headers.common["Authorization"] = state.jwt;
         },
         async removeToken(state) {

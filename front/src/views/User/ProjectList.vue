@@ -28,7 +28,6 @@
             </div>
         </div>
     </div>
-
     
     <teleport to="body">
         <div v-if="showPopUp" class="popup" @click="closePopUp">

@@ -30,7 +30,6 @@ export default class UserController {
                 password: hashedPassword
             };
             const newUser = await UserModel.create(user);
-
             const p = path.join(__dirname, `../../UserProjects/${newUser._id}/`)
             fs.mkdir(p, (err)=> {
                 if (err) {
@@ -68,7 +67,7 @@ export default class UserController {
                 if (user) {
 
                     user.username = data.username;
-                    user.email = data.email;
+                    user.email    = data.email;
                     user.save();
 
                     const payload = {
