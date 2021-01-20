@@ -7,7 +7,10 @@ const routes: Array<RouteRecordRaw> = [
         children: [
             {
                 path: "projects",
-                component: () => import('../views/User/ProjectList.vue')
+                component: () => import('../views/User/ProjectList.vue'),
+                meta: {
+                    title: "Project list"
+                }
             },
             {
                 path: "projects/:id",
@@ -21,17 +24,26 @@ const routes: Array<RouteRecordRaw> = [
     {
         path: '/auth/login',
         name: 'Авторизация',
-        component: () => import('../views/Login.vue')
+        component: () => import('../views/Login.vue'),
+        meta: {
+            title: "Login"
+        }
     },
     {
         path: '/auth/signup',
         name: 'Регистрация',
-        component: () => import('../views/SignUp.vue')
+        component: () => import('../views/SignUp.vue'),
+        meta: {
+            title: "Sign up"
+        }
     },
     {
         path: "/:pathMatch(.*)*",
         name: "404",
-        component: () => import('../views/404.vue')
+        component: () => import('../views/404.vue'),
+        meta: {
+            title: "404"
+        }
     },
 ]
 

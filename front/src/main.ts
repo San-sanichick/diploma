@@ -16,8 +16,16 @@ import config from "./config/config";
 
 axios.defaults.baseURL = config.API_URI;
 
+const DEFAULT_TITLE = "This page has no header";
+
 // Programmed routing
 router.beforeEach(async (to, from, next) => {
+    /**
+     * setting page header
+     */
+
+    document.title = to.meta.title ?? DEFAULT_TITLE;
+
     // Checking if user is logged
     if (to.matched.some(record => record.meta.requiresAuth)) {        
         if (await store.getters.isLogged) {
@@ -82,6 +90,12 @@ axios.interceptors.response.use(res => {
     }
 )
 
+const filters = {
+    dateFilter: (date: string) => {
+        return moment(date).format("HH:mm:ss, DD/MM/YYYY");
+    }
+}
+
 declare module "@vue/runtime-core" {
     interface State {
         user: UserInterface | null;
@@ -91,17 +105,14 @@ declare module "@vue/runtime-core" {
         $flashMessage: FlashMessagePlugin;
         $router: Router;
         $store: Store<State>;
+        $filters: typeof filters;
     }
 }
 
 const app = createApp(App);
 
 // ! IMPORTANT SHIT
-app.config.globalProperties.$filters = {
-    dateFilter(date: string) {
-        return moment(date).format("HH:mm:ss, DD/MM/YYYY");
-    }
-}
+app.config.globalProperties.$filters = filters;
 
 app.use(store).use(router).use(FlashMessage, {
     name: 'flashMessage',
