@@ -21,6 +21,8 @@ class App {
         this._app.use(cors({
             origin: config.frontOrigin
         }));
+
+        this._app.disable('x-powered-by');
         
         this.setMiddlewares();
 
