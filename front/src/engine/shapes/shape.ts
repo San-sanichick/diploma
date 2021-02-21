@@ -20,9 +20,9 @@ export default abstract class Shape {
     public static worldScale: number;
     public static worldOffset: Vector2D;
 
-    constructor(maxNodes: number) {
+    constructor(name = "shape", maxNodes: number) {
         this.maxNodes = maxNodes;
-        this.name = "I don't exist";
+        this.name = name;
         this.nodes = new Array<Node>();
         this.color = "#888";
     }
@@ -47,8 +47,8 @@ export default abstract class Shape {
      * @param {T} type Shape type
      * @param {T} shape The shape to clone from
      */
-    public static clone<T extends Shape>(type: { new(maxNodes: number): T}, shape: T): T {
-        const temp = new type(shape.maxNodes);
+    public static clone<T extends Shape>(type: { new(name: string, maxNodes: number): T}, shape: T): T {
+        const temp = new type(shape.name, shape.maxNodes);
         temp.nodes = [...shape.nodes];
         temp.color = shape.color;
         return temp;

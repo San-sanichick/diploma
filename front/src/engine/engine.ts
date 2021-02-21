@@ -23,7 +23,7 @@ export default class Engine {
     selectedNode:  Node | null  = null;
     curTypeToDraw: Shapes = Shapes.NONE;
     private scale = 10.0;
-    private grid = 2.0;
+    private grid = 1.0;
     private offset: Vector2D = new Vector2D(0.0, 0.0);
     private startPan: Vector2D = new Vector2D(0.0, 0.0);
     private cursor = new Vector2D(0.0, 0.0);
@@ -54,66 +54,59 @@ export default class Engine {
     init(): void {
         console.dir(this.shapes);
         
-        // this.canvas.addEventListener("mousedown", (e) => {
-        //     if (e.button === 0) {
-        //         this.tempShape = new Line();
-        //         // to avoid fuckery with pointers we create a copy of the mouse position
-        //         this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
-        //         // and then we just pass a pointer for a second node, because this one needs to move with the mouse
-        //         this.selectedNode = this.tempShape.getNextNode(this.cursor);
-        //     }
-        //     // temporary, I need internal state of the engine to determine what type of
-        //     // action the user is currently performing
-        //     if (e.button === 1) {
-        //         // console.log("middle");
-        //         this.selectedNode = null;
-        //         for (const shape of this.shapes) {
-        //             this.selectedNode = shape.hitNode(this.cursor);
-        //             if (this.selectedNode !== null) {
-        //                 break;
-        //             }
-        //         }
+        this.canvas.addEventListener("mousedown", (e) => {
+            if (e.button === 0) {
+                this.tempShape = new Line();
+                // to avoid fuckery with pointers we create a copy of the mouse position
+                this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
+                // and then we just pass a pointer for a second node, because this one needs to move with the mouse
+                this.selectedNode = this.tempShape.getNextNode(this.cursor);
+            }
+            // temporary, I need internal state of the engine to determine what type of
+            // action the user is currently performing
+            if (e.button === 1) {
+                // console.log("middle");
+                this.selectedNode = null;
+                for (const shape of this.shapes) {
+                    this.selectedNode = shape.hitNode(this.cursor);
+                    if (this.selectedNode !== null) {
+                        break;
+                    }
+                }
 
-        //         if (this.selectedNode !== null) {
-        //             this.selectedNode.setPosition = this.cursor;
-        //         }
-        //     }
-        // });
+                if (this.selectedNode !== null) {
+                    this.selectedNode.setPosition = this.cursor;
+                }
+            }
+        });
 
-        // this.canvas.addEventListener("mouseup", (e) => {
-        //     if (e.button === 0) {
-        //         if (this.tempShape !== null && this.selectedNode !== null) {
-        //             // This works, because JS is magic and passes instances of classes exclusively by a pointer.
-        //             // Because of that, I can take a reference (selectedNode), change its position, which will, in turn,
-        //             // change the position of node inside the shape (inside thempShape), which this (selectedNode) is a reference to, 
-        //             // and then overwrite the reference with new node.
-        //             // I have to do this to stop the node from moving with the mouse cursor
-        //             this.selectedNode.setPosition = Vector2D.copyFrom(this.cursor);
-        //             // Now we try to create a new node, if it even exists
-        //             this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
-        //             if (this.selectedNode == null) {
-        //                 this.tempShape.color = "#fff";
-        //                 this.shapes.push(Shape.clone<Line>(Line, this.tempShape));
-        //                 this.tempShape = null;
-        //             }
-        //         } else {
-        //             this.selectedNode = null;
-        //         }
-        //     }
-        //     if (e.button === 1) {
-        //         if (this.selectedNode !== null) {
-        //             this.selectedNode.setPosition = Vector2D.copyFrom(this.cursor);
-        //             this.selectedNode = null;
-        //         }
-        //     }
-        // });
-
-        // this.canvas.addEventListener("wheel", (e) => {
-        //     // this.mouseBeforeZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
-        //     this.scale += e.deltaY * -0.1;
-        //     // this.mouseAfterZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
-        //     // this.offset.add(this.mouseBeforeZoom.subtract(this.mouseAfterZoom)); 
-        // });
+        this.canvas.addEventListener("mouseup", (e) => {
+            if (e.button === 0) {
+                if (this.tempShape !== null && this.selectedNode !== null) {
+                    // This works, because JS is magic and passes instances of classes exclusively by a pointer.
+                    // Because of that, I can take a reference (selectedNode), change its position, which will, in turn,
+                    // change the position of node inside the shape (inside thempShape), which this (selectedNode) is a reference to, 
+                    // and then overwrite the reference with new node.
+                    // I have to do this to stop the node from moving with the mouse cursor
+                    this.selectedNode.setPosition = Vector2D.copyFrom(this.cursor);
+                    // Now we try to create a new node, if it even exists
+                    this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
+                    if (this.selectedNode == null) {
+                        this.tempShape.color = "#fff";
+                        this.shapes.push(Shape.clone<Line>(Line, this.tempShape));
+                        this.tempShape = null;
+                    }
+                } else {
+                    this.selectedNode = null;
+                }
+            }
+            if (e.button === 1) {
+                if (this.selectedNode !== null) {
+                    this.selectedNode.setPosition = Vector2D.copyFrom(this.cursor);
+                    this.selectedNode = null;
+                }
+            }
+        });
     }
 
     
@@ -133,12 +126,58 @@ export default class Engine {
             this.scale += this.mouse.getDelta * -0.11;
             this.scale = clamp(this.scale, 5, 50);
         }
+        // console.log(this.mouse.getPressedButton);
+        if (this.mouse.getPressedButton === 1) {
+            // this.startPan = Vector2D.copyFrom(this.mouse.getCurrentPosition());
+            this.mouse.recordPosition();
+        }
+
+        if (this.mouse.getHeldButton === 1) {
+            this.offset = this.offset.subtract(this.mouse.getCurrentPosition()
+                                     .subtract(this.mouse.getRecordedPosition()).divide(this.scale));
+            this.mouse.recordPosition();
+        }
         
         const mouseAfterZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
         this.offset.add(mouseBeforeZoom.subtract(mouseAfterZoom));
         
         this.cursor = mouseAfterZoom.add(new Vector2D(0.5, 0.5).multiply(this.grid));
         this.cursor.floor();
+
+
+        // if (this.mouse.getPressedButton === 0) {
+        //     this.tempShape = new Line();
+        //     // to avoid fuckery with pointers we create a copy of the mouse position
+        //     this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
+        //     console.log("kek");
+        //     // and then we just pass a pointer for a second node, because this one needs to move with the mouse
+        //     this.selectedNode = this.tempShape.getNextNode(this.cursor);
+        // }
+
+        // if (this.mouse.getReleasedButton === 0) {
+        //     if (this.tempShape !== null && this.selectedNode !== null) {
+        //         // This works, because JS is magic and passes instances of classes exclusively by a pointer.
+        //         // Because of that, I can take a reference (selectedNode), change its position, which will, in turn,
+        //         // change the position of node inside the shape (inside thempShape), which this (selectedNode) is a reference to, 
+        //         // and then overwrite the reference with new node.
+        //         // I have to do this to stop the node from moving with the mouse cursor
+        //         this.selectedNode.setPosition = Vector2D.copyFrom(this.cursor);
+        //         // Now we try to create a new node, if it even exists
+        //         this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
+        //         if (this.selectedNode == null) {
+        //             this.tempShape.color = "#fff";
+        //             this.shapes.push(Shape.clone<Line>(Line, this.tempShape));
+        //             this.tempShape = null;
+        //         }
+        //     } else {
+        //         this.selectedNode = null;
+        //     }
+        // }
+
+
+        if (this.selectedNode !== null) {
+            this.selectedNode.setPosition = this.cursor;
+        }
 
         // rendering
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);

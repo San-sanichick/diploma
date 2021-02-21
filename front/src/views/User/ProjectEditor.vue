@@ -22,7 +22,7 @@
         },
         mounted(){
             try {
-                this.engine = new Engine(this.$refs.canvas as HTMLCanvasElement, 700, 700);
+                this.engine = new Engine(this.$refs.canvas as HTMLCanvasElement, 800, 700);
 
                 this.engine.init();
 

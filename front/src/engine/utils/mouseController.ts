@@ -10,8 +10,12 @@ export default class MouseController {
 
     private mouseWheelStep = 20;
 
+    private isPressed  = false;
+    private isHeld     = false;
+    private isReleased = false;
     private heldButton: number | null     = null;
     private releasedButton: number | null = null;
+    private pressedButton: number | null  = null;
 
     constructor(canvas: HTMLCanvasElement) {
         this.curPos = new Vector2D(0, 0);
@@ -33,12 +37,17 @@ export default class MouseController {
 
         canvas.addEventListener("mousedown", (e) => {
             this.heldButton = e.button;
+            this.pressedButton = e.button;
             this.releasedButton = null;
+            this.isPressed = true;
+            this.isHeld = true;
         });
 
         canvas.addEventListener("mouseup", (e) => {
             this.releasedButton = e.button;
             this.heldButton = null;
+            this.isHeld = false;
+            this.isReleased = true;
         });
     }
 
@@ -57,12 +66,35 @@ export default class MouseController {
         return this.heldButton;
     }
 
+    get getPressedButton() {
+        // console.log(this.pressedButton);
+        const temp = this.pressedButton;
+        //this.pressedButton = null;
+        return temp;
+    }
+
     get getReleasedButton() {
         const temp = this.releasedButton;
         this.releasedButton = null;
         return temp;
     }
 
+    get isMousePressed() {
+        const temp = this.isPressed;
+        this.isPressed = false;
+        return temp;
+    }
+
+    get isMouseHeld() {
+        return this.isHeld;
+    }
+
+    get isMouseReleased() {
+        const temp = this.isReleased;
+        this.isReleased = false;
+        return temp;
+    }
+ 
     public recordPosition(): void {
         this.oldPos = Vector2D.copyFrom(this.curPos);
     }

@@ -2,9 +2,8 @@ import Shape from "./shape";
 import Vector2D from "../utils/vector2d";
 
 export default class Line extends Shape {
-    constructor(name: string) {
-        super(2);
-        this.name = name;
+    constructor(name = "Line") {
+        super(name, 2);
     }
 
     renderSelf(ctx: CanvasRenderingContext2D): void {
