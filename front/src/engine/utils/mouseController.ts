@@ -1,4 +1,5 @@
 import Vector2D from "./vector2d";
+import { clamp } from "./math";
 
 export default class MouseController {
     private curPos: Vector2D;
@@ -49,7 +50,7 @@ export default class MouseController {
         const temp = this.delta;
         this.oldDelta = this.delta;
         this.delta = 0;
-        return temp;
+        return clamp(temp, -100, 100);
     }
 
     get getHeldButton() {

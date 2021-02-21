@@ -11,6 +11,7 @@ export default abstract class Shape {
      */
     private   maxNodes: number;
     public    color: string;
+    public    name: string;
     /**
      * An array of nodes in a shape. The number of nodes is dictated by maxNodes
      * @protected
@@ -21,6 +22,7 @@ export default abstract class Shape {
 
     constructor(maxNodes: number) {
         this.maxNodes = maxNodes;
+        this.name = "I don't exist";
         this.nodes = new Array<Node>();
         this.color = "#888";
     }

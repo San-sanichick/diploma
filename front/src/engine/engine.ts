@@ -3,6 +3,7 @@ import Node            from "./shapes/node";
 import Line            from "./shapes/line";
 import Vector2D        from "./utils/vector2d";
 import MouseController from "./utils/mouseController";
+import { clamp }       from "./utils/math";
 
 enum Shapes {
     NONE,
@@ -26,8 +27,8 @@ export default class Engine {
     private offset: Vector2D = new Vector2D(0.0, 0.0);
     private startPan: Vector2D = new Vector2D(0.0, 0.0);
     private cursor = new Vector2D(0.0, 0.0);
-    private mouseBeforeZoom: Vector2D = new Vector2D(0.0, 0.0);
-    private mouseAfterZoom: Vector2D = new Vector2D(0.0, 0.0);
+    // private mouseBeforeZoom: Vector2D = new Vector2D(0.0, 0.0);
+    // private mouseAfterZoom: Vector2D = new Vector2D(0.0, 0.0);
 
     constructor(canvas: HTMLCanvasElement, width?: number, height?: number) {
         this.canvas        = canvas;
@@ -126,22 +127,20 @@ export default class Engine {
         if (this.ctx === null) return;
         // const mouseCurPos = this.mouse.getCurrentPosition();
 
-        this.mouseBeforeZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
+        const mouseBeforeZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
         
         if(this.mouse.mouseScrolled) {
-            this.scale += this.mouse.getDelta * -0.1;
+            this.scale += this.mouse.getDelta * -0.11;
+            this.scale = clamp(this.scale, 5, 50);
         }
         
-        this.mouseAfterZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
-        this.offset.add(this.mouseBeforeZoom.subtract(this.mouseAfterZoom)); 
+        const mouseAfterZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
+        this.offset.add(mouseBeforeZoom.subtract(mouseAfterZoom));
         
-        this.cursor = this.mouseAfterZoom.add(new Vector2D(0.5, 0.5).multiply(this.grid));
+        this.cursor = mouseAfterZoom.add(new Vector2D(0.5, 0.5).multiply(this.grid));
         this.cursor.floor();
-        // console.log(this.cursor);
 
         // rendering
-
-        // this should clear the canvas, yet it fucking doesn't
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctx.fillStyle = "#191e38";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -179,21 +178,13 @@ export default class Engine {
             this.tempShape.renderNodes(this.ctx, "yellow");
         }
 
-
-        // const curV = this.WorldToScreen(this.cursor);
-        // this.ctx.strokeStyle = "#fff";
-        // this.ctx.moveTo(curV.x, curV.y);
-        // this.ctx.ellipse(curV.x, curV.y, 5, 5, 0, 0, Math.PI);
-        // this.ctx.stroke();
-        // this.ctx.strokeStyle = "";
-        sv = this.WorldToScreen(this.cursor);
+        const curV = this.WorldToScreen(this.cursor);
         this.ctx.strokeStyle = "#fff";
-        this.ctx.moveTo(sv.x, sv.y);
-        this.ctx.arc(sv.x, sv.y, 5, 0, 2 * Math.PI);
+        this.ctx.beginPath();
+        this.ctx.arc(curV.x, curV.y, 5, 0, 2 * Math.PI);
+        this.ctx.closePath();
         this.ctx.stroke();
         this.ctx.strokeStyle = "";
-
-        
         
         this.ctx.fillStyle = "#fff";
         this.ctx.fillText(`x: ${this.mouse.getCurrentPosition().x}, y: ${this.mouse.getCurrentPosition().y}`, 
