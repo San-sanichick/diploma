@@ -14,7 +14,7 @@ const routes: Array<RouteRecordRaw> = [
             },
             {
                 path: "projects/:id",
-                component: () => import('../views/User/ProjectExplorer.vue')
+                component: () => import('../views/User/ProjectEditor.vue')
             }
         ],
         meta: {
