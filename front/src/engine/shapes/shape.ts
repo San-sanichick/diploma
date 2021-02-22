@@ -19,6 +19,7 @@ export default abstract class Shape {
     protected nodes: Array<Node>;
     public static worldScale: number;
     public static worldOffset: Vector2D;
+    public static magnitude = 2.5;
 
     constructor(name = "shape", maxNodes: number) {
         this.maxNodes = maxNodes;
@@ -75,7 +76,7 @@ export default abstract class Shape {
      */
     hitNode(curPos: Vector2D): Node | null {
         for (const node of this.nodes) {
-            if (curPos.subtract(node.getPosition).mag() < 5) {
+            if (curPos.subtract(node.getPosition).mag() < Shape.magnitude) {
                 return node;
             }
         }
@@ -93,6 +94,10 @@ export default abstract class Shape {
         // later
     }
 
+    setNodeColor(color: string) {
+        this.nodes.forEach(node => node.color = color);
+    }
+
     /**
      * Renders shape with a set color on a given context
      * @param ctx 2D canvas context
@@ -104,15 +109,16 @@ export default abstract class Shape {
      * @param ctx 2D canvas context
      * @param color color of the nodes
      */
-    renderNodes(ctx: CanvasRenderingContext2D, color: string) {
+    renderNodes(ctx: CanvasRenderingContext2D) {
         this.nodes.forEach(node => {
             const sv = this.WorldToScreen(node.getPosition);
-
-            ctx.fillStyle = color;
+            // ctx.save();
+            ctx.fillStyle = node.color;
             ctx.strokeStyle = "";
             ctx.moveTo(sv.x, sv.y)
             ctx.arc(sv.x, sv.y, node.radius, 0, Math.PI * 2);
             ctx.fill();
+            // ctx.restore();
         })
     }
 }

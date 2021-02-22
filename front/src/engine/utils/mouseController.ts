@@ -1,6 +1,12 @@
 import Vector2D from "./vector2d";
 import { clamp } from "./math";
 
+enum MouseButtons {
+    LEFT,
+    MIDDLE,
+    RIGHT
+}
+
 export default class MouseController {
     private curPos: Vector2D;
     private oldPos: Vector2D;
@@ -38,8 +44,15 @@ export default class MouseController {
         canvas.addEventListener("mousedown", (e) => {
             this.heldButton = e.button;
             this.pressedButton = e.button;
-            this.releasedButton = null;
             this.isPressed = true;
+
+            // it just works
+            setTimeout(() => {
+                this.pressedButton = null;
+                this.isPressed = false;
+            }, 0);
+
+            this.releasedButton = null;
             this.isHeld = true;
         });
 
@@ -81,7 +94,7 @@ export default class MouseController {
 
     get isMousePressed() {
         const temp = this.isPressed;
-        this.isPressed = false;
+        // this.isPressed = false;
         return temp;
     }
 
@@ -107,3 +120,5 @@ export default class MouseController {
         return this.curPos;
     }
 }
+
+export { MouseButtons }

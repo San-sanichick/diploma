@@ -8,8 +8,9 @@ import Vector2D from "../utils/vector2d";
  */
 export default class Node {
     private pos: Vector2D;
-    public radius: number;
     private parent: Shape;
+    public radius: number;
+    public color = "red";
 
     constructor(pos: Vector2D, parent: Shape, radius = 4) {
         this.pos = pos;

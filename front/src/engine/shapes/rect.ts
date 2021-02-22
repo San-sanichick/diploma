@@ -1,26 +1,21 @@
 import Shape from "./shape";
 import Vector2D from "../utils/vector2d";
 
-export default class Line extends Shape {
-    constructor(name = "Line") {
+export default class Rectangle extends Shape {
+    constructor(name = "Rectangle") {
         super(name, 2);
     }
 
-    renderSelf(ctx: CanvasRenderingContext2D): void {
-        // console.log(Shape.worldOffset);
-
+    renderSelf(ctx: CanvasRenderingContext2D) {
         const sv: Vector2D = this.WorldToScreen(this.nodes[0].getPosition);
         const ev: Vector2D = this.WorldToScreen(this.nodes[1].getPosition);
 
-        // console.log(sv);
-        // console.log(this.color);
         // ctx.save();
         ctx.fillStyle = "";
         ctx.strokeStyle = this.color;
-        ctx.beginPath();
-        ctx.moveTo(sv.x, sv.y);
-        ctx.lineTo(ev.x, ev.y);
-        ctx.stroke();
+        const dimensions = ev.subtract(sv);
+        ctx.moveTo(sv.x, sv.y)
+        ctx.strokeRect(sv.x, sv.y, dimensions.x, dimensions.y);
         // ctx.restore();
     }
 }
