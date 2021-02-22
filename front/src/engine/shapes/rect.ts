@@ -13,7 +13,12 @@ export default class Rectangle extends Shape {
         // ctx.save();
         ctx.fillStyle = "";
         ctx.strokeStyle = this.color;
+
+        /* calculate dx and dy of the rectange
+           by subtracting its staring point from its ending point
+        */
         const dimensions = ev.subtract(sv);
+
         ctx.moveTo(sv.x, sv.y)
         ctx.strokeRect(sv.x, sv.y, dimensions.x, dimensions.y);
         // ctx.restore();

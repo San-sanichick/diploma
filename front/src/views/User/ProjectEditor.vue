@@ -2,7 +2,7 @@
     <div class="page">
         <div class="page-header">
             <button @click="goBack">back</button>
-            <button :value="engineState[1]" @click="setEngineState">move</button>
+            <button :value="engineState[1]" @click="setEngineState">point edit</button>
             <button :value="shapes[1]" @click="setEngineState">draw line</button>
             <button :value="shapes[2]" @click="setEngineState">draw rectangle</button>
             <button :value="shapes[3]" @click="setEngineState">draw circle</button>
@@ -30,7 +30,7 @@
         },
         mounted(){
             try {
-                this.engine = new Engine(this.$refs.canvas as HTMLCanvasElement, document.body.clientWidth - 100, 700);
+                this.engine = new Engine(this.$refs.canvas as HTMLCanvasElement, document.body.clientWidth - 200, 700);
 
                 this.engine.init();
 
@@ -58,8 +58,8 @@
                 const state = button.value;
 
                 switch(state) {
-                    case "MOVE": 
-                        this.engine.engineState = EngineState.MOVE;
+                    case "MOVEPOINT": 
+                        this.engine.engineState = EngineState.MOVEPOINT;
                         break;
                     case "LINE":
                         this.engine.engineState = EngineState.DRAW;
@@ -68,6 +68,11 @@
                     case "RECT":
                         this.engine.engineState = EngineState.DRAW;
                         this.engine.curTypeToDraw = Shapes.RECT;
+                        break;
+                    case "CIRCLE":
+                        this.engine.engineState = EngineState.DRAW;
+                        this.engine.curTypeToDraw=  Shapes.CIRCLE;
+                        break;
                 }
                 
             }

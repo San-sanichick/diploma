@@ -46,11 +46,13 @@ export default class MouseController {
             this.pressedButton = e.button;
             this.isPressed = true;
 
-            // it just works
+            // this bullshit is framerate dependant.
+            // At 30fps you will find that 0ms works like magic
+            // but if our framerate is optimized, then 0ms is waaaay too fast
             setTimeout(() => {
                 this.pressedButton = null;
                 this.isPressed = false;
-            }, 0);
+            }, 10);
 
             this.releasedButton = null;
             this.isHeld = true;

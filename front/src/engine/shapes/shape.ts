@@ -19,7 +19,7 @@ export default abstract class Shape {
     protected nodes: Array<Node>;
     public static worldScale: number;
     public static worldOffset: Vector2D;
-    public static magnitude = 2.5;
+    public static magnitude = 2;
 
     constructor(name = "shape", maxNodes: number) {
         this.maxNodes = maxNodes;
@@ -76,7 +76,7 @@ export default abstract class Shape {
      */
     hitNode(curPos: Vector2D): Node | null {
         for (const node of this.nodes) {
-            if (curPos.subtract(node.getPosition).mag() < Shape.magnitude) {
+            if (Math.abs(curPos.subtract(node.getPosition).mag()) <= Shape.magnitude) {
                 return node;
             }
         }
@@ -112,13 +112,15 @@ export default abstract class Shape {
     renderNodes(ctx: CanvasRenderingContext2D) {
         this.nodes.forEach(node => {
             const sv = this.WorldToScreen(node.getPosition);
-            // ctx.save();
+            ctx.save();
             ctx.fillStyle = node.color;
             ctx.strokeStyle = "";
-            ctx.moveTo(sv.x, sv.y)
+            // ctx.moveTo(sv.x, sv.y);
+            ctx.beginPath();
             ctx.arc(sv.x, sv.y, node.radius, 0, Math.PI * 2);
+            ctx.closePath();
             ctx.fill();
-            // ctx.restore();
+            ctx.restore();
         })
     }
 }
