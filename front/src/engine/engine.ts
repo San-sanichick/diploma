@@ -87,7 +87,7 @@ export default class Engine {
         
         if(this.mouse.mouseScrolled) {
             this.scale += this.mouse.getDelta * -0.11;
-            this.scale = clamp(this.scale, 10, 50);
+            this.scale = clamp(this.scale, 8, 50);
         }
 
         if (this.mouse.getPressedButton === MouseButtons.MIDDLE) {
@@ -211,6 +211,10 @@ export default class Engine {
         this.ctx.fillStyle = "#787878";
 
         // I am a mathematical genius
+        // This approach gives a goddamn 4x (4 times, 4 TIMES, FOUR TIMES) speed boost
+        // over brute force calculation of coordinates for each point on the grid,
+        // over all ending up at ~140fps, with 6-7ms per frame, which is bloody brilliant
+        // if I can optimize this even further, this could be great
         const sx      = (worldTopLeft.x - this.offset.x)             * this.scale * this.grid;
         const sy      = (worldTopLeft.y - this.offset.y)             * this.scale * this.grid;
         const ex      = (worldTopLeft.x + this.grid - this.offset.x) * this.scale * this.grid;

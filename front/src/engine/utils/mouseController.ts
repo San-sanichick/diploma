@@ -33,6 +33,7 @@ export default class MouseController {
         });
 
         canvas.addEventListener("wheel", (e) => {
+            e.preventDefault();
             this.oldDelta = this.delta;
             if (e.deltaY > 0) {
                 this.delta += this.mouseWheelStep
