@@ -7,6 +7,8 @@ export default class Arc extends Shape {
     }
 
     renderSelf(ctx: CanvasRenderingContext2D) {
+        if (this.nodes.length <= 1) return;
+
         if (this.nodes.length < 3) {
             const radius = this.nodes[0].getPosition.subtract(this.nodes[1].getPosition).mag();
 

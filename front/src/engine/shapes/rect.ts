@@ -7,6 +7,8 @@ export default class Rectangle extends Shape {
     }
 
     renderSelf(ctx: CanvasRenderingContext2D) {
+        if (this.nodes.length <= 1) return;
+
         const sv: Vector2D = this.WorldToScreen(this.nodes[0].getPosition);
         const ev: Vector2D = this.WorldToScreen(this.nodes[1].getPosition);
 

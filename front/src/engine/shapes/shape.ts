@@ -99,6 +99,10 @@ export default abstract class Shape {
         this.nodes.forEach(node => node.color = color);
     }
 
+    get numberOfNodes() {
+        return this.nodes.length;
+    }
+
     /**
      * Renders shape with a set color on a given context
      * @param ctx 2D canvas context

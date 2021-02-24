@@ -7,6 +7,8 @@ export default class Circle extends Shape {
     }
 
     renderSelf(ctx: CanvasRenderingContext2D) {
+        if (this.nodes.length <= 1) return;
+
         // calculate the radius of the circle
         const radius = this.nodes[0].getPosition.subtract(this.nodes[1].getPosition).mag();
 

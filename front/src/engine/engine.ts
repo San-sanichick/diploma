@@ -4,6 +4,7 @@ import Line                              from "./shapes/line";
 import Rectangle                         from "./shapes/rect";
 import Circle                            from "./shapes/circle";
 import Ellipse                           from "./shapes/ellipse";
+import Bezier                            from "./shapes/bezier";
 
 import Vector2D                          from "./utils/vector2d";
 import MouseController, { MouseButtons } from "./utils/mouseController";
@@ -122,45 +123,25 @@ export default class Engine {
                     case Shapes.ELLIPSE:
                         this.tempShape = new Ellipse();
                         break;
+                    case Shapes.BEZIER:
+                        this.tempShape = new Bezier();
+                        break;
                     default:
                         break out;
                 }
             }
             // to avoid fuckery with pointers we create a copy of the mouse position
             this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
-            // and then we just pass a pointer for a second node, because this one needs to move with the mouse
-            this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
+            // and then we create a second point, but only if our number of points in the shape is currently 1
+            if (this.tempShape.numberOfNodes === 1) this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
 
             this.tempShape.setNodeColor("yellow");
             console.log(this.tempShape);
         }
 
 
-        if (this.engineState === EngineState.MOVEPOINT && this.mouse.getPressedButton === MouseButtons.LEFT) {
-            this.selectedNode = null;
-            for (const shape of this.shapes) {
-                this.selectedNode = shape.hitNode(this.cursor);
-                if (this.selectedNode !== null) break;
-            }
-        } else if (this.engineState === EngineState.MOVEPOINT && this.mouse.getReleasedButton === MouseButtons.LEFT) {
-            this.selectedNode = null;
-        }
-
-        if (this.selectedNode !== null) {
-            this.selectedNode.setPosition = this.cursor;
-        }
-
-
         if (this.mouse.getReleasedButton === MouseButtons.LEFT) {
             if (this.tempShape !== null) {
-                // This works, because JS is magic and passes instances of classes exclusively by a pointer.
-                // Because of that, I can take a reference (selectedNode), change its position, which will, in turn,
-                // change the position of node inside the shape (inside thempShape), which this (selectedNode) is a reference to, 
-                // and then overwrite the reference with new node.
-                // I have to do this to stop the node from moving with the mouse cursor
-                // this.selectedNode.setPosition = Vector2D.copyFrom(this.cursor);
-                // Now we try to create a new node, if it even exists
-                this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
                 if (this.selectedNode === null) {
                     this.tempShape.color = "#fff";
 
@@ -179,6 +160,9 @@ export default class Engine {
                         case Shapes.ELLIPSE:
                             this.shapes.push(Shape.clone<Ellipse>(Ellipse, this.tempShape));
                             break;
+                        case Shapes.BEZIER:
+                            this.shapes.push(Shape.clone<Bezier>(Bezier, this.tempShape));
+                            break;
                         default:
                             break;
                     }
@@ -189,6 +173,20 @@ export default class Engine {
                 this.selectedNode = null;
             }
         }   
+
+        if (this.engineState === EngineState.MOVEPOINT && this.mouse.getPressedButton === MouseButtons.LEFT) {
+            this.selectedNode = null;
+            for (const shape of this.shapes) {
+                this.selectedNode = shape.hitNode(this.cursor);
+                if (this.selectedNode !== null) break;
+            }
+        } else if (this.engineState === EngineState.MOVEPOINT && this.mouse.getReleasedButton === MouseButtons.LEFT) {
+            this.selectedNode = null;
+        }
+
+        if (this.selectedNode !== null) {
+            this.selectedNode.setPosition = this.cursor;
+        }
         
         this.mouse.resetPressAndRelease();
 
@@ -210,7 +208,7 @@ export default class Engine {
         worldBottomRight.ceil();
 
         this.ctx.save();
-        this.ctx.fillStyle = "#ccc";
+        this.ctx.fillStyle = "#787878";
 
         // I am a mathematical genius
         const sx      = (worldTopLeft.x - this.offset.x)             * this.scale * this.grid;
@@ -254,6 +252,22 @@ export default class Engine {
 
         // draw cursor
         const curV = this.WorldToScreen(this.cursor);
+
+        this.ctx.save();
+            this.ctx.setLineDash([10, 15]);
+            this.ctx.strokeStyle = "#ccc";
+            this.ctx.beginPath();
+            this.ctx.moveTo(curV.x, 0);
+            this.ctx.lineTo(curV.x, this.canvas.height);
+            this.ctx.closePath();
+            this.ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, curV.y);
+            this.ctx.lineTo(this.canvas.width, curV.y);
+            this.ctx.closePath();
+            this.ctx.stroke();
+        this.ctx.restore();
+
         this.ctx.save();
         this.ctx.strokeStyle = "#fff";
         this.ctx.beginPath();
