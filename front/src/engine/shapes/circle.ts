@@ -27,8 +27,8 @@ export default class Circle extends Shape {
             ctx.fillStyle = "";
             ctx.strokeStyle = this.color;
             ctx.setLineDash([]);
-            ctx.beginPath();      
-            ctx.arc(sv.x, sv.y, radius * Shape.worldScale, 0, 2 * Math.PI, false);
+            ctx.beginPath();
+            ctx.arc(sv.x, sv.y, radius * Shape.worldScale * Shape.worldGrid, 0, 2 * Math.PI, false);
             ctx.closePath();
             ctx.stroke();
         ctx.restore();

@@ -6,8 +6,9 @@
             <button :value="shapes[1]" @click="setEngineState">draw line</button>
             <button :value="shapes[2]" @click="setEngineState">draw rectangle</button>
             <button :value="shapes[3]" @click="setEngineState">draw circle</button>
-            <button :value="shapes[4]" @click="setEngineState">draw bezier curve</button>
-            <button :value="shapes[5]" @click="setEngineState">draw arc</button>
+            <button :value="shapes[4]" @click="setEngineState">draw ellipse</button>
+            <button :value="shapes[5]" @click="setEngineState">draw bezier curve</button>
+            <button :value="shapes[6]" @click="setEngineState">draw arc</button>
         </div>
         <div>
             <canvas ref="canvas"></canvas>
@@ -30,7 +31,7 @@
         },
         mounted(){
             try {
-                this.engine = new Engine(this.$refs.canvas as HTMLCanvasElement, document.body.clientWidth - 200, 700);
+                this.engine = new Engine(this.$refs.canvas as HTMLCanvasElement, document.body.clientWidth - 600, 800);
 
                 this.engine.init();
 
@@ -72,6 +73,18 @@
                     case "CIRCLE":
                         this.engine.engineState = EngineState.DRAW;
                         this.engine.curTypeToDraw=  Shapes.CIRCLE;
+                        break;
+                    case "ELLIPSE":
+                        this.engine.engineState = EngineState.DRAW;
+                        this.engine.curTypeToDraw = Shapes.ELLIPSE;
+                        break;
+                    case "BEZIER":
+                        this.engine.engineState = EngineState.DRAW;
+                        this.engine.curTypeToDraw=  Shapes.BEZIER;
+                        break;
+                    case "ARC":
+                        this.engine.engineState = EngineState.DRAW;
+                        this.engine.curTypeToDraw=  Shapes.ARC;
                         break;
                 }
                 

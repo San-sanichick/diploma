@@ -48,6 +48,10 @@ export default class Vector2D {
         return new Vector2D(this.x / coeff, this.y / coeff);
     }
 
+    public static dot(v2d1: Vector2D, v2d2: Vector2D): number {
+        return v2d1.x * v2d2.x + v2d1.y * v2d2.y;
+    }
+
     // some nice things
 
     public ceil() {

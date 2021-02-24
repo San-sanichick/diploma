@@ -142,6 +142,7 @@
                 document.body.style.overflowY = document.body.style.overflowY === "" ? "hidden" : "";
             },
             closePopUp(e: Event) {
+                e.stopPropagation();
                 const target = e.target as HTMLElement;
                 
                 if (target.className === "popup") {

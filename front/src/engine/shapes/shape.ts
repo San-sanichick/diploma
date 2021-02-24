@@ -19,7 +19,8 @@ export default abstract class Shape {
     protected nodes: Array<Node>;
     public static worldScale: number;
     public static worldOffset: Vector2D;
-    public static magnitude = 2;
+    public static worldGrid: number;
+    public static magnitude = 0.5;
 
     constructor(name = "shape", maxNodes: number) {
         this.maxNodes = maxNodes;
@@ -29,7 +30,7 @@ export default abstract class Shape {
     }
 
     protected WorldToScreen(v: Vector2D): Vector2D {
-        return v.subtract(Shape.worldOffset).multiply(Shape.worldScale);
+        return v.subtract(Shape.worldOffset).multiply(Shape.worldScale * Shape.worldGrid);
     }
 
     /**

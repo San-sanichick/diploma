@@ -3,6 +3,7 @@ import Node                              from "./shapes/node";
 import Line                              from "./shapes/line";
 import Rectangle                         from "./shapes/rect";
 import Circle                            from "./shapes/circle";
+import Ellipse                           from "./shapes/ellipse";
 
 import Vector2D                          from "./utils/vector2d";
 import MouseController, { MouseButtons } from "./utils/mouseController";
@@ -22,6 +23,7 @@ enum Shapes {
     LINE,
     RECT,
     CIRCLE,
+    ELLIPSE,
     BEZIER,
     ARC
 }
@@ -69,44 +71,8 @@ export default class Engine {
      */
     init(): void {
         console.dir(this.shapes);
-        
-        // // load the data for the grid visualization
-        // /**
-        //  * @see https://codereview.stackexchange.com/a/114703
-        //  */
-        // const data = '<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"> \
-        //     <defs> \
-        //         <pattern id="smallGrid" width="8" height="8" patternUnits="userSpaceOnUse"> \
-        //             <path d="M 8 0 L 0 0 0 8" fill="none" stroke="gray" stroke-width="0.5" /> \
-        //         </pattern> \
-        //         <pattern id="grid" width="80" height="80" patternUnits="userSpaceOnUse"> \
-        //             <rect width="80" height="80" fill="url(#smallGrid)" /> \
-        //             <path d="M 80 0 L 0 0 0 80" fill="none" stroke="gray" stroke-width="1" /> \
-        //         </pattern> \
-        //     </defs> \
-        //     <rect width="100%" height="100%" fill="url(#grid)" /> \
-        // </svg>';
-
-        // const DOMURL = window.URL ?? window.webkitURL ?? window;
-
-        // this.gridImg = new Image();
-        // const svg = new Blob([data], {type: "image/svg+xml;charset=utf-8"});
-        // const url = DOMURL.createObjectURL(svg);
-
-
-        // if (this.ctx !== null) {
-        //     this.gridImg.onload = () => {
-        //         this.ctx!.drawImage(this.gridImg, 0, 0);
-        //         DOMURL.revokeObjectURL(url);
-        //     }
-
-        //     this.gridImg.src = url;
-        // }
+        Shape.worldGrid = this.grid;
     }
-
-    // drawGrid(ctx: CanvasRenderingContext2D, w: number, h: number) {
-        
-    // }
 
     /**
      * Update method, has to be run through requestAnimationFrame
@@ -120,17 +86,16 @@ export default class Engine {
         
         if(this.mouse.mouseScrolled) {
             this.scale += this.mouse.getDelta * -0.11;
-            this.scale = clamp(this.scale, 8, 50);
+            this.scale = clamp(this.scale, 10, 50);
         }
-        // console.log(this.mouse.getPressedButton);
+
         if (this.mouse.getPressedButton === MouseButtons.MIDDLE) {
-            // this.startPan = Vector2D.copyFrom(this.mouse.getCurrentPosition());
             this.mouse.recordPosition();
         }
 
         if (this.mouse.getHeldButton === MouseButtons.MIDDLE) {
             this.offset = this.offset.subtract(this.mouse.getCurrentPosition()
-                                     .subtract(this.mouse.getRecordedPosition()).divide(this.scale));
+                                     .subtract(this.mouse.getRecordedPosition()).divide(this.scale * this.grid));
             this.mouse.recordPosition();
         }
         
@@ -142,25 +107,32 @@ export default class Engine {
 
         out:
         if (this.engineState === EngineState.DRAW && this.mouse.getPressedButton === MouseButtons.LEFT) {
-            switch(this.curTypeToDraw) {
-                case Shapes.LINE: 
-                    this.tempShape = new Line();
-                    break;
-                case Shapes.RECT:
-                    this.tempShape = new Rectangle();
-                    break;
-                case Shapes.CIRCLE:
-                    this.tempShape = new Circle();
-                    break;
-                default:
-                    break out;
+            console.log("HAVJHSFGIUGF");
+            if (this.tempShape === null) {
+                switch(this.curTypeToDraw) {
+                    case Shapes.LINE: 
+                        this.tempShape = new Line();
+                        break;
+                    case Shapes.RECT:
+                        this.tempShape = new Rectangle();
+                        break;
+                    case Shapes.CIRCLE:
+                        this.tempShape = new Circle();
+                        break;
+                    case Shapes.ELLIPSE:
+                        this.tempShape = new Ellipse();
+                        break;
+                    default:
+                        break out;
+                }
             }
             // to avoid fuckery with pointers we create a copy of the mouse position
             this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
             // and then we just pass a pointer for a second node, because this one needs to move with the mouse
-            this.selectedNode = this.tempShape.getNextNode(this.cursor);
+            this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
 
             this.tempShape.setNodeColor("yellow");
+            console.log(this.tempShape);
         }
 
 
@@ -179,17 +151,17 @@ export default class Engine {
         }
 
 
-        if (this.mouse.getReleasedButton === 0) {
-            if (this.tempShape !== null && this.selectedNode !== null) {
+        if (this.mouse.getReleasedButton === MouseButtons.LEFT) {
+            if (this.tempShape !== null) {
                 // This works, because JS is magic and passes instances of classes exclusively by a pointer.
                 // Because of that, I can take a reference (selectedNode), change its position, which will, in turn,
                 // change the position of node inside the shape (inside thempShape), which this (selectedNode) is a reference to, 
                 // and then overwrite the reference with new node.
                 // I have to do this to stop the node from moving with the mouse cursor
-                this.selectedNode.setPosition = Vector2D.copyFrom(this.cursor);
+                // this.selectedNode.setPosition = Vector2D.copyFrom(this.cursor);
                 // Now we try to create a new node, if it even exists
                 this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
-                if (this.selectedNode == null) {
+                if (this.selectedNode === null) {
                     this.tempShape.color = "#fff";
 
                     this.tempShape.setNodeColor("red");
@@ -204,6 +176,9 @@ export default class Engine {
                         case Shapes.CIRCLE:
                             this.shapes.push(Shape.clone<Circle>(Circle, this.tempShape));
                             break;
+                        case Shapes.ELLIPSE:
+                            this.shapes.push(Shape.clone<Ellipse>(Ellipse, this.tempShape));
+                            break;
                         default:
                             break;
                     }
@@ -215,6 +190,8 @@ export default class Engine {
             }
         }   
         
+        this.mouse.resetPressAndRelease();
+
         const updateTime = performance.now() - t1;
 
         // rendering
@@ -223,8 +200,8 @@ export default class Engine {
         this.ctx.fillStyle = "#191e38";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        let sv: Vector2D,
-            ev: Vector2D;
+        // let sv: Vector2D,
+        //     ev: Vector2D;
 
         const worldTopLeft: Vector2D      = this.ScreenToWorld(new Vector2D(0, 0));
         const worldBottomRight: Vector2D  = this.ScreenToWorld(new Vector2D(this.canvas.width, this.canvas.height));
@@ -235,19 +212,20 @@ export default class Engine {
         this.ctx.save();
         this.ctx.fillStyle = "#ccc";
 
-        // TODO: Use SVG or something simillar to draw the grid
-        // this.ctx.drawImage(this.gridImg, worldTopLeft.x, worldTopLeft.y, worldBottomRight.x - worldTopLeft.x, worldBottomRight.y - worldTopLeft.y);
+        // I am a mathematical genius
+        const sx      = (worldTopLeft.x - this.offset.x)             * this.scale * this.grid;
+        const sy      = (worldTopLeft.y - this.offset.y)             * this.scale * this.grid;
+        const ex      = (worldTopLeft.x + this.grid - this.offset.x) * this.scale * this.grid;
+        const ey      = (worldTopLeft.y + this.grid - this.offset.y) * this.scale * this.grid;
+        const offsetX = ex - sx;
+        const offsetY = ey - sy;
 
-        let sx = 0, sy = 0;
+        const width  = worldBottomRight.x - worldTopLeft.x;
+        const height = worldBottomRight.y - worldTopLeft.y;
 
-        // Draw the grid
-        for (let x = worldTopLeft.x; x < worldBottomRight.x; x += this.grid) {
-            for (let y = worldTopLeft.y; y < worldBottomRight.y; y += this.grid) {
-                // this is faster to do manually
-                // time save is about ~5ms
-                sx = (x - this.offset.x) * this.scale;
-                sy = (y - this.offset.y) * this.scale;
-                this.ctx.fillRect(sx, sy, 1, 1);
+        for (let i = 0; i < width; i++) {
+            for (let j = 0; j < height; j++) {
+                this.ctx.fillRect(sx + offsetX * i, sy + offsetY * j, 1, 1);
             }
         }
 
@@ -302,6 +280,7 @@ export default class Engine {
         this.ctx.fillStyle = "#ccc";
         this.ctx.fillText(`Update time (per frame): ${Math.trunc(updateTime)}ms`, 10, 20);
         this.ctx.fillText(`Render time (per frame): ${Math.trunc(renderTime)}ms`, 10, 40);
+        this.ctx.fillText(`FPS: ${Math.trunc(1000 / renderTime)}`, 10, 60);
         this.ctx.restore();
     }
 }
