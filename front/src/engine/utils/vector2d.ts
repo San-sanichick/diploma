@@ -68,4 +68,8 @@ export default class Vector2D {
         this.x = Math.round(this.x);
         this.y = Math.round(this.y);
     }
+
+    toString(): string {
+        return `x: ${this.x}, y: ${this.y}`;
+    }
 } 

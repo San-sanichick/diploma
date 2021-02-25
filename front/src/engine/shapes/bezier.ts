@@ -46,6 +46,13 @@ export default class Bezier extends Shape {
             const ev: Vector2D  = this.WorldToScreen(this.nodes[3].getPosition);
 
             ctx.save();
+                ctx.strokeStyle = this.color;
+                ctx.moveTo(sv.x, sv.y);
+                ctx.bezierCurveTo(mv.x, mv.y, mv2.x, mv2.y, ev.x, ev.y);
+                ctx.stroke();
+            ctx.restore();
+
+            ctx.save();
                 ctx.setLineDash([5, 15]);
                 ctx.strokeStyle = this.color;
                 ctx.beginPath();
@@ -57,15 +64,7 @@ export default class Bezier extends Shape {
                 ctx.stroke();
             ctx.restore();
 
-            ctx.save();
-                ctx.strokeStyle = this.color;
-                ctx.setLineDash([]);
-                ctx.beginPath();
-                ctx.moveTo(sv.x, sv.y);
-                ctx.bezierCurveTo(mv.x, mv.y, mv2.x, mv2.y, ev.x, ev.y);
-                ctx.closePath();
-                ctx.stroke();
-            ctx.restore();
+            
         }
     }
 }

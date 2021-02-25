@@ -32,7 +32,7 @@
         mounted(){
             try {
                 this.engine = new Engine(this.$refs.canvas as HTMLCanvasElement, document.body.clientWidth - 600, 800);
-
+                // this.$router.$
                 this.engine.init();
 
                 const renderer = () => {

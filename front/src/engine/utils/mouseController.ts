@@ -11,14 +11,14 @@ export default class MouseController {
     private curPos: Vector2D;
     private oldPos: Vector2D;
 
-    private delta      = 0;
-    private oldDelta   = 0;
+    private delta                         = 0;
+    private oldDelta                      = 0;
 
-    private mouseWheelStep = 20;
+    private mouseWheelStep                = 20;
 
-    private isPressed  = false;
-    private isHeld     = false;
-    private isReleased = false;
+    private isPressed                     = false;
+    private isHeld                        = false;
+    private isReleased                    = false;
     private heldButton: number | null     = null;
     private releasedButton: number | null = null;
     private pressedButton: number | null  = null;
@@ -47,14 +47,6 @@ export default class MouseController {
             this.pressedButton = e.button;
             this.isPressed = true;
 
-            // // this bullshit is framerate dependant.
-            // // At 30fps you will find that 0ms works like magic
-            // // but if our framerate is optimized, then 0ms is waaaay too fast
-            // setTimeout(() => {
-            //     this.pressedButton = null;
-            //     this.isPressed = false;
-            // }, 1);
-
             this.releasedButton = null;
             this.isHeld = true;
         });
@@ -64,11 +56,6 @@ export default class MouseController {
             this.heldButton = null;
             this.isHeld = false;
             this.isReleased = true;
-
-            // setTimeout(() => {
-            //     this.releasedButton = null;
-            //     this.isReleased = false;
-            // }, 0);
         });
     }
 

@@ -30,6 +30,10 @@ export default class Node {
         return this.parent;
     }
 
+    toString() {
+        return this.pos.toString();
+    }
+
     // /**
     //  * Renders a node with a given color on a given context
     //  * @param ctx 2D canvas context
