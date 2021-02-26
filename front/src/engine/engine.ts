@@ -81,6 +81,8 @@ export default class Engine {
     public init(): void {
         console.dir(this.shapes);
         Shape.worldGrid = this.grid;
+        if (this.ctx === null) return;
+        this.ctx.lineWidth = 1;
     }
 
     /**
@@ -217,9 +219,6 @@ export default class Engine {
         worldTopLeft.floor();
         worldBottomRight.ceil();
 
-        this.ctx.save();
-        this.ctx.strokeStyle = "#2c3563";
-
         // I am a mathematical genius
         // This approach gives a goddamn 4x (4 times, 4 TIMES, FOUR TIMES) speed boost
         // over brute force calculation of coordinates for each point on the grid,
@@ -273,21 +272,27 @@ export default class Engine {
          * to offset them from the boundary to the actual bloody pixel, so we end up with
          * ONE. PIXEL. WIDTH.
          */
-        this.ctx.lineWidth = 1;
+        this.ctx.save();
+        this.ctx.strokeStyle = "#2c3563";
+        console.log(this.ctx.strokeStyle);
 
         // horizontal lines
         for (let i = 0; i < width; i++) {
             const x = fastRounding(sx + offset * i);
+            this.ctx.beginPath();
             this.ctx.moveTo(x + 0.5, 0.5);
             this.ctx.lineTo(x + 0.5, this.canvas.height + 0.5);
+            this.ctx.closePath();
             this.ctx.stroke();
         }
 
         // vertical lines
         for (let j = 0; j < height; j++) {
             const y = fastRounding(sy + offset * j);
+            this.ctx.beginPath();
             this.ctx.moveTo(                    0.5, y + 0.5);
             this.ctx.lineTo(this.canvas.width + 0.5, y + 0.5);
+            this.ctx.closePath();
             this.ctx.stroke();
         }
 
@@ -296,19 +301,19 @@ export default class Engine {
         Shape.worldOffset = this.offset;
         Shape.worldScale = this.scale;
 
-        // this.ctx.save();
+        this.ctx.save();
         if (this.tempShape !== null) {
             this.tempShape.renderSelf(this.ctx);
             this.tempShape.renderNodes(this.ctx);
         }
-        // this.ctx.restore();
+        this.ctx.restore();
 
-        // this.ctx.save();
+        this.ctx.save();
         this.shapes.forEach(shape => {
             shape.renderSelf(this.ctx!);
             shape.renderNodes(this.ctx!);
         });
-        // this.ctx.restore();
+        this.ctx.restore();
 
         
         // draw cursor
