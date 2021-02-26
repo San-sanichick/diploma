@@ -8,8 +8,11 @@ import Bezier                            from "./shapes/bezier";
 
 import Vector2D                          from "./utils/vector2d";
 import MouseController, { MouseButtons } from "./utils/mouseController";
-import { clamp }                         from "./utils/math";
+import { clamp, fastRounding }           from "./utils/math";
 
+/**
+ * Possible engine states
+ */
 enum EngineState {
     SELECT,
     MOVEPOINT,
@@ -19,6 +22,9 @@ enum EngineState {
     DRAW
 }
 
+/**
+ * Supported shapes
+ */
 enum Shapes {
     NONE,
     LINE,
@@ -29,6 +35,10 @@ enum Shapes {
     ARC
 }
 
+/**
+ * CAD engine class
+ * @class
+ */
 export default class Engine {
     private canvas:        HTMLCanvasElement;
     private ctx:           CanvasRenderingContext2D | null;
@@ -80,13 +90,6 @@ export default class Engine {
         // const t1 = performance.now();
 
         // updating
-        const mouseBeforeZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
-        
-        if(this.mouse.mouseScrolled) {
-            this.scale += this.mouse.getDelta * -0.11;
-            this.scale = clamp(this.scale, 9, 50);
-        }
-
         if (this.mouse.getPressedButton === MouseButtons.MIDDLE) {
             this.mouse.recordPosition();
         }
@@ -96,11 +99,18 @@ export default class Engine {
                                      .subtract(this.mouse.getRecordedPosition()).divide(this.scale * this.grid));
             this.mouse.recordPosition();
         }
+
+        const mouseBeforeZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
+        
+        if(this.mouse.mouseScrolled) {
+            this.scale += this.mouse.getDelta * -0.11;
+            this.scale = clamp(this.scale, 9, 50);
+        }
         
         const mouseAfterZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
-        this.offset.add(mouseBeforeZoom.subtract(mouseAfterZoom));
+        this.offset = this.offset.add(mouseBeforeZoom.subtract(mouseAfterZoom));
         
-        this.cursor = mouseAfterZoom.add(new Vector2D(0.5, 0.5).multiply(this.grid));
+        this.cursor = mouseAfterZoom.add(new Vector2D(0, 0).multiply(this.grid));
         this.cursor.floor();
 
         out:
@@ -208,7 +218,7 @@ export default class Engine {
         worldBottomRight.ceil();
 
         this.ctx.save();
-        this.ctx.fillStyle = "#787878";
+        this.ctx.strokeStyle = "#2c3563";
 
         // I am a mathematical genius
         // This approach gives a goddamn 4x (4 times, 4 TIMES, FOUR TIMES) speed boost
@@ -216,17 +226,69 @@ export default class Engine {
         // over all ending up at ~140fps, with 6-7ms per frame, which is bloody brilliant
         // if I can optimize this even further, this could be great
         // TODO: Zoom levels could still be a good idea
-        const sx     = (worldTopLeft.x - this.offset.x) * this.scale * this.grid;
-        const sy     = (worldTopLeft.y - this.offset.y) * this.scale * this.grid;
         const offset = this.grid * this.scale;
+        const sx     = (worldTopLeft.x - this.offset.x) * offset;
+        const sy     = (worldTopLeft.y - this.offset.y) * offset;
 
         const width  = worldBottomRight.x - worldTopLeft.x;
         const height = worldBottomRight.y - worldTopLeft.y;
 
+        // for (let i = 0; i < width; i++) {
+        //     for (let j = 0; j < height; j++) {
+        //         this.ctx.fillRect(sx + offset * i, sy + offset * j, 1, 1);
+        //     }
+        // }
+
+
+
+        // Instead of drawing width * height amount of points, we're gonna draw
+        // width + height amount of lines, increasing our FPS from ~140 to ~300-400 (or 1-2ms per frame)
+
+        /**
+         * Canvas draws lines in an especially retarded way
+         * 
+         * Assume this is a line from (2,5) to (4,5) on a canvas:
+         * 
+         *   0         10
+         * 0 ###########
+         *   #.........#
+         *   #....|....#
+         *   #....|....#
+         *   #....|....#
+         *   #.........#
+         * 6 ###########
+         * 
+         * A normal person would assume that the dots are pixels, but not JS.
+         * JS assumes that dots are BOUNDARIES of the pixels, and draws ON THEM.
+         * As in, draws INBETWEEN PIXELS.
+         * What happens, when you try to draw inbetween pixels?
+         * That's right, you have to fill in both pixels on the right, and on the left of the
+         * boundary. So you end up with double the width.
+         * Let me get this straigh: you set the line thickness to ONE. PIXEl.
+         * And end up with TWO. PIXEL. WIDTH.
+         * 
+         * WHY IS THIS A THING????!!!!
+         * 
+         * Ahem. So in order to avoid that, we calculate the coordinates, round them, and then add 0.5
+         * to offset them from the boundary to the actual bloody pixel, so we end up with
+         * ONE. PIXEL. WIDTH.
+         */
+        this.ctx.lineWidth = 1;
+
+        // horizontal lines
         for (let i = 0; i < width; i++) {
-            for (let j = 0; j < height; j++) {
-                this.ctx.fillRect(sx + offset * i, sy + offset * j, 1, 1);
-            }
+            const x = fastRounding(sx + offset * i);
+            this.ctx.moveTo(x + 0.5, 0.5);
+            this.ctx.lineTo(x + 0.5, this.canvas.height + 0.5);
+            this.ctx.stroke();
+        }
+
+        // vertical lines
+        for (let j = 0; j < height; j++) {
+            const y = fastRounding(sy + offset * j);
+            this.ctx.moveTo(                    0.5, y + 0.5);
+            this.ctx.lineTo(this.canvas.width + 0.5, y + 0.5);
+            this.ctx.stroke();
         }
 
         this.ctx.restore();

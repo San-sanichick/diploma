@@ -1,3 +1,5 @@
+import { fastRounding } from "./math";
+
 export default class Vector2D {
     public x: number;
     public y: number;
@@ -60,13 +62,13 @@ export default class Vector2D {
     }
 
     public floor() {
-        this.x = Math.floor(this.x);
-        this.y = Math.floor(this.y);
+        this.x = ~~this.x;
+        this.y = ~~this.y;
     }
 
     public round() {
-        this.x = Math.round(this.x);
-        this.y = Math.round(this.y);
+        this.x = fastRounding(this.x);
+        this.y = fastRounding(this.y);
     }
 
     toString(): string {

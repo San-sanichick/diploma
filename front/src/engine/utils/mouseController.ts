@@ -57,6 +57,10 @@ export default class MouseController {
             this.isHeld = false;
             this.isReleased = true;
         });
+
+        canvas.addEventListener("contextmenu", (e) => {
+            e.preventDefault();
+        })
     }
 
     get mouseScrolled() {
