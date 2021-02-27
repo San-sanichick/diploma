@@ -1,12 +1,11 @@
 import { createApp } from 'vue';
-import {Router} from "vue-router";
-import {Store} from "vuex";
+import { Router } from "vue-router";
+import { Store } from "vuex";
 import App from './App.vue';
 import axios from "axios";
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import moment from "moment";
 import FlashMessage, { FlashMessagePlugin } from "@smartweb/vue-flash-message";
-
 
 import router from './router';
 import store from './store';

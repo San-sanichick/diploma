@@ -43,6 +43,7 @@ export default class Engine {
     private canvas:        HTMLCanvasElement;
     private ctx:           CanvasRenderingContext2D | null;
     private mouse:         MouseController;
+    // I hope y'all like polymorphism, there's a lot of it here
     private shapes:        Array<Shape>;
     private tempShape:     Shape | null = null;
     private selectedNode:  Node | null  = null;
@@ -67,6 +68,10 @@ export default class Engine {
         this.cursor = new Vector2D(this.canvas.width / 2, this.canvas.height / 2);
     }
 
+    get shapeList(): Array<Shape> {
+        return this.shapes;
+    }
+
     private WorldToScreen(v: Vector2D): Vector2D {
         return v.subtract(this.offset).multiply(this.scale);
     }
@@ -76,19 +81,40 @@ export default class Engine {
     }
 
     /**
-     * Initialization method, sets up nothing, except my well-beign, yea
+     * Initialization method, sets up the initial state of the engine
+     * @returns true if initialization is successful, false otherwise
      */
-    public init(): void {
+    public init(): boolean {
         console.dir(this.shapes);
         Shape.worldGrid = this.grid;
-        if (this.ctx === null) return;
+
+        if (this.ctx === null) return false;
         this.ctx.lineWidth = 1;
+
+        return true;
+    }
+
+    /**
+     * Starts engine's update routine cycle
+     */
+    public start(): void {
+        const updateRoutine = () => {
+            try {
+                this.update();
+                requestAnimationFrame(updateRoutine);
+            } catch(e) {
+                console.error(e);
+                return;
+            }
+        }
+
+        requestAnimationFrame(updateRoutine);
     }
 
     /**
      * Update method, has to be run through requestAnimationFrame
      */
-    public update(): void {
+    private update(): void {
         // const t1 = performance.now();
 
         // updating
@@ -105,14 +131,14 @@ export default class Engine {
         const mouseBeforeZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
         
         if(this.mouse.mouseScrolled) {
-            this.scale += this.mouse.getDelta * -0.11;
-            this.scale = clamp(this.scale, 9, 50);
+            this.scale += this.mouse.getDelta * -0.2;
+            this.scale = clamp(this.scale, 5,200);
         }
         
         const mouseAfterZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
         this.offset = this.offset.add(mouseBeforeZoom.subtract(mouseAfterZoom));
         
-        this.cursor = mouseAfterZoom.add(new Vector2D(0, 0).multiply(this.grid));
+        this.cursor = mouseAfterZoom.add(new Vector2D(0.5, 0.5).multiply(this.grid));
         this.cursor.floor();
 
         out:
@@ -120,19 +146,19 @@ export default class Engine {
             if (this.tempShape === null) {
                 switch(this.curTypeToDraw) {
                     case Shapes.LINE: 
-                        this.tempShape = new Line();
+                        this.tempShape = new Line("Line " + this.shapes.length);
                         break;
                     case Shapes.RECT:
-                        this.tempShape = new Rectangle();
+                        this.tempShape = new Rectangle("Rectangle " + this.shapes.length);
                         break;
                     case Shapes.CIRCLE:
-                        this.tempShape = new Circle();
+                        this.tempShape = new Circle("Circle " + this.shapes.length);
                         break;
                     case Shapes.ELLIPSE:
-                        this.tempShape = new Ellipse();
+                        this.tempShape = new Ellipse("Ellipse " + this.shapes.length);
                         break;
                     case Shapes.BEZIER:
-                        this.tempShape = new Bezier();
+                        this.tempShape = new Bezier("Bezier " + this.shapes.length);
                         break;
                     default:
                         break out;
@@ -274,7 +300,6 @@ export default class Engine {
          */
         this.ctx.save();
         this.ctx.strokeStyle = "#2c3563";
-        console.log(this.ctx.strokeStyle);
 
         // horizontal lines
         for (let i = 0; i < width; i++) {
@@ -321,7 +346,7 @@ export default class Engine {
 
         this.ctx.save();
             this.ctx.setLineDash([10, 15]);
-            this.ctx.strokeStyle = "#ccc";
+            this.ctx.strokeStyle = "rgba(100, 100, 100, 1)";
             this.ctx.beginPath();
             this.ctx.moveTo(curV.x, 0);
             this.ctx.lineTo(curV.x, this.canvas.height);
@@ -334,12 +359,15 @@ export default class Engine {
             this.ctx.stroke();
         this.ctx.restore();
 
-        this.ctx.strokeStyle = "#fff";
+        // this.ctx.strokeStyle = "#fff";
+        this.ctx.save();
+        this.ctx.strokeStyle = "rgba(100, 100, 100, 1)";
         this.ctx.beginPath();
         this.ctx.arc(curV.x, curV.y, 5, 0, 2 * Math.PI);
         this.ctx.closePath();
         this.ctx.stroke();
-        
+        this.ctx.restore();
+
         this.ctx.font = "14px sans-serif";
         this.ctx.fillStyle = "#fff";
         this.ctx.fillText(`x: ${this.mouse.getCurrentPosition().x}, y: ${this.mouse.getCurrentPosition().y}`, 
@@ -354,7 +382,7 @@ export default class Engine {
         // for debug purposes
         this.ctx.font = "18px sans-serif";
         this.ctx.fillStyle = "#ccc";
-        this.ctx.fillText(`Render time (per frame): ${Math.trunc(renderTime)}ms`, 10, 20);
+        this.ctx.fillText(`Render time (per frame): ${(renderTime).toPrecision(3)}ms`, 10, 20);
         this.ctx.fillText(`FPS: ${Math.trunc(1000 / renderTime)}`,                10, 40);
         this.ctx.fillText(`Shapes on scene: ${this.shapes.length}`,               10, 60);
         this.ctx.fillText(`Temp shape: ${this.tempShape?.name ?? "none"}`,        10, 80);

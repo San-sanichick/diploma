@@ -26,7 +26,7 @@ function clamp(val: number, min: number, max: number): number {
  * @param val Number to be rounded
  */
 function fastRounding(val: number): number {
-    return ((val + 0.5) << 1) >> 1;
+    return (val + (val > 0 ? 0.5 : -0.5)) << 0;
 }
 
 export { clamp, mapRange, fastRounding }

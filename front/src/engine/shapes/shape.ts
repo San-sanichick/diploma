@@ -128,4 +128,8 @@ export default abstract class Shape {
             ctx.restore();
         })
     }
+
+    public toString(): string {
+        return `Name: ${this.name}, nodes: ${this.nodes.length}`
+    }
 }

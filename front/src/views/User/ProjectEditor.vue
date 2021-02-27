@@ -14,13 +14,31 @@
             <canvas ref="canvas"></canvas>
         </div>
     </div>
+    <teleport to="body">
+        <Properties>
+            <template v-slot:header>
+                Objects
+            </template>
+            <template v-slot:main> 
+                <div v-for="shape in shapesOnScene" :key="shape.name" style="padding: 10px;">
+                    {{ shape.toString() }}
+                </div>
+            </template>
+        </Properties>
+    </teleport>
 </template>
 
 <script lang="ts">
     import { defineComponent } from 'vue';
+    import Properties from "../../components/draggable/properties.vue";
+
     import Engine, { EngineState, Shapes } from "../../engine/engine";
+    import Shape from "../../engine/shapes/shape";
 
     export default defineComponent({
+        components: {
+            Properties,
+        },
         data() {
             return {
                 id: this.$route.params.id,
@@ -29,23 +47,19 @@
                 engineState: EngineState
             }
         },
+        computed: {
+            shapesOnScene(): Array<Shape> {
+                return this.engine.shapeList;
+            }
+        },
         mounted(){
             try {
                 this.engine = new Engine(this.$refs.canvas as HTMLCanvasElement, document.body.clientWidth - 600, 800);
                 // this.$router.$
-                this.engine.init();
+                 if (this.engine.init()) {
+                     this.engine.start();
+                 }
 
-                const renderer = () => {
-                try {
-                    this.engine.update();
-                    requestAnimationFrame(renderer);
-                } catch(e) {
-                    console.error(e);
-                    return;
-                }
-            }
-
-            requestAnimationFrame(renderer);
             } catch (err) {
                 console.error(err);
             }
@@ -97,5 +111,6 @@
     .page {
         padding: 90px 0 0 0;
 
+        
     }
 </style>
