@@ -7,6 +7,7 @@ import Ellipse                           from "./shapes/ellipse";
 import Bezier                            from "./shapes/bezier";
 
 import Vector2D                          from "./utils/vector2d";
+import Matrix                            from "./utils/matrix";
 import MouseController, { MouseButtons } from "./utils/mouseController";
 import { clamp, fastRounding }           from "./utils/math";
 
@@ -90,6 +91,19 @@ export default class Engine {
 
         if (this.ctx === null) return false;
         this.ctx.lineWidth = 1;
+
+        const m = new Matrix([
+            [1, 0, 0],
+            [0, 1, 0],
+            [1, 0, 1]
+        ]);
+        const m2 = new Matrix([
+            [2, 4, 2],
+            [1, 3, 3],
+            [2, 45, 7]
+        ])
+
+        console.table(Matrix.multMatrixByMatrix(m, m2).value);
 
         return true;
     }
@@ -222,9 +236,9 @@ export default class Engine {
         }
         
         this.mouse.resetPressAndRelease();
-
+        
         // const updateTime = performance.now() - t1;
-
+        
         // rendering
         this.render();
     }
@@ -236,7 +250,8 @@ export default class Engine {
         if (this.ctx === null) return;
         const t2 = performance.now();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.fillStyle = "#191e38";
+        // this.ctx.fillStyle = "#191e38";
+        this.ctx.fillStyle = "#272d38";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         const worldTopLeft: Vector2D      = this.ScreenToWorld(new Vector2D(0, 0));
@@ -257,14 +272,6 @@ export default class Engine {
 
         const width  = worldBottomRight.x - worldTopLeft.x;
         const height = worldBottomRight.y - worldTopLeft.y;
-
-        // for (let i = 0; i < width; i++) {
-        //     for (let j = 0; j < height; j++) {
-        //         this.ctx.fillRect(sx + offset * i, sy + offset * j, 1, 1);
-        //     }
-        // }
-
-
 
         // Instead of drawing width * height amount of points, we're gonna draw
         // width + height amount of lines, increasing our FPS from ~140 to ~300-400 (or 1-2ms per frame)
@@ -299,32 +306,41 @@ export default class Engine {
          * ONE. PIXEL. WIDTH.
          */
         this.ctx.save();
-        this.ctx.strokeStyle = "#2c3563";
+        this.ctx.strokeStyle = "#323848";
+
+        let worldX = worldTopLeft.x,
+            worldY = worldTopLeft.y;
 
         // horizontal lines
         for (let i = 0; i < width; i++) {
             const x = fastRounding(sx + offset * i);
+            if (worldX % 5 == 0) this.ctx.lineWidth = 2;
             this.ctx.beginPath();
             this.ctx.moveTo(x + 0.5, 0.5);
             this.ctx.lineTo(x + 0.5, this.canvas.height + 0.5);
             this.ctx.closePath();
             this.ctx.stroke();
+            this.ctx.lineWidth = 1;
+            worldX++;
         }
 
         // vertical lines
         for (let j = 0; j < height; j++) {
             const y = fastRounding(sy + offset * j);
+            if (worldY % 5 == 0) this.ctx.lineWidth = 2;
             this.ctx.beginPath();
             this.ctx.moveTo(                    0.5, y + 0.5);
             this.ctx.lineTo(this.canvas.width + 0.5, y + 0.5);
             this.ctx.closePath();
             this.ctx.stroke();
+            this.ctx.lineWidth = 1;
+            worldY++;
         }
 
         this.ctx.restore();
 
         Shape.worldOffset = this.offset;
-        Shape.worldScale = this.scale;
+        Shape.worldScale  = this.scale;
 
         this.ctx.save();
         if (this.tempShape !== null) {
@@ -359,13 +375,13 @@ export default class Engine {
             this.ctx.stroke();
         this.ctx.restore();
 
-        // this.ctx.strokeStyle = "#fff";
+
         this.ctx.save();
-        this.ctx.strokeStyle = "rgba(100, 100, 100, 1)";
-        this.ctx.beginPath();
-        this.ctx.arc(curV.x, curV.y, 5, 0, 2 * Math.PI);
-        this.ctx.closePath();
-        this.ctx.stroke();
+            this.ctx.strokeStyle = "rgba(100, 100, 100, 1)";
+            this.ctx.beginPath();
+            this.ctx.arc(curV.x, curV.y, 5, 0, 2 * Math.PI);
+            this.ctx.closePath();
+            this.ctx.stroke();
         this.ctx.restore();
 
         this.ctx.font = "14px sans-serif";
@@ -377,7 +393,6 @@ export default class Engine {
                                 this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 25);
 
         const renderTime = performance.now() - t2;
-
 
         // for debug purposes
         this.ctx.font = "18px sans-serif";

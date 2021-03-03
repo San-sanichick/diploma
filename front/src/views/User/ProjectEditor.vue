@@ -11,7 +11,7 @@
             <button :value="shapes[6]" @click="setEngineState">draw arc</button>
         </div>
         <div>
-            <canvas ref="canvas"></canvas>
+            <canvas class="canvas" ref="canvas"></canvas>
         </div>
     </div>
     <teleport to="body">
@@ -111,6 +111,8 @@
     .page {
         padding: 90px 0 0 0;
 
-        
+        .canvas {
+            cursor: none;
+        }
     }
 </style>
