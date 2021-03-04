@@ -15,9 +15,10 @@ export default class Arc extends Shape {
             const sv: Vector2D = this.WorldToScreen(this.nodes[0].getPosition);
             const ev: Vector2D = this.WorldToScreen(this.nodes[1].getPosition);
 
+            ctx.strokeStyle = this.isSelected ? "red" : this.color;
+
             ctx.save();
                 ctx.setLineDash([5, 15]);
-                ctx.strokeStyle = this.color;
                 ctx.beginPath();
                 ctx.moveTo(sv.x, sv.y);
                 ctx.lineTo(ev.x, ev.y);
@@ -27,7 +28,6 @@ export default class Arc extends Shape {
 
             ctx.save();
                 ctx.fillStyle = "";
-                ctx.strokeStyle = this.color;
                 ctx.setLineDash([]);
                 ctx.beginPath();
                 ctx.arc(sv.x, sv.y, radius * Shape.worldScale * Shape.worldGrid, 0, 2 * Math.PI, false);

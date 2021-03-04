@@ -1,5 +1,6 @@
 import Node from "./node";
 import Vector2D from "../utils/vector2d";
+import Matrix from "../utils/matrix";
 
 /**
  * Abstract shape class, use as basis for every other shape
@@ -12,6 +13,7 @@ export default abstract class Shape {
     private   maxNodes: number;
     public    color: string;
     public    name: string;
+    public    isSelected: boolean;
     /**
      * An array of nodes in a shape. The number of nodes is dictated by maxNodes
      * @protected
@@ -27,6 +29,7 @@ export default abstract class Shape {
         this.name = name;
         this.nodes = new Array<Node>();
         this.color = "#888";
+        this.isSelected = false;
     }
 
     protected WorldToScreen(v: Vector2D): Vector2D {
@@ -85,14 +88,90 @@ export default abstract class Shape {
         return null;
     }
 
-    translate(deltaDist: Vector2D): void {
-        // later
+    isInRectangle(rectPoint1: Vector2D, rectPoint2: Vector2D): boolean {
+        for (const node of this.nodes) {
+            if (node.getPosition.x <= rectPoint1.x || node.getPosition.y <= rectPoint1.y 
+                || node.getPosition.x >= rectPoint2.x || node.getPosition.y >= rectPoint2.y){
+                return false;
+            }
+        }
+        return true;
     }
+
+    translate(deltaDist: Vector2D): void {
+        // Translation matrix
+        const trMatrix = new Matrix([
+            [1          , 0          , 0],
+            [0          , 1          , 0],
+            [deltaDist.x, deltaDist.y, 1]
+        ]);
+
+        const coords = [];
+        for (const node of this.nodes) {
+            coords.push([node.getPosition.x, node.getPosition.y, 1]);
+        }
+
+        const coordMatrix = new Matrix(coords);
+
+        const newCoord = Matrix.multMatrixByMatrix(coordMatrix, trMatrix);
+        
+        for (let i = 0; i < this.nodes.length; i++) {
+            const temp = new Vector2D(newCoord.value[i][0], newCoord.value[i][1]);
+            temp.round();
+            this.nodes[i].setPosition = temp;
+        }
+    }
+
     rotate(angle: number): void {
         // later
     }
-    resize(sizeCoeff: number): void {
-        // later
+
+    /**
+     * Resizes the shape relative to current mouse position
+     * 
+     * Also it doesn't bloody work
+     * @param sizeCoeff resize coefficient
+     * @param pos current position of the mouse
+     */
+    resize(sizeCoeff: number, pos: Vector2D): void {
+        // translate to origin
+        const trMatrix = new Matrix([
+            [1, 0, 0],
+            [0, 1, 0],
+            [-pos.x, -pos.y, 0]
+        ])
+
+        // scale matrix
+        const scMatrix = new Matrix([
+            [sizeCoeff  , 0          , 0        ],
+            [0          , sizeCoeff  , 0        ],
+            [0          , 0          , 1        ]
+        ]);
+
+        // move it back to initial position
+        const reTrMatrix = new Matrix([
+            [1, 0, 0],
+            [0, 1, 0],
+            [pos.x, pos.y, 0]
+        ]);
+
+        // multiply all that stuff
+        const m = Matrix.multMatrixByMatrix(Matrix.multMatrixByMatrix(trMatrix, scMatrix), reTrMatrix);
+
+        const coords = [];
+        for (const node of this.nodes) {
+            coords.push([node.getPosition.x, node.getPosition.y, 1]);
+        }
+
+        const coordMatrix = new Matrix(coords);
+
+        const newCoord = Matrix.multMatrixByMatrix(coordMatrix, m);
+        
+        console.log(newCoord.value);
+
+        for (let i = 0; i < this.nodes.length; i++) {
+            this.nodes[i].setPosition = new Vector2D(newCoord.value[i][0], newCoord.value[i][1]);
+        }
     }
 
     setNodeColor(color: string) {

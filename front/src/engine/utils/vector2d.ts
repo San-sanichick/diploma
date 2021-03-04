@@ -56,6 +56,10 @@ export default class Vector2D {
 
     // some nice things
 
+    public static abs(v2d: Vector2D) {
+        return new Vector2D(Math.abs(v2d.x), Math.abs(v2d.y));
+    }
+
     public ceil() {
         this.x = Math.ceil(this.x);
         this.y = Math.ceil(this.y);
@@ -67,9 +71,19 @@ export default class Vector2D {
     }
 
     public round() {
-        this.x = fastRounding(this.x);
-        this.y = fastRounding(this.y);
+        // this.x = fastRounding(this.x);
+        // this.y = fastRounding(this.y);
+        this.x = Math.round(this.x);
+        this.y = Math.round(this.y);
     }
+
+    public equals(v2d: Vector2D): boolean {
+        return this.x == fastRounding(v2d.x) && this.y == fastRounding(v2d.y);
+    }
+
+    // public compareTo(v2d: Vector2D): -1 | 0 | 1 {
+    //     if (this.x < v2d.x )
+    // }
 
     toString(): string {
         return `x: ${this.x}, y: ${this.y}`;

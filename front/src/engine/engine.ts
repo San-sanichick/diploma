@@ -41,23 +41,25 @@ enum Shapes {
  * @class
  */
 export default class Engine {
-    private canvas:        HTMLCanvasElement;
-    private ctx:           CanvasRenderingContext2D | null;
-    private mouse:         MouseController;
+    private canvas:         HTMLCanvasElement;
+    private ctx:            CanvasRenderingContext2D | null;
+    private mouse:          MouseController;
     // I hope y'all like polymorphism, there's a lot of it here
-    private shapes:        Array<Shape>;
-    private tempShape:     Shape | null = null;
-    private selectedNode:  Node | null  = null;
+    private shapes:         Array<Shape>;
+    private selectedShapes: Set<Shape>   = new Set<Shape>();
+    private tempShape:      Shape | null = null;
+    private selectedNode:   Node | null  = null;
     private scale = 10.0;
     private grid = 1.0;
-    private offset: Vector2D = new Vector2D(0.0, 0.0);
-    private cursor: Vector2D;
-    public engineState: EngineState = EngineState.DRAW;
-    public curTypeToDraw: Shapes = Shapes.NONE;
+    private offset:         Vector2D     = new Vector2D(0.0, 0.0);
+    private cursor:         Vector2D;
+    private cursorOldPos:   Vector2D     = new Vector2D(0.0, 0.0);
+    public engineState:     EngineState  = EngineState.DRAW;
+    public curTypeToDraw:   Shapes       = Shapes.NONE;
 
     constructor(canvas: HTMLCanvasElement, width?: number, height?: number) {
         this.canvas        = canvas;
-        this.ctx           = this.canvas.getContext("2d", { alpha: false });
+        this.ctx           = this.canvas.getContext("2d");
 
         if (this.ctx === null) throw new Error("error when getting 2d context");
         
@@ -91,19 +93,6 @@ export default class Engine {
 
         if (this.ctx === null) return false;
         this.ctx.lineWidth = 1;
-
-        const m = new Matrix([
-            [1, 0, 0],
-            [0, 1, 0],
-            [1, 0, 1]
-        ]);
-        const m2 = new Matrix([
-            [2, 4, 2],
-            [1, 3, 3],
-            [2, 45, 7]
-        ])
-
-        console.table(Matrix.multMatrixByMatrix(m, m2).value);
 
         return true;
     }
@@ -234,13 +223,60 @@ export default class Engine {
         if (this.selectedNode !== null) {
             this.selectedNode.setPosition = this.cursor;
         }
-        
-        this.mouse.resetPressAndRelease();
-        
+
+        if (this.engineState === EngineState.SELECT) {
+            if (this.mouse.getPressedButton === MouseButtons.LEFT) {
+                this.cursorOldPos = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
+            }
+
+            if (this.mouse.getHeldButton === MouseButtons.LEFT) {
+                this.selectedShapes.clear();
+                for (const shape of this.shapes) {
+                    shape.isSelected = false;
+                    if (shape.isInRectangle(this.cursorOldPos, this.cursor)) {
+                        shape.isSelected = true;
+                        this.selectedShapes.add(shape);
+                    }
+                }
+            }
+        }
+
+        if (this.engineState === EngineState.TRANSLATE) {
+            if (this.mouse.getPressedButton === MouseButtons.LEFT) {
+                this.cursorOldPos = Vector2D.copyFrom(this.cursor);
+            }
+
+            if (this.mouse.getHeldButton === MouseButtons.LEFT) {
+                for (const shape of this.selectedShapes) {
+                    if (this.cursor.equals(this.cursorOldPos)) break;
+                    shape.translate(this.cursor.subtract(this.cursorOldPos));
+                }
+            }
+            this.cursorOldPos = Vector2D.copyFrom(this.cursor);
+        }
+
+        if (this.engineState === EngineState.SCALE) {
+            // console.log("RESIZING");
+            if (this.mouse.getPressedButton === MouseButtons.LEFT) {
+                this.cursorOldPos = Vector2D.copyFrom(this.cursor);
+            }
+
+            if (this.mouse.getHeldButton === MouseButtons.LEFT) {
+                for (const shape of this.selectedShapes) {
+                    if (this.cursor.equals(this.cursorOldPos)) break;
+                    shape.resize(1, this.cursor);
+                }
+            }
+            this.cursorOldPos = Vector2D.copyFrom(this.cursorOldPos);
+        }
+
         // const updateTime = performance.now() - t1;
         
         // rendering
         this.render();
+
+        // :)
+        this.mouse.resetPressAndRelease();
     }
 
     /**
@@ -339,6 +375,17 @@ export default class Engine {
 
         this.ctx.restore();
 
+        this.ctx.save();
+
+        const origin = this.WorldToScreen(new Vector2D(0, 0));
+            this.ctx.strokeStyle = "rgba(0, 150, 150, 1)";
+            this.ctx.beginPath();
+            this.ctx.arc(origin.x, origin.y, 5, 0, 2 * Math.PI);
+            this.ctx.closePath();
+            this.ctx.stroke();
+
+        this.ctx.restore();
+
         Shape.worldOffset = this.offset;
         Shape.worldScale  = this.scale;
 
@@ -356,13 +403,30 @@ export default class Engine {
         });
         this.ctx.restore();
 
+        this.ctx.save();
+        if (this.engineState === EngineState.SELECT) {
+            if (this.mouse.getHeldButton === MouseButtons.LEFT) {
+                const sx = (this.cursorOldPos.x - this.offset.x) * offset;
+                const sy = (this.cursorOldPos.y - this.offset.y) * offset;
+                const ex = (this.cursor.x       - this.offset.x) * offset;
+                const ey = (this.cursor.y       - this.offset.y) * offset;
+
+                this.ctx.strokeStyle = "#696";
+                this.ctx.fillStyle = "rgba(186, 255, 205, 0.5)";
+                this.ctx.fillRect(sx, sy, ex - sx, ey - sy);
+                this.ctx.stroke();
+            }
+        }
+
+        this.ctx.restore();
+
         
         // draw cursor
         const curV = this.WorldToScreen(this.cursor);
 
         this.ctx.save();
             this.ctx.setLineDash([10, 15]);
-            this.ctx.strokeStyle = "rgba(100, 100, 100, 1)";
+            this.ctx.strokeStyle = "rgba(100, 100, 100, 0.5)";
             this.ctx.beginPath();
             this.ctx.moveTo(curV.x, 0);
             this.ctx.lineTo(curV.x, this.canvas.height);
@@ -377,7 +441,7 @@ export default class Engine {
 
 
         this.ctx.save();
-            this.ctx.strokeStyle = "rgba(100, 100, 100, 1)";
+            this.ctx.strokeStyle = "rgba(150, 150, 150, 1)";
             this.ctx.beginPath();
             this.ctx.arc(curV.x, curV.y, 5, 0, 2 * Math.PI);
             this.ctx.closePath();

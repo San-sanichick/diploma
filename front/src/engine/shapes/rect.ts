@@ -14,7 +14,7 @@ export default class Rectangle extends Shape {
 
         // ctx.save();
         ctx.fillStyle = "";
-        ctx.strokeStyle = this.color;
+        ctx.strokeStyle = this.isSelected ? "red" : this.color;
 
         /* calculate dx and dy of the rectange
            by subtracting its staring point from its ending point

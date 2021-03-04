@@ -2,19 +2,27 @@
     <div class="page">
         <div class="page-header">
             <button @click="goBack">back</button>
-            <button :value="engineState[1]" @click="setEngineState">point edit</button>
-            <button :value="shapes[1]" @click="setEngineState">draw line</button>
-            <button :value="shapes[2]" @click="setEngineState">draw rectangle</button>
-            <button :value="shapes[3]" @click="setEngineState">draw circle</button>
-            <button :value="shapes[4]" @click="setEngineState">draw ellipse</button>
-            <button :value="shapes[5]" @click="setEngineState">draw bezier curve</button>
-            <button :value="shapes[6]" @click="setEngineState">draw arc</button>
+            <div>
+                <button :value="engineState[0]" @click="setEngineState">select shape</button>
+                <button :value="engineState[1]" @click="setEngineState">point edit</button>
+                <button :value="engineState[2]" @click="setEngineState">translate shape</button>
+                <button :value="engineState[3]" @click="setEngineState">rotate shape</button>
+                <button :value="engineState[4]" @click="setEngineState">scale shape</button>
+            </div>
+            <div>
+                <button :value="shapes[1]" @click="setEngineState">draw line</button>
+                <button :value="shapes[2]" @click="setEngineState">draw rectangle</button>
+                <button :value="shapes[3]" @click="setEngineState">draw circle</button>
+                <button :value="shapes[4]" @click="setEngineState">draw ellipse</button>
+                <button :value="shapes[5]" @click="setEngineState">draw bezier curve</button>
+                <button :value="shapes[6]" @click="setEngineState">draw arc</button>
+            </div>
         </div>
         <div>
             <canvas class="canvas" ref="canvas"></canvas>
         </div>
     </div>
-    <teleport to="body">
+    <!-- <teleport to="body">
         <Properties>
             <template v-slot:header>
                 Objects
@@ -25,20 +33,20 @@
                 </div>
             </template>
         </Properties>
-    </teleport>
+    </teleport> -->
 </template>
 
 <script lang="ts">
     import { defineComponent } from 'vue';
-    import Properties from "../../components/draggable/properties.vue";
+    // import Properties from "../../components/draggable/properties.vue";
 
     import Engine, { EngineState, Shapes } from "../../engine/engine";
     import Shape from "../../engine/shapes/shape";
 
     export default defineComponent({
-        components: {
-            Properties,
-        },
+        // components: {
+        //     Properties,
+        // },
         data() {
             return {
                 id: this.$route.params.id,
@@ -75,6 +83,18 @@
                 switch(state) {
                     case "MOVEPOINT": 
                         this.engine.engineState = EngineState.MOVEPOINT;
+                        break;
+                    case "SELECT": 
+                        this.engine.engineState = EngineState.SELECT;
+                        break;
+                    case "TRANSLATE": 
+                        this.engine.engineState = EngineState.TRANSLATE;
+                        break;
+                    case "ROTATE": 
+                        this.engine.engineState = EngineState.ROTATE;
+                        break;
+                    case "SCALE": 
+                        this.engine.engineState = EngineState.SCALE;
                         break;
                     case "LINE":
                         this.engine.engineState = EngineState.DRAW;

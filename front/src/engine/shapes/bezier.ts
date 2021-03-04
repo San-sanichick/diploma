@@ -45,7 +45,7 @@ export default class Bezier extends Shape {
             const mv2: Vector2D = this.WorldToScreen(this.nodes[2].getPosition);
             const ev: Vector2D  = this.WorldToScreen(this.nodes[3].getPosition);
 
-            ctx.strokeStyle = this.color;
+            ctx.strokeStyle = this.isSelected ? "red" : this.color;
 
             ctx.save();
                 // ctx.strokeStyle = this.color;

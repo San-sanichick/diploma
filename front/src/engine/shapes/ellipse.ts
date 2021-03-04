@@ -47,10 +47,11 @@ export default class Ellipse extends Shape {
 
             const angle = Math.acos(Vector2D.dot(mvsv, svev) / (mvsv.mag() * rad2));
 
+            ctx.strokeStyle = this.isSelected ? "red" : this.color;
 
             ctx.save();
                 ctx.setLineDash([5, 15]);
-                ctx.strokeStyle = this.color;
+                // ctx.strokeStyle = this.color;
                 ctx.beginPath();
                 ctx.moveTo(sv.x, sv.y);
                 ctx.lineTo(mv.x, mv.y);
@@ -60,7 +61,7 @@ export default class Ellipse extends Shape {
 
             ctx.save();
                 ctx.setLineDash([5, 15]);
-                ctx.strokeStyle = this.color;
+                // ctx.strokeStyle = this.color;
                 ctx.beginPath();
                 ctx.moveTo(sv.x, sv.y);
                 ctx.lineTo(ev.x, ev.y);
@@ -70,7 +71,7 @@ export default class Ellipse extends Shape {
 
             ctx.save();
                 ctx.fillStyle = "";
-                ctx.strokeStyle = this.color;
+                // ctx.strokeStyle = this.color;
                 ctx.setLineDash([]);
                 ctx.beginPath();
                 ctx.ellipse(sv.x, sv.y, rad2 * Shape.worldScale * Shape.worldGrid, rad1 * Shape.worldScale * Shape.worldGrid, angle, 0, 2 * Math.PI, false);
