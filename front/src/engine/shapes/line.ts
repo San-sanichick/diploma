@@ -1,5 +1,5 @@
 import Shape from "./shape";
-import Vector2D from "../utils/vector2d";
+import Vec2 from "../utils/vector2d";
 
 export default class Line extends Shape {
     constructor(name = "Line") {
@@ -10,8 +10,8 @@ export default class Line extends Shape {
         // console.log(Shape.worldOffset);
 
         if (this.nodes.length > 1) {
-            const sv: Vector2D = this.WorldToScreen(this.nodes[0].getPosition);
-            const ev: Vector2D = this.WorldToScreen(this.nodes[1].getPosition);
+            const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
+            const ev: Vec2 = this.WorldToScreen(this.nodes[1].getPosition);
 
             // Contrary to my assumption, checking if shape is off screen slows everything
             // significantly down, so don't do it

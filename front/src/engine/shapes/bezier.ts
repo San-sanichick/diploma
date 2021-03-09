@@ -1,5 +1,5 @@
 import Shape from "./shape";
-import Vector2D from "../utils/vector2d";
+import Vec2 from "../utils/vector2d";
 
 export default class Bezier extends Shape {
     constructor(name = "Bezier") {
@@ -10,8 +10,8 @@ export default class Bezier extends Shape {
         if (this.nodes.length <= 1) return;
 
         if (this.nodes.length < 3) {
-            const sv: Vector2D = this.WorldToScreen(this.nodes[0].getPosition);
-            const ev: Vector2D = this.WorldToScreen(this.nodes[1].getPosition);
+            const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
+            const ev: Vec2 = this.WorldToScreen(this.nodes[1].getPosition);
 
             // console.log(sv);
             // console.log(this.color);
@@ -25,9 +25,9 @@ export default class Bezier extends Shape {
             ctx.stroke();
             ctx.restore();
         } else if (this.nodes.length < 4) {
-            const sv: Vector2D = this.WorldToScreen(this.nodes[0].getPosition);
-            const mv: Vector2D = this.WorldToScreen(this.nodes[1].getPosition);
-            const ev: Vector2D = this.WorldToScreen(this.nodes[2].getPosition);
+            const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
+            const mv: Vec2 = this.WorldToScreen(this.nodes[1].getPosition);
+            const ev: Vec2 = this.WorldToScreen(this.nodes[2].getPosition);
 
             ctx.save();
                 ctx.setLineDash([5, 15]);
@@ -40,10 +40,10 @@ export default class Bezier extends Shape {
                 ctx.stroke();
             ctx.restore();
         } else if (this.nodes.length === 4) {
-            const sv: Vector2D  = this.WorldToScreen(this.nodes[0].getPosition);
-            const mv: Vector2D  = this.WorldToScreen(this.nodes[1].getPosition);
-            const mv2: Vector2D = this.WorldToScreen(this.nodes[2].getPosition);
-            const ev: Vector2D  = this.WorldToScreen(this.nodes[3].getPosition);
+            const sv: Vec2  = this.WorldToScreen(this.nodes[0].getPosition);
+            const mv: Vec2  = this.WorldToScreen(this.nodes[1].getPosition);
+            const mv2: Vec2 = this.WorldToScreen(this.nodes[2].getPosition);
+            const ev: Vec2  = this.WorldToScreen(this.nodes[3].getPosition);
 
             ctx.strokeStyle = this.isSelected ? "red" : this.color;
 

@@ -1,5 +1,5 @@
 import Shape from "./shape";
-import Vector2D from "../utils/vector2d";
+import Vec2 from "../utils/vector2d";
 
 export default class Arc extends Shape {
     constructor(name = "Arc") {
@@ -12,8 +12,8 @@ export default class Arc extends Shape {
         if (this.nodes.length < 3) {
             const radius = this.nodes[0].getPosition.subtract(this.nodes[1].getPosition).mag();
 
-            const sv: Vector2D = this.WorldToScreen(this.nodes[0].getPosition);
-            const ev: Vector2D = this.WorldToScreen(this.nodes[1].getPosition);
+            const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
+            const ev: Vec2 = this.WorldToScreen(this.nodes[1].getPosition);
 
             ctx.strokeStyle = this.isSelected ? "red" : this.color;
 

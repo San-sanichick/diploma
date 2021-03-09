@@ -1,6 +1,6 @@
 import { fastRounding } from "./math";
 
-export default class Vector2D {
+export default class Vec2 {
     public x: number;
     public y: number;
 
@@ -21,8 +21,8 @@ export default class Vector2D {
      * Creates a copy of a given vector
      * @param v2d An instance of a Vector2D to copy from
      */
-    public static copyFrom(v2d: Vector2D) {
-        return new Vector2D(v2d.x, v2d.y);
+    public static copyFrom(v2d: Vec2) {
+        return new Vec2(v2d.x, v2d.y);
     }
 
     // basic math operations
@@ -32,32 +32,32 @@ export default class Vector2D {
      * @param v2d1 first vector
      * @param v2d2 second vector
      */
-    public subtract(v2d: Vector2D): Vector2D {
-        return new Vector2D(this.x - v2d.x, this.y - v2d.y);
+    public subtract(v2d: Vec2): Vec2 {
+        return new Vec2(this.x - v2d.x, this.y - v2d.y);
     }
 
-    public add(v2d: Vector2D) {
-        return new Vector2D(this.x + v2d.x, this.y + v2d.y);
+    public add(v2d: Vec2) {
+        return new Vec2(this.x + v2d.x, this.y + v2d.y);
     }
 
     // scalar operations
 
-    public multiply(coeff: number): Vector2D {
-        return new Vector2D(this.x * coeff, this.y * coeff);
+    public multiply(coeff: number): Vec2 {
+        return new Vec2(this.x * coeff, this.y * coeff);
     }
 
-    public divide(coeff: number): Vector2D {
-        return new Vector2D(this.x / coeff, this.y / coeff);
+    public divide(coeff: number): Vec2 {
+        return new Vec2(this.x / coeff, this.y / coeff);
     }
 
-    public static dot(v2d1: Vector2D, v2d2: Vector2D): number {
+    public static dot(v2d1: Vec2, v2d2: Vec2): number {
         return v2d1.x * v2d2.x + v2d1.y * v2d2.y;
     }
 
     // some nice things
 
-    public static abs(v2d: Vector2D) {
-        return new Vector2D(Math.abs(v2d.x), Math.abs(v2d.y));
+    public static abs(v2d: Vec2) {
+        return new Vec2(Math.abs(v2d.x), Math.abs(v2d.y));
     }
 
     public ceil() {
@@ -71,19 +71,13 @@ export default class Vector2D {
     }
 
     public round() {
-        // this.x = fastRounding(this.x);
-        // this.y = fastRounding(this.y);
-        this.x = Math.round(this.x);
-        this.y = Math.round(this.y);
+        this.x = fastRounding(this.x);
+        this.y = fastRounding(this.y);
     }
 
-    public equals(v2d: Vector2D): boolean {
+    public equals(v2d: Vec2): boolean {
         return this.x == fastRounding(v2d.x) && this.y == fastRounding(v2d.y);
     }
-
-    // public compareTo(v2d: Vector2D): -1 | 0 | 1 {
-    //     if (this.x < v2d.x )
-    // }
 
     toString(): string {
         return `x: ${this.x}, y: ${this.y}`;

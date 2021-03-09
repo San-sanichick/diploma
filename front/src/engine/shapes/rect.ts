@@ -1,5 +1,5 @@
 import Shape from "./shape";
-import Vector2D from "../utils/vector2d";
+import Vec2 from "../utils/vector2d";
 
 export default class Rectangle extends Shape {
     constructor(name = "Rectangle") {
@@ -9,8 +9,8 @@ export default class Rectangle extends Shape {
     renderSelf(ctx: CanvasRenderingContext2D) {
         if (this.nodes.length <= 1) return;
 
-        const sv: Vector2D = this.WorldToScreen(this.nodes[0].getPosition);
-        const ev: Vector2D = this.WorldToScreen(this.nodes[1].getPosition);
+        const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
+        const ev: Vec2 = this.WorldToScreen(this.nodes[1].getPosition);
 
         // ctx.save();
         ctx.fillStyle = "";

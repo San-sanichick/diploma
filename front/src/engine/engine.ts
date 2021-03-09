@@ -6,8 +6,7 @@ import Circle                            from "./shapes/circle";
 import Ellipse                           from "./shapes/ellipse";
 import Bezier                            from "./shapes/bezier";
 
-import Vector2D                          from "./utils/vector2d";
-import Matrix                            from "./utils/matrix";
+import Vec2                              from "./utils/vector2d";
 import MouseController, { MouseButtons } from "./utils/mouseController";
 import { clamp, fastRounding }           from "./utils/math";
 
@@ -49,12 +48,12 @@ export default class Engine {
     private selectedShapes: Set<Shape>   = new Set<Shape>();
     private tempShape:      Shape | null = null;
     private selectedNode:   Node | null  = null;
-    private scale = 10.0;
-    private grid = 1.0;
-    private offset:         Vector2D     = new Vector2D(0.0, 0.0);
-    private cursor:         Vector2D;
-    private cursorOldPos:   Vector2D     = new Vector2D(0.0, 0.0);
-    public engineState:     EngineState  = EngineState.DRAW;
+    private scale                        = 10.0;
+    private grid                         = 1.0;
+    private offset:         Vec2         = new Vec2(0.0, 0.0);
+    private cursor:         Vec2;
+    private cursorOldPos:   Vec2         = new Vec2(0.0, 0.0);
+    public engineState:     EngineState  = EngineState.SELECT;
     public curTypeToDraw:   Shapes       = Shapes.NONE;
 
     constructor(canvas: HTMLCanvasElement, width?: number, height?: number) {
@@ -68,30 +67,29 @@ export default class Engine {
         this.canvas.width  = width ?? 500;
         this.canvas.height = height ?? 500;
 
-        this.cursor = new Vector2D(this.canvas.width / 2, this.canvas.height / 2);
+        this.cursor = new Vec2(this.canvas.width / 2, this.canvas.height / 2);
     }
 
     get shapeList(): Array<Shape> {
         return this.shapes;
     }
 
-    private WorldToScreen(v: Vector2D): Vector2D {
+    private WorldToScreen(v: Vec2): Vec2 {
         return v.subtract(this.offset).multiply(this.scale);
     }
 
-    private ScreenToWorld(screenCoord: Vector2D): Vector2D {
+    private ScreenToWorld(screenCoord: Vec2): Vec2 {
         return screenCoord.divide(this.scale).add(this.offset);
     }
 
     /**
      * Initialization method, sets up the initial state of the engine
-     * @returns true if initialization is successful, false otherwise
+     * @returns {boolean} true if initialization is successful, false otherwise
      */
     public init(): boolean {
-        console.dir(this.shapes);
-        Shape.worldGrid = this.grid;
-
         if (this.ctx === null) return false;
+
+        Shape.worldGrid = this.grid;
         this.ctx.lineWidth = 1;
 
         return true;
@@ -131,17 +129,17 @@ export default class Engine {
             this.mouse.recordPosition();
         }
 
-        const mouseBeforeZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
+        const mouseBeforeZoom = this.ScreenToWorld(Vec2.copyFrom(this.mouse.getCurrentPosition()));
         
         if(this.mouse.mouseScrolled) {
             this.scale += this.mouse.getDelta * -0.2;
             this.scale = clamp(this.scale, 5,200);
         }
         
-        const mouseAfterZoom = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
+        const mouseAfterZoom = this.ScreenToWorld(Vec2.copyFrom(this.mouse.getCurrentPosition()));
         this.offset = this.offset.add(mouseBeforeZoom.subtract(mouseAfterZoom));
         
-        this.cursor = mouseAfterZoom.add(new Vector2D(0.5, 0.5).multiply(this.grid));
+        this.cursor = mouseAfterZoom.add(new Vec2(0.5, 0.5).multiply(this.grid));
         this.cursor.floor();
 
         out:
@@ -168,9 +166,9 @@ export default class Engine {
                 }
             }
             // to avoid fuckery with pointers we create a copy of the mouse position
-            this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
+            this.selectedNode = this.tempShape.getNextNode(Vec2.copyFrom(this.cursor));
             // and then we create a second point, but only if our number of points in the shape is currently 1
-            if (this.tempShape.numberOfNodes === 1) this.selectedNode = this.tempShape.getNextNode(Vector2D.copyFrom(this.cursor));
+            if (this.tempShape.numberOfNodes === 1) this.selectedNode = this.tempShape.getNextNode(Vec2.copyFrom(this.cursor));
 
             this.tempShape.setNodeColor("yellow");
         }
@@ -226,7 +224,7 @@ export default class Engine {
 
         if (this.engineState === EngineState.SELECT) {
             if (this.mouse.getPressedButton === MouseButtons.LEFT) {
-                this.cursorOldPos = this.ScreenToWorld(Vector2D.copyFrom(this.mouse.getCurrentPosition()));
+                this.cursorOldPos = this.ScreenToWorld(Vec2.copyFrom(this.mouse.getCurrentPosition()));
             }
 
             if (this.mouse.getHeldButton === MouseButtons.LEFT) {
@@ -243,7 +241,7 @@ export default class Engine {
 
         if (this.engineState === EngineState.TRANSLATE) {
             if (this.mouse.getPressedButton === MouseButtons.LEFT) {
-                this.cursorOldPos = Vector2D.copyFrom(this.cursor);
+                this.cursorOldPos = Vec2.copyFrom(this.cursor);
             }
 
             if (this.mouse.getHeldButton === MouseButtons.LEFT) {
@@ -252,13 +250,12 @@ export default class Engine {
                     shape.translate(this.cursor.subtract(this.cursorOldPos));
                 }
             }
-            this.cursorOldPos = Vector2D.copyFrom(this.cursor);
+            this.cursorOldPos = Vec2.copyFrom(this.cursor);
         }
 
         if (this.engineState === EngineState.SCALE) {
-            // console.log("RESIZING");
             if (this.mouse.getPressedButton === MouseButtons.LEFT) {
-                this.cursorOldPos = Vector2D.copyFrom(this.cursor);
+                this.cursorOldPos = Vec2.copyFrom(this.cursor);
             }
 
             if (this.mouse.getHeldButton === MouseButtons.LEFT) {
@@ -267,7 +264,7 @@ export default class Engine {
                     shape.resize(1, this.cursor);
                 }
             }
-            this.cursorOldPos = Vector2D.copyFrom(this.cursorOldPos);
+            this.cursorOldPos = Vec2.copyFrom(this.cursorOldPos);
         }
 
         // const updateTime = performance.now() - t1;
@@ -279,6 +276,8 @@ export default class Engine {
         this.mouse.resetPressAndRelease();
     }
 
+
+    // TODO: Split drawing into subroutines, so that this function is not so bloody huge
     /**
      * Render method, gets called at the end of each update
      */
@@ -290,8 +289,8 @@ export default class Engine {
         this.ctx.fillStyle = "#272d38";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-        const worldTopLeft: Vector2D      = this.ScreenToWorld(new Vector2D(0, 0));
-        const worldBottomRight: Vector2D  = this.ScreenToWorld(new Vector2D(this.canvas.width, this.canvas.height));
+        const worldTopLeft: Vec2      = this.ScreenToWorld(new Vec2(0, 0));
+        const worldBottomRight: Vec2  = this.ScreenToWorld(new Vec2(this.canvas.width, this.canvas.height));
 
         worldTopLeft.floor();
         worldBottomRight.ceil();
@@ -317,14 +316,14 @@ export default class Engine {
          * 
          * Assume this is a line from (2,5) to (4,5) on a canvas:
          * 
-         *   0         10
-         * 0 ###########
-         *   #.........#
-         *   #....|....#
-         *   #....|....#
-         *   #....|....#
-         *   #.........#
-         * 6 ###########
+         *                      0         10
+         *                    0 ###########
+         *                      #.........#
+         *                      #....|....#
+         *                      #....|....#
+         *                      #....|....#
+         *                      #.........#
+         *                    6 ###########
          * 
          * A normal person would assume that the dots are pixels, but not JS.
          * JS assumes that dots are BOUNDARIES of the pixels, and draws ON THEM.
@@ -376,14 +375,32 @@ export default class Engine {
         this.ctx.restore();
 
         this.ctx.save();
-
-        const origin = this.WorldToScreen(new Vector2D(0, 0));
+            const origin = this.WorldToScreen(new Vec2(0, 0));
+            
             this.ctx.strokeStyle = "rgba(0, 150, 150, 1)";
             this.ctx.beginPath();
             this.ctx.arc(origin.x, origin.y, 5, 0, 2 * Math.PI);
             this.ctx.closePath();
             this.ctx.stroke();
 
+            this.ctx.strokeStyle = "red";
+            this.ctx.beginPath();
+            this.ctx.moveTo(origin.x, origin.y);
+            this.ctx.lineTo(origin.x, origin.y + 50);
+            this.ctx.closePath();
+            this.ctx.stroke();
+            
+            this.ctx.strokeStyle = "blue";
+            this.ctx.beginPath();
+            this.ctx.moveTo(origin.x, origin.y);
+            this.ctx.lineTo(origin.x + 50, origin.y);
+            this.ctx.closePath();
+            this.ctx.stroke();
+
+            this.ctx.font = "12px sans-serif";
+            this.ctx.fillStyle = "#ccc";
+            this.ctx.fillText("x", origin.x + 50, origin.y);
+            this.ctx.fillText("y", origin.x, origin.y + 50);
         this.ctx.restore();
 
         Shape.worldOffset = this.offset;
@@ -411,15 +428,16 @@ export default class Engine {
                 const ex = (this.cursor.x       - this.offset.x) * offset;
                 const ey = (this.cursor.y       - this.offset.y) * offset;
 
-                this.ctx.strokeStyle = "#696";
-                this.ctx.fillStyle = "rgba(186, 255, 205, 0.5)";
-                this.ctx.fillRect(sx, sy, ex - sx, ey - sy);
+                // this.ctx.lineWidth = 5;
+                this.ctx.strokeStyle = "#fff";
+                this.ctx.fillStyle = "rgba(186, 255, 205, 0.2)";
+                this.ctx.rect(sx, sy, ex - sx, ey - sy);
+                this.ctx.fill();
                 this.ctx.stroke();
             }
         }
 
         this.ctx.restore();
-
         
         // draw cursor
         const curV = this.WorldToScreen(this.cursor);
@@ -441,7 +459,7 @@ export default class Engine {
 
 
         this.ctx.save();
-            this.ctx.strokeStyle = "rgba(150, 150, 150, 1)";
+            this.ctx.strokeStyle = "rgba(150, 150, 150, 0.5)";
             this.ctx.beginPath();
             this.ctx.arc(curV.x, curV.y, 5, 0, 2 * Math.PI);
             this.ctx.closePath();

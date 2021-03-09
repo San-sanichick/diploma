@@ -1,4 +1,4 @@
-import Vector2D from "./vector2d";
+import Vec2 from "./vector2d";
 import { clamp } from "./math";
 
 enum MouseButtons {
@@ -8,8 +8,8 @@ enum MouseButtons {
 }
 
 export default class MouseController {
-    private curPos: Vector2D;
-    private oldPos: Vector2D;
+    private curPos: Vec2;
+    private oldPos: Vec2;
 
     private delta                         = 0;
     private oldDelta                      = 0;
@@ -24,8 +24,8 @@ export default class MouseController {
     private pressedButton: number | null  = null;
 
     constructor(canvas: HTMLCanvasElement) {
-        this.curPos = new Vector2D(0, 0);
-        this.oldPos = new Vector2D(0, 0);
+        this.curPos = new Vec2(0, 0);
+        this.oldPos = new Vec2(0, 0);
         canvas.addEventListener("mousemove", (e) => {
             const boundingRect = canvas.getBoundingClientRect();
             this.curPos.x = e.clientX - boundingRect.x;
@@ -110,14 +110,14 @@ export default class MouseController {
     }
  
     public recordPosition(): void {
-        this.oldPos = Vector2D.copyFrom(this.curPos);
+        this.oldPos = Vec2.copyFrom(this.curPos);
     }
 
-    public getRecordedPosition(): Vector2D {
+    public getRecordedPosition(): Vec2 {
         return this.oldPos;
     }
 
-    public getCurrentPosition(): Vector2D {
+    public getCurrentPosition(): Vec2 {
         return this.curPos;
     }
 

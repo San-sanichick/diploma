@@ -1,5 +1,5 @@
 import Shape from "./shape";
-import Vector2D from "../utils/vector2d";
+import Vec2 from "../utils/vector2d";
 
 export default class Ellipse extends Shape {
     constructor(name = "Ellipse") {
@@ -12,8 +12,8 @@ export default class Ellipse extends Shape {
         if (this.nodes.length < 3) {
             const radius = this.nodes[0].getPosition.subtract(this.nodes[1].getPosition).mag();
 
-            const sv: Vector2D = this.WorldToScreen(this.nodes[0].getPosition);
-            const ev: Vector2D = this.WorldToScreen(this.nodes[1].getPosition);
+            const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
+            const ev: Vec2 = this.WorldToScreen(this.nodes[1].getPosition);
 
             ctx.save();
                 ctx.setLineDash([5, 15]);
@@ -35,17 +35,17 @@ export default class Ellipse extends Shape {
                 ctx.stroke();
             ctx.restore();
         } else if (this.nodes.length === 3) {
-            const sv: Vector2D = this.WorldToScreen(this.nodes[0].getPosition);
-            const mv: Vector2D = this.WorldToScreen(this.nodes[1].getPosition);
-            const ev: Vector2D = this.WorldToScreen(this.nodes[2].getPosition);
+            const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
+            const mv: Vec2 = this.WorldToScreen(this.nodes[1].getPosition);
+            const ev: Vec2 = this.WorldToScreen(this.nodes[2].getPosition);
 
-            const mvsv = new Vector2D(1, this.nodes[0].getPosition.y).subtract(this.nodes[0].getPosition);
+            const mvsv = new Vec2(1, this.nodes[0].getPosition.y).subtract(this.nodes[0].getPosition);
             const svev = this.nodes[2].getPosition.subtract(this.nodes[0].getPosition);
 
             const rad1 = this.nodes[1].getPosition.subtract(this.nodes[0].getPosition).mag();
             const rad2 = svev.mag();
 
-            const angle = Math.acos(Vector2D.dot(mvsv, svev) / (mvsv.mag() * rad2));
+            const angle = Math.acos(Vec2.dot(mvsv, svev) / (mvsv.mag() * rad2));
 
             ctx.strokeStyle = this.isSelected ? "red" : this.color;
 

@@ -1,4 +1,4 @@
-import Vector2D from "./vector2d";
+import Vec2 from "./vector2d";
 
 export default class Matrix {
     private matrix: Array<Array<number>>;
@@ -12,8 +12,9 @@ export default class Matrix {
      * @see https://stackoverflow.com/a/48694670
      * @param m1 First matrix
      * @param m2 Second matrix
+     * @returns {Matrix} new matrix as a result of multimplication
      */
-    public static multMatrixByMatrix(m1: Matrix, m2: Matrix) {
+    public static multMatrixByMatrix(m1: Matrix, m2: Matrix): Matrix {
         let result = new Array<number>(m1.rows).fill(0).map(
             row => new Array(m2.cols).fill(0)
         );
@@ -35,6 +36,9 @@ export default class Matrix {
         return this.matrix[0].length;
     }
 
+    /**
+     * Matrix value as a 2D array
+     */
     get value() {
         return this.matrix;
     }
