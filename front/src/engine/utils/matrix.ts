@@ -10,8 +10,8 @@ export default class Matrix {
     /**
      * Matrix multiplication
      * @see https://stackoverflow.com/a/48694670
-     * @param m1 First matrix
-     * @param m2 Second matrix
+     * @param {Matrix} m1 First matrix
+     * @param {Matrix} m2 Second matrix
      * @returns {Matrix} new matrix as a result of multimplication
      */
     public static multMatrixByMatrix(m1: Matrix, m2: Matrix): Matrix {

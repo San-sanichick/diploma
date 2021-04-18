@@ -187,7 +187,7 @@ export default abstract class Shape {
         const newCoord = Matrix.multMatrixByMatrix(coordMatrix, m);
         
         // console.log(newCoord.value);
-
+        // get some bullshit result
         for (let i = 0; i < this.nodes.length; i++) {
             this.nodes[i].setPosition = new Vec2(newCoord.value[i][0], newCoord.value[i][1]);
         }

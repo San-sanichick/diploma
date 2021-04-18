@@ -133,7 +133,7 @@ export default class Engine {
         
         if(this.mouse.mouseScrolled) {
             this.scale += this.mouse.getDelta * -0.2;
-            this.scale = clamp(this.scale, 5,200);
+            this.scale = clamp(this.scale, 3, 200);
         }
         
         const mouseAfterZoom = this.ScreenToWorld(Vec2.copyFrom(this.mouse.getCurrentPosition()));
@@ -484,6 +484,7 @@ export default class Engine {
         this.ctx.fillText(`Shapes on scene: ${this.shapes.length}`,               10, 60);
         this.ctx.fillText(`Temp shape: ${this.tempShape?.name ?? "none"}`,        10, 80);
         this.ctx.fillText(`Selected node: ${this.selectedNode ?? "none"}`,        10, 100);
+        this.ctx.fillText(`Zoom level: ${this.scale}`,                            10, 120);
     }
 }
 
