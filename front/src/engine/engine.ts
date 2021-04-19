@@ -100,22 +100,25 @@ export default class Engine {
     }
 
     public save(): string {
-        let result = "";
-        result += "[";
+        const shapeArr = [];
         for (let i = 0; i < this.shapes.length; i++) {
-            const shape = this.shapes[i];
-            result += JSON.stringify(Serializer.serialize(shape));
-            if (i < this.shapes.length - 1) result += ",";
+            shapeArr.push(Serializer.serialize(this.shapes[i]));
         }
-        result += "]";
-        return result;
+
+
+
+        return JSON.stringify({
+            offset: this.offset,
+            scale: this.scale,
+            shapes: shapeArr
+        });
     }
 
     public load(str: string) {
         const arr: Array<Shape> = new Array<Shape>();
         const data = JSON.parse(str);
 
-        for (const obj of data) {
+        for (const obj of data.shapes) {
             const shape = Serializer.deserialize(obj);
             if (shape != null) {
                 arr.push(shape);
@@ -127,6 +130,8 @@ export default class Engine {
         console.log(arr);
         this.shapes = [];
         this.shapes = [...arr];
+        this.scale = data.scale;
+        this.offset = new Vec2(data.offset.x, data.offset.y);
     }
 
     /**
