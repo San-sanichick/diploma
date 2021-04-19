@@ -9,6 +9,8 @@ import Bezier                            from "./shapes/bezier";
 import Vec2                              from "./utils/vector2d";
 import MouseController, { MouseButtons } from "./utils/mouseController";
 import { clamp, fastRounding }           from "./utils/math";
+import Serializable from "./shapes/serializable";
+import Serializer from "./shapes/serializer";
 
 /**
  * Possible engine states
@@ -89,10 +91,42 @@ export default class Engine {
     public init(): boolean {
         if (this.ctx === null) return false;
 
+        console.log(this.shapes);
+
         Shape.worldGrid = this.grid;
         this.ctx.lineWidth = 1;
 
         return true;
+    }
+
+    public save(): string {
+        let result = "";
+        result += "[";
+        for (let i = 0; i < this.shapes.length; i++) {
+            const shape = this.shapes[i];
+            result += JSON.stringify(Serializer.serialize(shape));
+            if (i < this.shapes.length - 1) result += ",";
+        }
+        result += "]";
+        return result;
+    }
+
+    public load(str: string) {
+        const arr: Array<Shape> = new Array<Shape>();
+        const data = JSON.parse(str);
+
+        for (const obj of data) {
+            const shape = Serializer.deserialize(obj);
+            if (shape != null) {
+                arr.push(shape);
+            } else {
+                throw new TypeError("Shape deserialized to null, check input string for errors");
+            }
+        }
+
+        console.log(arr);
+        this.shapes = [];
+        this.shapes = [...arr];
     }
 
     /**
@@ -182,7 +216,7 @@ export default class Engine {
                     this.tempShape.setNodeColor("red");
 
                     switch(this.curTypeToDraw) {
-                        case Shapes.LINE: 
+                        case Shapes.LINE:
                             this.shapes.push(Shape.clone<Line>(Line, this.tempShape));
                             break;
                         case Shapes.RECT:

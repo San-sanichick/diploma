@@ -1,5 +1,6 @@
 import Shape from "./shape";
 import Vec2 from "../utils/vector2d";
+import serializable from "./serializable";
 
 export default class Line extends Shape {
     constructor(name = "Line") {

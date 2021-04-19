@@ -8,14 +8,14 @@ import Vec2 from "../utils/vector2d";
  */
 export default class Node {
     private pos: Vec2;
-    private parent: Shape;
+    // private parent: Shape;
     public radius: number;
     public color = "red";
 
     constructor(pos: Vec2, parent: Shape, radius = 4) {
         this.pos = pos;
         this.radius = radius;
-        this.parent = parent;
+        // this.parent = parent;
     }
 
     set setPosition(newPos: Vec2) {
@@ -26,9 +26,9 @@ export default class Node {
         return this.pos;
     }
 
-    get getParent() {
-        return this.parent;
-    }
+    // get getParent() {
+    //     return this.parent;
+    // }
 
     toString() {
         return this.pos.toString();

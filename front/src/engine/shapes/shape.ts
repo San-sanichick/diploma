@@ -1,11 +1,21 @@
 import Node from "./node";
 import Vec2 from "../utils/vector2d";
 import Matrix from "../utils/matrix";
+import Serializable from "./serializable"
+
+export interface ShapeObject {
+    type: string;
+    maxNodes: number;
+    color: string;
+    name: string;
+    isSelected: boolean;
+    nodes: Array<any>;
+}
 
 /**
  * Abstract shape class, use as basis for every other shape
  */
-export default abstract class Shape {
+export default abstract class Shape extends Serializable {
     /**
      * For the sake of my sanity, shapes are not going to have > 3 nodes
      * @private
@@ -25,6 +35,7 @@ export default abstract class Shape {
     public static magnitude = 0.5;
 
     constructor(name = "shape", maxNodes: number) {
+        super();
         this.maxNodes = maxNodes;
         this.name = name;
         this.nodes = new Array<Node>();
@@ -54,8 +65,23 @@ export default abstract class Shape {
      */
     public static clone<T extends Shape>(type: { new(name: string, maxNodes: number): T}, shape: T): T {
         const temp = new type(shape.name, shape.maxNodes);
+        temp.type = shape.type;
         temp.nodes = [...shape.nodes];
         temp.color = shape.color;
+        return temp;
+    }
+
+    public static cloneFromObject<T extends Shape>(type: { new(name: string, maxNodes: number): T}, obj: ShapeObject): T {
+        const temp = new type(obj.name, obj.maxNodes);
+        temp.type = obj.type;
+        // temp.nodes = [...obj.nodes];
+
+        console.log(obj.nodes);
+        obj.nodes.forEach(node => {
+            temp.nodes.push(new Node(new Vec2(node.pos.x, node.pos.y), temp, node.radius));
+        })
+
+        temp.color = obj.color;
         return temp;
     }
 

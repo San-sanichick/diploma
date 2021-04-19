@@ -17,6 +17,10 @@
                 <button :value="shapes[5]" @click="setEngineState">draw bezier curve</button>
                 <button :value="shapes[6]" @click="setEngineState">draw arc</button>
             </div>
+            <div>
+                <button @click="saveProject">save</button>
+                <button @click="loadProject">load</button>
+            </div>
         </div>
         <div>
             <canvas class="canvas" ref="canvas"></canvas>
@@ -42,6 +46,7 @@
 
     import Engine, { EngineState, Shapes } from "../../engine/engine";
     import Shape from "../../engine/shapes/shape";
+import Serializer from '@/engine/shapes/serializer';
 
     export default defineComponent({
         // components: {
@@ -52,7 +57,8 @@
                 id: this.$route.params.id,
                 engine: {} as Engine,
                 shapes: Shapes,
-                engineState: EngineState
+                engineState: EngineState,
+                str: ""
             }
         },
         computed: {
@@ -118,10 +124,22 @@
                         break;
                     case "ARC":
                         this.engine.engineState = EngineState.DRAW;
-                        this.engine.curTypeToDraw=  Shapes.ARC;
+                        this.engine.curTypeToDraw = Shapes.ARC;
                         break;
                 }
                 
+            },
+            saveProject() {
+                // circular structure my ass
+                this.str = this.engine.save();
+                console.log(this.str);
+            },
+            loadProject() {
+                try {
+                    this.engine.load(this.str);
+                } catch (e) {
+                    console.error(e);
+                }
             }
         }
     })
@@ -129,7 +147,14 @@
 
 <style lang="scss">
     .page {
-        padding: 90px 0 0 0;
+        padding: 65px 7% 5% 7%;
+        // padding: 90px 0 0 0;
+        .page-header {
+            margin: 20px 0;
+            display: grid;
+            grid-template-columns: max-content auto max-content;
+            align-items: center;
+        }
 
         .canvas {
             cursor: none;
