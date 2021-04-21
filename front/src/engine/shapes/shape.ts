@@ -15,11 +15,12 @@ export interface ShapeObject {
 /**
  * Abstract shape class, use as basis for every other shape
  */
-export default abstract class Shape extends Serializable {
+export default abstract class Shape implements Serializable {
     /**
      * For the sake of my sanity, shapes are not going to have > 3 nodes
      * @private
      */
+    public    type: string | undefined;
     private   maxNodes: number;
     public    color: string;
     public    name: string;
@@ -35,12 +36,12 @@ export default abstract class Shape extends Serializable {
     public static magnitude = 0.5;
 
     constructor(name = "shape", maxNodes: number) {
-        super();
         this.maxNodes = maxNodes;
         this.name = name;
         this.nodes = new Array<Node>();
         this.color = "#888";
         this.isSelected = false;
+        this.type = this.constructor.name;
     }
 
     protected WorldToScreen(v: Vec2): Vec2 {

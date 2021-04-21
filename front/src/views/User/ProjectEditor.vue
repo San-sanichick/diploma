@@ -46,7 +46,8 @@
 
     import Engine, { EngineState, Shapes } from "../../engine/engine";
     import Shape from "../../engine/shapes/shape";
-import Serializer from '@/engine/shapes/serializer';
+import axios from 'axios';
+    // import Serializer from '@/engine/shapes/serializer';
 
     export default defineComponent({
         // components: {
@@ -57,8 +58,7 @@ import Serializer from '@/engine/shapes/serializer';
                 id: this.$route.params.id,
                 engine: {} as Engine,
                 shapes: Shapes,
-                engineState: EngineState,
-                str: ""
+                engineState: EngineState
             }
         },
         computed: {
@@ -66,10 +66,13 @@ import Serializer from '@/engine/shapes/serializer';
                 return this.engine.shapeList;
             }
         },
-        mounted(){
+        created() {
+            this.loadProject();
+        },
+        mounted() {
             try {
                 this.engine = new Engine(this.$refs.canvas as HTMLCanvasElement, document.body.clientWidth - 600, 800);
-                // this.$router.$
+                console.log(this.$route.params);
                  if (this.engine.init()) {
                      this.engine.start();
                  }
@@ -129,16 +132,52 @@ import Serializer from '@/engine/shapes/serializer';
                 }
                 
             },
-            saveProject() {
-                // circular structure my ass
-                this.str = this.engine.save();
-                console.log(this.str);
-            },
-            loadProject() {
+            async saveProject() {
+                const data = this.engine.save();
+                const id = this.$route.params.id;
+                // console.log(this.str);
+
                 try {
-                    this.engine.load(this.str);
-                } catch (e) {
-                    console.error(e);
+                    const res = await axios.patch(`projects/save`, { id, data });
+
+                    this.$flashMessage.show({
+                        type: 'success',
+                        image: require("../../assets/flashMessage/success.svg"),
+                        text: res.data.msg
+                    });
+                } catch(err) {
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: require("../../assets/flashMessage/fail.svg"),
+                        text: err
+                    });
+                }
+            },
+            async loadProject() {
+                // try {
+                //     this.engine.load(this.str);
+                // } catch (e) {
+                //     console.error(e);
+                // }
+                const id = this.$route.params.id;
+
+                try {
+                    const res = await axios.get(`projects/get/${id}`);
+                    const data = res.data;
+                    console.log(data.data);
+                    this.engine.load(data.data);
+
+                    this.$flashMessage.show({
+                        type: 'success',
+                        image: require("../../assets/flashMessage/success.svg"),
+                        text: res.data.msg
+                    });
+                } catch (err) {
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: require("../../assets/flashMessage/fail.svg"),
+                        text: err
+                    });
                 }
             }
         }

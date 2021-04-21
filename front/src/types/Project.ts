@@ -5,3 +5,9 @@ export default interface Project {
     dateOfLastChange: Date;
     files: number;
 }
+
+export interface IProject {
+    offset: Object;
+    scale: number;
+    shapes: Array<Object>;
+}

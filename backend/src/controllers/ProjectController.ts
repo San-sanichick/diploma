@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { verify } from "jsonwebtoken";
 import passport from "passport";
 
+import IProject from "../db/interfaces/ProjectInterface";
 import { ProjectModel, Project } from "../db/models/ProjectModel";
 import { UserModel } from "../db/models/UserModel";
 
@@ -11,6 +12,11 @@ import config from "../config/config";
 import * as fs from "fs";
 import path from "path";
 import del from "del";
+import { promisify } from "util";
+
+
+const writeFile = promisify(fs.writeFile);
+const readFile  = promisify(fs.readFile);
 
 export default class ProjectController {
     public async createProject(req: Request, res: Response) {
@@ -58,6 +64,15 @@ export default class ProjectController {
                             console.log(`Created new project folder ${newProject._id}`);
                         }
                     });
+
+                    const newProjectFile: IProject = {
+                        offset: { x: 0, y: 0 },
+                        scale: 10,
+                        shapes: []
+                    }
+
+                    fs.writeFileSync(`${p}/save.json`, JSON.stringify(newProjectFile));
+
                     res.status(200).json({msg: `Проект "${newProject.name}" был успешно создан!`, data: newProject});
                 }
             } catch (err) {
@@ -68,8 +83,45 @@ export default class ProjectController {
         }
     }
 
-
     public async updateProject(req: Request, res: Response) {
+        const token = getToken(req.headers);
+        console.log(req.body);  
+        if (token) {
+            const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
+
+            try {
+                const user = await UserModel.findById(decoded.id);
+                
+                if (user) {
+                    const project = await ProjectModel.findById(req.body.id);
+                         
+                    if (project) {
+                        project.dateOfLastChange = new Date();
+                        project.save();
+
+                        const p = path.join(__dirname, `../../UserProjects/${user._id}/${project._id}/save.json`);
+
+                        try {
+                            await writeFile(p, JSON.stringify(req.body.data));
+
+                            res.status(200).json({
+                                msg: `Проект ${project.name} успешно сохранён`
+                            });
+                        } catch (err) {
+                            throw err;
+                        }                        
+                    }
+                }
+
+            } catch (err) {
+                res.status(400).json({msg: `Произошла ошибка: ${err}`});
+            }
+        } else {
+            res.status(401).json({msg: "Access denied"});
+        }
+    }
+
+    public async updateProjectConfig(req: Request, res: Response) {
         const token = getToken(req.headers);
         console.log(req.body);  
         if (token) {
@@ -90,6 +142,47 @@ export default class ProjectController {
                             msg: `Настройки проекта ${project.name} успешно обновлены`,
                             data: project
                         });
+                    }
+                }
+
+            } catch (err) {
+                res.status(400).json({msg: `Произошла ошибка: ${err}`});
+            }
+        } else {
+            res.status(401).json({msg: "Access denied"});
+        }
+    }
+
+    public async getProjectByID(req: Request, res: Response) {
+        const token = getToken(req.headers);
+        // console.log(req.body);
+        if (token) {
+            const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
+
+            try {
+                const user = await UserModel.findById(decoded.id);
+                // console.log(user);
+                
+                if (user) {
+                    const project = await ProjectModel.findById(req.params.id);
+                    
+                    // console.log(project);
+
+                    if (project) {
+                        // console.log("KKKK");
+                        const userPath = path.join(__dirname, `../../UserProjects/${user._id}/${project._id}`);
+                        try {
+                            const projectData = await readFile(`${userPath}/save.json`);
+                            const save = JSON.parse(projectData as unknown as string);
+                            console.log(projectData);
+                            console.log("HAHAHA", save);
+                            res.status(200).json({
+                                msg: `Проект ${project.name} успешно загружен`,
+                                data: save
+                            })
+                        } catch (err) {
+                            throw err;
+                        }
                     }
                 }
 

@@ -150,12 +150,10 @@
                     document.body.style.overflowY = document.body.style.overflowY === "" ? "hidden" : "";
                 }
             },
-            openProject(id: string) {
-                console.log(id);
-                // this.$router.push(`project/${id}`);
+            async openProject(id: string) {
                 this.$router.push({
                     path: `projects/${id}`
-                })
+                });
             },
             async deleteProject(id: number) {
                 console.log(id);

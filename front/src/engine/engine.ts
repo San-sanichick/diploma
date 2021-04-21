@@ -99,7 +99,7 @@ export default class Engine {
         return true;
     }
 
-    public save(): string {
+    public save() {
         const shapeArr = [];
         for (let i = 0; i < this.shapes.length; i++) {
             shapeArr.push(Serializer.serialize(this.shapes[i]));
@@ -107,16 +107,15 @@ export default class Engine {
 
 
 
-        return JSON.stringify({
+        return {
             offset: this.offset,
             scale: this.scale,
             shapes: shapeArr
-        });
+        };
     }
 
-    public load(str: string) {
+    public load(data: any) {
         const arr: Array<Shape> = new Array<Shape>();
-        const data = JSON.parse(str);
 
         for (const obj of data.shapes) {
             const shape = Serializer.deserialize(obj);
@@ -127,7 +126,6 @@ export default class Engine {
             }
         }
 
-        console.log(arr);
         this.shapes = [];
         this.shapes = [...arr];
         this.scale = data.scale;
