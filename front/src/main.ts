@@ -116,6 +116,6 @@ app.config.globalProperties.$filters = filters;
 app.use(store).use(router).use(FlashMessage, {
     name: 'flashMessage',
     tag: 'FlashMessage',
-    time: 10000,
+    time: 1000,
     strategy: 'single'
 }).mount('#app');

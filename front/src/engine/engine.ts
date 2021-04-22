@@ -43,7 +43,9 @@ enum Shapes {
  */
 export default class Engine {
     private canvas:         HTMLCanvasElement;
+    private canvasUI:       HTMLCanvasElement;
     private ctx:            CanvasRenderingContext2D | null;
+    private ctxUI:          CanvasRenderingContext2D | null;
     private mouse:          MouseController;
     // I hope y'all like polymorphism, there's a lot of it here
     private shapes:         Array<Shape>;
@@ -58,16 +60,20 @@ export default class Engine {
     public engineState:     EngineState  = EngineState.SELECT;
     public curTypeToDraw:   Shapes       = Shapes.NONE;
 
-    constructor(canvas: HTMLCanvasElement, width?: number, height?: number) {
+    constructor(canvas: HTMLCanvasElement, canvasUI: HTMLCanvasElement, width?: number, height?: number) {
         this.canvas        = canvas;
+        this.canvasUI      = canvasUI;
         this.ctx           = this.canvas.getContext("2d");
+        this.ctxUI         = this.canvasUI.getContext("2d");
 
         if (this.ctx === null) throw new Error("error when getting 2d context");
         
         this.shapes        = new Array<Shape>();
-        this.mouse         = new MouseController(this.canvas);
+        this.mouse         = new MouseController(this.canvasUI);
         this.canvas.width  = width ?? 500;
         this.canvas.height = height ?? 500;
+        this.canvasUI.width = width ?? 500;
+        this.canvasUI.height = height ?? 500;
 
         this.cursor = new Vec2(this.canvas.width / 2, this.canvas.height / 2);
     }
@@ -99,13 +105,15 @@ export default class Engine {
         return true;
     }
 
+    public saveImage() {
+        window.location.href = this.canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+    }
+
     public save() {
         const shapeArr = [];
         for (let i = 0; i < this.shapes.length; i++) {
             shapeArr.push(Serializer.serialize(this.shapes[i]));
         }
-
-
 
         return {
             offset: this.offset,
@@ -319,9 +327,10 @@ export default class Engine {
      * Render method, gets called at the end of each update
      */
     private render(): void {
-        if (this.ctx === null) return;
+        if (this.ctx === null || this.ctxUI === null) return;
         const t2 = performance.now();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        this.ctxUI.clearRect(0, 0, this.canvasUI.width, this.canvasUI.height);
         // this.ctx.fillStyle = "#191e38";
         this.ctx.fillStyle = "#272d38";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -479,49 +488,79 @@ export default class Engine {
         // draw cursor
         const curV = this.WorldToScreen(this.cursor);
 
-        this.ctx.save();
-            this.ctx.setLineDash([10, 15]);
-            this.ctx.strokeStyle = "rgba(100, 100, 100, 0.5)";
-            this.ctx.beginPath();
-            this.ctx.moveTo(curV.x, 0);
-            this.ctx.lineTo(curV.x, this.canvas.height);
-            this.ctx.closePath();
-            this.ctx.stroke();
-            this.ctx.beginPath();
-            this.ctx.moveTo(0, curV.y);
-            this.ctx.lineTo(this.canvas.width, curV.y);
-            this.ctx.closePath();
-            this.ctx.stroke();
-        this.ctx.restore();
+        // this.ctx.save();
+        //     this.ctx.setLineDash([10, 15]);
+        //     this.ctx.strokeStyle = "rgba(100, 100, 100, 0.5)";
+        //     this.ctx.beginPath();
+        //     this.ctx.moveTo(curV.x, 0);
+        //     this.ctx.lineTo(curV.x, this.canvas.height);
+        //     this.ctx.closePath();
+        //     this.ctx.stroke();
+        //     this.ctx.beginPath();
+        //     this.ctx.moveTo(0, curV.y);
+        //     this.ctx.lineTo(this.canvas.width, curV.y);
+        //     this.ctx.closePath();
+        //     this.ctx.stroke();
+        // this.ctx.restore();
+        this.ctxUI.save();
+            this.ctxUI.setLineDash([10, 15]);
+            this.ctxUI.strokeStyle = "rgba(100, 100, 100, 0.5)";
+            this.ctxUI.beginPath();
+            this.ctxUI.moveTo(curV.x, 0);
+            this.ctxUI.lineTo(curV.x, this.canvas.height);
+            this.ctxUI.closePath();
+            this.ctxUI.stroke();
+            this.ctxUI.beginPath();
+            this.ctxUI.moveTo(0, curV.y);
+            this.ctxUI.lineTo(this.canvas.width, curV.y);
+            this.ctxUI.closePath();
+            this.ctxUI.stroke();
+        this.ctxUI.restore();
 
 
-        this.ctx.save();
-            this.ctx.strokeStyle = "rgba(150, 150, 150, 0.5)";
-            this.ctx.beginPath();
-            this.ctx.arc(curV.x, curV.y, 5, 0, 2 * Math.PI);
-            this.ctx.closePath();
-            this.ctx.stroke();
-        this.ctx.restore();
+        // this.ctx.save();
+        //     this.ctx.strokeStyle = "rgba(150, 150, 150, 0.5)";
+        //     this.ctx.beginPath();
+        //     this.ctx.arc(curV.x, curV.y, 5, 0, 2 * Math.PI);
+        //     this.ctx.closePath();
+        //     this.ctx.stroke();
+        // this.ctx.restore();
 
-        this.ctx.font = "14px sans-serif";
-        this.ctx.fillStyle = "#fff";
-        this.ctx.fillText(`x: ${this.mouse.getCurrentPosition().x}, y: ${this.mouse.getCurrentPosition().y}`, 
+        this.ctxUI.save();
+            this.ctxUI.strokeStyle = "rgba(150, 150, 150, 0.5)";
+            this.ctxUI.beginPath();
+            this.ctxUI.arc(curV.x, curV.y, 5, 0, 2 * Math.PI);
+            this.ctxUI.closePath();
+            this.ctxUI.stroke();
+        this.ctxUI.restore();
+
+        // this.ctx.font = "14px sans-serif";
+        // this.ctx.fillStyle = "#fff";
+        // this.ctx.fillText(`x: ${this.mouse.getCurrentPosition().x}, y: ${this.mouse.getCurrentPosition().y}`, 
+        //                         this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 10);
+
+        // this.ctx.fillText(`x: ${this.cursor.x}, y: ${this.cursor.y}`, 
+        //                         this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 25);
+
+        this.ctxUI.font = "14px sans-serif";
+        this.ctxUI.fillStyle = "#fff";
+        this.ctxUI.fillText(`x: ${this.mouse.getCurrentPosition().x}, y: ${this.mouse.getCurrentPosition().y}`, 
                                 this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 10);
 
-        this.ctx.fillText(`x: ${this.cursor.x}, y: ${this.cursor.y}`, 
+        this.ctxUI.fillText(`x: ${this.cursor.x}, y: ${this.cursor.y}`, 
                                 this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 25);
 
         const renderTime = performance.now() - t2;
 
         // for debug purposes
-        this.ctx.font = "18px sans-serif";
-        this.ctx.fillStyle = "#ccc";
-        this.ctx.fillText(`Render time (per frame): ${(renderTime).toPrecision(3)}ms`, 10, 20);
-        this.ctx.fillText(`FPS: ${Math.trunc(1000 / renderTime)}`,                10, 40);
-        this.ctx.fillText(`Shapes on scene: ${this.shapes.length}`,               10, 60);
-        this.ctx.fillText(`Temp shape: ${this.tempShape?.name ?? "none"}`,        10, 80);
-        this.ctx.fillText(`Selected node: ${this.selectedNode ?? "none"}`,        10, 100);
-        this.ctx.fillText(`Zoom level: ${this.scale}`,                            10, 120);
+        this.ctxUI.font = "18px sans-serif";
+        this.ctxUI.fillStyle = "#ccc";
+        this.ctxUI.fillText(`Render time (per frame): ${(renderTime).toPrecision(3)}ms`, 10, 20);
+        this.ctxUI.fillText(`FPS: ${Math.trunc(1000 / renderTime)}`,                10, 40);
+        this.ctxUI.fillText(`Shapes on scene: ${this.shapes.length}`,               10, 60);
+        this.ctxUI.fillText(`Temp shape: ${this.tempShape?.name ?? "none"}`,        10, 80);
+        this.ctxUI.fillText(`Selected node: ${this.selectedNode ?? "none"}`,        10, 100);
+        this.ctxUI.fillText(`Zoom level: ${this.scale}`,                            10, 120);
     }
 }
 

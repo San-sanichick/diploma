@@ -20,9 +20,11 @@
             <div>
                 <button @click="saveProject">save</button>
                 <button @click="loadProject">load</button>
+                <button @click="saveAsImage">save as image</button>
             </div>
         </div>
-        <div>
+        <div class="viewport">
+            <canvas class="canvas-ui" ref="canvas-ui"></canvas>
             <canvas class="canvas" ref="canvas"></canvas>
         </div>
     </div>
@@ -46,7 +48,7 @@
 
     import Engine, { EngineState, Shapes } from "../../engine/engine";
     import Shape from "../../engine/shapes/shape";
-import axios from 'axios';
+    import axios from 'axios';
     // import Serializer from '@/engine/shapes/serializer';
 
     export default defineComponent({
@@ -71,7 +73,7 @@ import axios from 'axios';
         },
         mounted() {
             try {
-                this.engine = new Engine(this.$refs.canvas as HTMLCanvasElement, document.body.clientWidth - 600, 800);
+                this.engine = new Engine(this.$refs.canvas as HTMLCanvasElement, this.$refs["canvas-ui"] as HTMLCanvasElement, document.body.clientWidth - 600, 800);
                 console.log(this.$route.params);
                  if (this.engine.init()) {
                      this.engine.start();
@@ -179,6 +181,9 @@ import axios from 'axios';
                         text: err
                     });
                 }
+            },
+            saveAsImage() {
+                this.engine.saveImage();
             }
         }
     })
@@ -186,7 +191,11 @@ import axios from 'axios';
 
 <style lang="scss">
     .page {
-        padding: 65px 7% 5% 7%;
+        padding: 65px 7% 0 7%;
+        
+        display: flex;
+        flex-flow: column;
+        align-items: center;
         // padding: 90px 0 0 0;
         .page-header {
             margin: 20px 0;
@@ -195,8 +204,32 @@ import axios from 'axios';
             align-items: center;
         }
 
-        .canvas {
-            cursor: none;
+        .viewport {
+            position: relative;
+            height: 100%;
+            width: 100%;
+
+            canvas {
+                cursor: none;
+                position: absolute;
+                margin-left: auto;
+                margin-right: auto;
+                left: 0;
+                right: 0;
+                text-align: center;
+            }
+
+            .canvas {
+                left: 0; 
+                top: 0;
+                z-index: 0;
+            }
+
+            .canvas-ui {
+                left: 0; 
+                top: 0;
+                z-index: 1;
+            }
         }
     }
 </style>
