@@ -8,8 +8,8 @@ import Bezier                            from "./shapes/bezier";
 
 import Vec2                              from "./utils/vector2d";
 import MouseController, { MouseButtons } from "./utils/mouseController";
+import KeyboardController                from "./utils/keyboardController";
 import { clamp, fastRounding }           from "./utils/math";
-import Serializable from "./shapes/serializable";
 import Serializer from "./shapes/serializer";
 
 /**
@@ -42,11 +42,13 @@ enum Shapes {
  * @class
  */
 export default class Engine {
+    private viewport:       HTMLDivElement;
     private canvas:         HTMLCanvasElement;
     private canvasUI:       HTMLCanvasElement;
     private ctx:            CanvasRenderingContext2D | null;
     private ctxUI:          CanvasRenderingContext2D | null;
     private mouse:          MouseController;
+    private keyboard:       KeyboardController;
     // I hope y'all like polymorphism, there's a lot of it here
     private shapes:         Array<Shape>;
     private selectedShapes: Set<Shape>   = new Set<Shape>();
@@ -60,9 +62,10 @@ export default class Engine {
     public engineState:     EngineState  = EngineState.SELECT;
     public curTypeToDraw:   Shapes       = Shapes.NONE;
 
-    constructor(canvas: HTMLCanvasElement, canvasUI: HTMLCanvasElement, width?: number, height?: number) {
-        this.canvas        = canvas;
-        this.canvasUI      = canvasUI;
+    constructor(viewport: HTMLDivElement, width?: number, height?: number) {
+        this.viewport      = viewport;
+        this.canvas        = viewport.querySelector(".canvas") as HTMLCanvasElement;
+        this.canvasUI      = viewport.querySelector(".canvas-ui") as HTMLCanvasElement;
         this.ctx           = this.canvas.getContext("2d");
         this.ctxUI         = this.canvasUI.getContext("2d");
 
@@ -70,6 +73,7 @@ export default class Engine {
         
         this.shapes        = new Array<Shape>();
         this.mouse         = new MouseController(this.canvasUI);
+        this.keyboard      = new KeyboardController();
         this.canvas.width  = width ?? 500;
         this.canvas.height = height ?? 500;
         this.canvasUI.width = width ?? 500;
@@ -162,11 +166,12 @@ export default class Engine {
         requestAnimationFrame(updateRoutine);
     }
 
+
     /**
      * Update method, has to be run through requestAnimationFrame
      */
     private update(): void {
-        // const t1 = performance.now();
+        const t1 = performance.now();
 
         // updating
         if (this.mouse.getPressedButton === MouseButtons.MIDDLE) {
@@ -192,6 +197,8 @@ export default class Engine {
         this.cursor = mouseAfterZoom.add(new Vec2(0.5, 0.5).multiply(this.grid));
         this.cursor.floor();
 
+
+        // TODO: Change cursor icon based on engine state
         out:
         if (this.engineState === EngineState.DRAW && this.mouse.getPressedButton === MouseButtons.LEFT) {
             if (this.tempShape === null) {
@@ -317,13 +324,25 @@ export default class Engine {
             this.cursorOldPos = Vec2.copyFrom(this.cursorOldPos);
         }
 
-        // const updateTime = performance.now() - t1;
+        if (this.selectedShapes.size != 0) {
+            // console.log(this.keyboard.getPressedButton);
+            if (this.keyboard.getPressedButton === "Delete") {
+                this.shapes = this.shapes.filter(shape => {
+                    return !this.selectedShapes.has(shape);
+                });
+
+                this.selectedShapes.clear();
+            }
+        }
+
+        const updateTime = performance.now() - t1;
         
         // rendering
-        this.render();
+        this.render(true, updateTime);
 
         // :)
         this.mouse.resetPressAndRelease();
+        this.keyboard.resetKeyController();
     }
 
     /**
@@ -363,7 +382,8 @@ export default class Engine {
     /**
      * Render method, gets called at the end of each update
      */
-    private render(): void {
+    private render(debug = false, performanceTime?: number): void {
+        // console.log(debug);
         if (this.ctx === null || this.ctxUI === null) return;
         const t2 = performance.now();
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -590,14 +610,20 @@ export default class Engine {
         const renderTime = performance.now() - t2;
 
         // for debug purposes
-        this.ctxUI.font = "18px sans-serif";
-        this.ctxUI.fillStyle = "#ccc";
-        this.ctxUI.fillText(`Render time (per frame): ${(renderTime).toPrecision(3)}ms`, 10, 20);
-        this.ctxUI.fillText(`FPS: ${Math.trunc(1000 / renderTime)}`,                10, 40);
-        this.ctxUI.fillText(`Shapes on scene: ${this.shapes.length}`,               10, 60);
-        this.ctxUI.fillText(`Temp shape: ${this.tempShape?.name ?? "none"}`,        10, 80);
-        this.ctxUI.fillText(`Selected node: ${this.selectedNode ?? "none"}`,        10, 100);
-        this.ctxUI.fillText(`Zoom level: ${this.scale}`,                            10, 120);
+        if (debug) {
+            this.ctxUI.font = "18px sans-serif";
+            this.ctxUI.fillStyle = "#ccc";
+            this.ctxUI.fillText(`Render time (per frame): ${(renderTime).toPrecision(3)}ms`,      10, 20);
+
+            if (performanceTime) 
+                this.ctxUI.fillText(`Update time (per frame): ${(performanceTime).toPrecision(3)}ms`, 10, 40);
+            
+            this.ctxUI.fillText(`FPS: ${Math.trunc(1000 / renderTime)}`,                          10, 60);
+            this.ctxUI.fillText(`Shapes on scene: ${this.shapes.length}`,                         10, 80);
+            this.ctxUI.fillText(`Temp shape: ${this.tempShape?.name ?? "none"}`,                  10, 100);
+            this.ctxUI.fillText(`Selected node: ${this.selectedNode ?? "none"}`,                  10, 120);
+            this.ctxUI.fillText(`Zoom level: ${this.scale}`,                                      10, 140);
+        }
     }
 }
 

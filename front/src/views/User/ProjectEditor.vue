@@ -1,6 +1,6 @@
 <template>
-    <div class="page">
-        <div class="page-header">
+    <div class="page-editor">
+        <div class="page-header-editor">
             <button @click="goBack">back</button>
             <div>
                 <button :value="engineState[0]" @click="setEngineState">select shape</button>
@@ -21,10 +21,11 @@
                 <button @click="saveProject">save</button>
                 <button @click="loadProject">load</button>
                 <!-- <button @click="saveAsImage">save as image</button> -->
+                <!-- TODO: STYLE THIS AS A BUTTON OR SOMETHING, IT'S BOTHERING ME -->
                 <a download="file.png" @click="saveAsImage">save as png</a>
             </div>
         </div>
-        <div class="viewport">
+        <div class="viewport" ref="viewport" tabindex="1">
             <canvas class="canvas-ui" ref="canvas-ui"></canvas>
             <canvas class="canvas" ref="canvas"></canvas>
         </div>
@@ -74,7 +75,11 @@
         },
         mounted() {
             try {
-                this.engine = new Engine(this.$refs.canvas as HTMLCanvasElement, this.$refs["canvas-ui"] as HTMLCanvasElement, document.body.clientWidth - 600, 800);
+                const viewport = this.$refs.viewport as HTMLDivElement;
+                viewport.style.width = (document.body.clientWidth - 600) + "px";
+                viewport.style.height = "800px";
+
+                this.engine = new Engine(this.$refs.viewport as HTMLDivElement, document.body.clientWidth - 600, 800);
                 console.log(this.$route.params);
                  if (this.engine.init()) {
                      this.engine.start();
@@ -197,14 +202,14 @@
 </script>
 
 <style lang="scss">
-    .page {
+    .page-editor {
         padding: 65px 7% 0 7%;
         
         display: flex;
         flex-flow: column;
         align-items: center;
         // padding: 90px 0 0 0;
-        .page-header {
+        .page-header-editor {
             margin: 20px 0;
             display: grid;
             grid-template-columns: max-content auto max-content;

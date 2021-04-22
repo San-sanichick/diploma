@@ -77,7 +77,6 @@ export default abstract class Shape implements Serializable {
         temp.type = obj.type;
         // temp.nodes = [...obj.nodes];
 
-        console.log(obj.nodes);
         obj.nodes.forEach(node => {
             temp.nodes.push(new Node(new Vec2(node.pos.x, node.pos.y), temp, node.radius));
         })
