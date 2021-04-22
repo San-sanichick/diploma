@@ -20,7 +20,8 @@
             <div>
                 <button @click="saveProject">save</button>
                 <button @click="loadProject">load</button>
-                <button @click="saveAsImage">save as image</button>
+                <!-- <button @click="saveAsImage">save as image</button> -->
+                <a download="file.png" @click="saveAsImage">save as png</a>
             </div>
         </div>
         <div class="viewport">
@@ -182,8 +183,14 @@
                     });
                 }
             },
-            saveAsImage() {
-                this.engine.saveImage();
+            saveAsImage(e: Event) {
+                const target = e.target as HTMLAnchorElement;
+                const filePath = this.engine.saveImage();
+
+                if (target !== null && filePath !== undefined) {
+                    target.href = filePath;
+                    // target.click();
+                }
             }
         }
     })

@@ -105,8 +105,13 @@ export default class Engine {
         return true;
     }
 
-    public saveImage() {
-        window.location.href = this.canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+    public saveImage(): string | undefined {
+        // window.location.href = this.canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
+        try {
+            return this.renderToImage().toDataURL("image/png").replace("image/png", "image/octet-stream");
+        } catch(err) {
+            console.error(err);
+        }
     }
 
     public save() {
@@ -321,6 +326,38 @@ export default class Engine {
         this.mouse.resetPressAndRelease();
     }
 
+    /**
+     * Render method, inteded for file save. Renders the scene on an offscreen canvas
+     * of fixed size (but not actual offscreenCanvas, as that feature is not implemented in
+     * all browsers yet (Firefox, I'm looking at you ಠ_ಠ))
+     * 
+     * Might want to offload this to a WebWorker, not that it matters too much
+     */
+    private renderToImage(): HTMLCanvasElement {
+        const canvas = document.createElement("canvas") as HTMLCanvasElement;
+        const ctx = canvas.getContext("2d");
+
+        // TODO: Create a popup window instead, asking for the dimensions of the file
+        canvas.width = 1000;
+        canvas.height = 1000;
+
+        // TODO: Scale and center shapes, requires creating a copy of the shapes array
+        if (ctx !== null) {
+            ctx.fillStyle = "#272d38";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.save();
+            this.shapes.forEach(shape => {
+                shape.renderSelf(ctx);
+                shape.renderNodes(ctx);
+            });
+            ctx.restore();
+
+            return canvas;
+        } else {
+            throw new Error("Failed to get canvas context");
+        }
+    }
 
     // TODO: Split drawing into subroutines, so that this function is not so bloody huge
     /**
