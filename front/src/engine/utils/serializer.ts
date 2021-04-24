@@ -25,7 +25,7 @@ export default class Serializer {
         object.type = object.constructor.name;
 
         if (object instanceof Group) {
-            (object as Group).getShapes.forEach(shape => {
+            (object as Group).getObjects.forEach(shape => {
                 shape.type = shape.constructor.name;
             });
         }

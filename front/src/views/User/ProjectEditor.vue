@@ -26,7 +26,7 @@
             </div>
             <div>
                 <button :value="engineState[6]" @click="setEngineState">group</button>
-                <button :value="engineState[7]">ungroup</button>
+                <button :value="engineState[7]" @click="setEngineState">ungroup</button>
             </div>
         </div>
         <div class="editor">
@@ -161,6 +161,9 @@
                         break;
                     case "GROUP":
                         this.engine.engineState = EngineState.GROUP;
+                        break;
+                    case "UNGROUP":
+                        this.engine.engineState = EngineState.UNGROUP;
                         break;
                     case "LINE":
                         this.engine.engineState = EngineState.DRAW;

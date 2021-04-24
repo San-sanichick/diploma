@@ -1,4 +1,4 @@
-import Node from "./node";
+import Node, { NodeColors } from "./node";
 import Vec2 from "../utils/vector2d";
 import Matrix from "../utils/matrix";
 // import Serializable from "./serializable"
@@ -151,6 +151,15 @@ export default abstract class Shape implements Drawable {
 
     set setIsSelected(val: boolean) {
         this.isSelected = val;
+        if (this.isSelected) {
+            this.nodes.forEach(node => {
+                node.color = NodeColors.ACTIVE;
+            });
+        } else {
+            this.nodes.forEach(node => {
+                node.color = NodeColors.INACTIVE;
+            });
+        }
     }
 
     translate(deltaDist: Vec2): void {
@@ -229,7 +238,7 @@ export default abstract class Shape implements Drawable {
         }
     }
 
-    setNodeColor(color: string) {
+    setNodeColor(color: NodeColors) {
         this.nodes.forEach(node => node.color = color);
     }
 
@@ -252,13 +261,16 @@ export default abstract class Shape implements Drawable {
         this.nodes.forEach(node => {
             const sv = this.WorldToScreen(node.getPosition);
             ctx.save();
-            ctx.fillStyle = node.color;
-            ctx.strokeStyle = "";
-            // ctx.moveTo(sv.x, sv.y);
-            ctx.beginPath();
-            ctx.arc(sv.x, sv.y, node.radius, 0, Math.PI * 2);
-            ctx.closePath();
-            ctx.fill();
+                ctx.fillStyle = node.color;
+                ctx.beginPath();
+                ctx.moveTo(sv.x, sv.y);
+                ctx.fillRect(sv.x - node.radius, sv.y - node.radius, 2 * node.radius, 2 * node.radius);
+                ctx.fillStyle = "";
+            // 
+            // ctx.beginPath();
+            // ctx.arc(sv.x, sv.y, node.radius, 0, Math.PI * 2);
+                ctx.closePath();
+            // ctx.fill();
             ctx.restore();
         })
     }

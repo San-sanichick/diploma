@@ -21,14 +21,16 @@ export default class Line extends Shape {
             // }
             // console.log(sv);
             // console.log(this.color);
-            // ctx.save();
-            ctx.fillStyle = "";
-            ctx.strokeStyle = this.isSelected ? "red" : this.color;
-            ctx.beginPath();
-            ctx.moveTo(sv.x, sv.y);
-            ctx.lineTo(ev.x, ev.y);
-            ctx.stroke();
+            ctx.save();
+                ctx.fillStyle = "";
+                ctx.strokeStyle = this.isSelected ? "red" : this.color;
+                ctx.beginPath();
+                ctx.moveTo(sv.x, sv.y);
+                ctx.lineTo(ev.x, ev.y);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.strokeStyle = "";
+            ctx.restore();
         }
-        // ctx.restore();
     }
 }

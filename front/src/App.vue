@@ -14,5 +14,9 @@
         text-align: center;
         color: black;
         height: 100%;
+
+        ._vue-flash-msg-body {
+            z-index: 10000000 !important;
+        }
     }
 </style>

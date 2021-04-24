@@ -2,7 +2,7 @@ import Serializer                        from "./utils/serializer";
 import Drawable                          from "./shapes/drawable";
 import Group                             from "./shapes/group";
 import Shape                             from "./shapes/shape";
-import Node                              from "./shapes/node";
+import Node, { NodeColors }                              from "./shapes/node";
 import Line                              from "./shapes/line";
 import Rectangle                         from "./shapes/rect";
 import Circle                            from "./shapes/circle";
@@ -272,7 +272,7 @@ export default class Engine {
             // and then we create a second point, but only if our number of points in the shape is currently 1
             if (this.tempShape.numberOfNodes === 1) this.selectedNode = this.tempShape.getNextNode(Vec2.copyFrom(this.cursor));
 
-            this.tempShape.setNodeColor("yellow");
+            this.tempShape.setNodeColor(NodeColors.ACTIVE);
         }
 
 
@@ -281,7 +281,7 @@ export default class Engine {
                 if (this.selectedNode === null) {
                     this.tempShape.color = "#fff";
 
-                    this.tempShape.setNodeColor("red");
+                    this.tempShape.setNodeColor(NodeColors.INACTIVE);
 
                     switch(this.curTypeToDraw) {
                         case Shapes.LINE:
@@ -381,7 +381,7 @@ export default class Engine {
             }
         }
 
-        if (this.engineState === EngineState.GROUP && this.shapes.length !== 0) {
+        if (this.engineState === EngineState.GROUP && this.selectedShapes.size !== 0) {
             this.shapes.push(new Group("Group", Array.from(this.selectedShapes)));
 
             this.shapes = this.shapes.filter(shape => {
@@ -389,6 +389,21 @@ export default class Engine {
             });
 
             this.selectedShapes.clear();
+            this.engineState = EngineState.SELECT;
+        }
+
+        if (this.engineState === EngineState.UNGROUP && this.selectedShapes.size === 1) {
+            const group = [...this.selectedShapes][0] as Group;
+
+            console.log(group);
+
+            for (const shape of group.getObjects) {
+                shape.setIsSelected = false;
+                this.shapes.push(shape);
+            }
+
+            this.selectedShapes.clear();
+            this.shapes.splice(this.shapes.indexOf(group), 1);
             this.engineState = EngineState.SELECT;
         }
 
@@ -542,23 +557,23 @@ export default class Engine {
 
         this.ctx.restore();
 
-        this.ctx.save();
+        // this.ctx.save();
             const origin = this.WorldToScreen(new Vec2(0, 0));
             
             this.ctx.strokeStyle = "rgba(0, 150, 150, 1)";
             this.ctx.beginPath();
             this.ctx.arc(origin.x, origin.y, 5, 0, 2 * Math.PI);
-            this.ctx.closePath();
+            // this.ctx.closePath();
             this.ctx.stroke();
 
-            this.ctx.strokeStyle = "red";
+            this.ctx.strokeStyle = "rgba(255, 0, 0, 1)";
             this.ctx.beginPath();
             this.ctx.moveTo(origin.x, origin.y);
             this.ctx.lineTo(origin.x, origin.y + 50);
             this.ctx.closePath();
             this.ctx.stroke();
             
-            this.ctx.strokeStyle = "blue";
+            this.ctx.strokeStyle = "rgba(0, 0, 255, 1)";
             this.ctx.beginPath();
             this.ctx.moveTo(origin.x, origin.y);
             this.ctx.lineTo(origin.x + 50, origin.y);
@@ -569,20 +584,20 @@ export default class Engine {
             this.ctx.fillStyle = "#ccc";
             this.ctx.fillText("x", origin.x + 50, origin.y);
             this.ctx.fillText("y", origin.x, origin.y + 50);
-        this.ctx.restore();
+        // this.ctx.restore();
 
         Shape.worldOffset = this.offset;
         Shape.worldScale  = this.scale;
 
-        this.ctx.save();
-        if (this.tempShape !== null) {
-            this.tempShape.renderSelf(this.ctx);
-            this.tempShape.renderNodes(this.ctx);
-        }
-        this.ctx.restore();
+        // this.ctx.save();
+            if (this.tempShape !== null) {
+                this.tempShape.renderSelf(this.ctx);
+                this.tempShape.renderNodes(this.ctx);
+            }
+        // this.ctx.restore();
 
         this.ctx.save();
-            // can't use foreach, TS is screaming abount ctx being possibly null
+            // can't use forEach, TS is screaming abount ctx being possibly null
             // what a bloody idiot
             for (const shape of this.shapes) {
                 shape.renderSelf(this.ctx);
@@ -599,14 +614,17 @@ export default class Engine {
                 const ey = (this.cursor.y       - this.offset.y) * offset;
 
                 // this.ctx.lineWidth = 5;
+                this.ctxUI.beginPath();
                 this.ctx.strokeStyle = "#fff";
                 this.ctx.fillStyle = "rgba(186, 255, 205, 0.2)";
                 this.ctx.rect(sx, sy, ex - sx, ey - sy);
                 this.ctx.fill();
+                this.ctx.closePath();
                 this.ctx.stroke();
+                this.ctx.strokeStyle = "";
+                this.ctx.fillStyle = "";
             }
         }
-
         this.ctx.restore();
         
         // draw cursor
@@ -634,6 +652,7 @@ export default class Engine {
             this.ctxUI.lineTo(curV.x, this.canvas.height);
             this.ctxUI.closePath();
             this.ctxUI.stroke();
+
             this.ctxUI.beginPath();
             this.ctxUI.moveTo(0, curV.y);
             this.ctxUI.lineTo(this.canvas.width, curV.y);
@@ -692,6 +711,8 @@ export default class Engine {
             this.ctxUI.fillText(`Zoom level: ${this.scale}`,                                      10, 140);
         }
     }
+
+    // private renderDebug()
 }
 
 export { EngineState, Shapes }

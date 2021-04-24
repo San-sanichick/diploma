@@ -56,6 +56,8 @@ export default class Bezier extends Shape {
                 ctx.stroke();
             ctx.restore();
 
+            ctx.strokeStyle = this.color;
+
             ctx.save();
                 ctx.setLineDash([5, 15]);
                 ctx.beginPath();

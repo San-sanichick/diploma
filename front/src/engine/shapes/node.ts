@@ -1,6 +1,11 @@
 import Shape from "./shape";
 import Vec2 from "../utils/vector2d";
 
+export enum NodeColors {
+    ACTIVE = "rgba(200, 200, 100, 1)",
+    INACTIVE = "#888"
+}
+
 /**
  * Node class, represents a node on the work field.
  * All shapes are created by nodes, done by nodes, undone by nodes.
@@ -10,7 +15,7 @@ export default class Node {
     private pos: Vec2;
     // private parent: Shape;
     public radius: number;
-    public color = "red";
+    public color = NodeColors.INACTIVE;
 
     constructor(pos: Vec2, parent: Shape, radius = 4) {
         this.pos = pos;

@@ -30,7 +30,7 @@ export default class Group implements Drawable {
         }
     }
 
-    get getShapes() {
+    get getObjects() {
         return this.objects;
     }
 
