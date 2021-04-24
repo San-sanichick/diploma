@@ -5,6 +5,8 @@
             <div>
                 <button :value="engineState[0]" @click="setEngineState">select shape</button>
                 <button :value="engineState[1]" @click="setEngineState">point edit</button>
+                <button :value="engineState[6]" @click="setEngineState">group</button>
+                <button :value="engineState[7]">ungroup</button>
                 <button :value="engineState[2]" @click="setEngineState">translate shape</button>
                 <button :value="engineState[3]" @click="setEngineState">rotate shape</button>
                 <button :value="engineState[4]" @click="setEngineState">scale shape</button>
@@ -25,9 +27,16 @@
                 <a download="file.png" @click="saveAsImage">save as png</a>
             </div>
         </div>
-        <div class="viewport" ref="viewport" tabindex="1">
-            <canvas class="canvas-ui" ref="canvas-ui"></canvas>
-            <canvas class="canvas" ref="canvas"></canvas>
+        <div class="editor">
+            <div class="project-tree">
+                <ul>
+                    <TreeItem :item="shapesOnScene" />
+                </ul>
+            </div>
+            <div class="viewport" ref="viewport" tabindex="1">
+                <canvas class="canvas-ui" ref="canvas-ui"></canvas>
+                <canvas class="canvas" ref="canvas"></canvas>
+            </div>
         </div>
     </div>
     <!-- <teleport to="body">
@@ -46,17 +55,20 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
+    import TreeItem from "../../components/TreeItem.vue"
     // import Properties from "../../components/draggable/properties.vue";
 
     import Engine, { EngineState, Shapes } from "../../engine/engine";
-    import Shape from "../../engine/shapes/shape";
+    // import Shape from "../../engine/shapes/shape";
     import axios from 'axios';
+    import Drawable from '@/engine/shapes/drawable';
     // import Serializer from '@/engine/shapes/serializer';
 
     export default defineComponent({
-        // components: {
-        //     Properties,
-        // },
+        components: {
+            // Properties,
+            TreeItem
+        },
         data() {
             return {
                 id: this.$route.params.id,
@@ -66,8 +78,11 @@
             }
         },
         computed: {
-            shapesOnScene(): Array<Shape> {
-                return this.engine.shapeList;
+            shapesOnScene(): { name: string; shapes: Array<Drawable> } {
+                return {
+                    name: "root",
+                    shapes: this.engine.shapeList
+                };
             }
         },
         created() {
@@ -80,7 +95,6 @@
                 viewport.style.height = "800px";
 
                 this.engine = new Engine(this.$refs.viewport as HTMLDivElement, document.body.clientWidth - 600, 800);
-                console.log(this.$route.params);
                  if (this.engine.init()) {
                      this.engine.start();
                  }
@@ -96,7 +110,7 @@
             setEngineState(e: Event) {
                 const button = e.target as HTMLButtonElement;
                 const state = button.value;
-
+                console.log(state);
                 switch(state) {
                     case "MOVEPOINT": 
                         this.engine.engineState = EngineState.MOVEPOINT;
@@ -112,6 +126,9 @@
                         break;
                     case "SCALE": 
                         this.engine.engineState = EngineState.SCALE;
+                        break;
+                    case "GROUP":
+                        this.engine.engineState = EngineState.GROUP;
                         break;
                     case "LINE":
                         this.engine.engineState = EngineState.DRAW;
@@ -143,7 +160,6 @@
             async saveProject() {
                 const data = this.engine.save();
                 const id = this.$route.params.id;
-                // console.log(this.str);
 
                 try {
                     const res = await axios.patch(`projects/save`, { id, data });
@@ -172,7 +188,7 @@
                 try {
                     const res = await axios.get(`projects/get/${id}`);
                     const data = res.data;
-                    console.log(data.data);
+                    // console.log(data.data);
                     this.engine.load(data.data);
 
                     this.$flashMessage.show({
@@ -203,7 +219,7 @@
 
 <style lang="scss">
     .page-editor {
-        padding: 65px 7% 0 7%;
+        padding: 65px 0 0 0;
         
         display: flex;
         flex-flow: column;
@@ -216,31 +232,51 @@
             align-items: center;
         }
 
-        .viewport {
-            position: relative;
-            height: 100%;
+        .editor {
+            align-self: flex-start;
+            display: grid;
+            grid-template-columns: 15% auto;
             width: 100%;
 
-            canvas {
-                cursor: none;
-                position: absolute;
-                margin-left: auto;
-                margin-right: auto;
-                left: 0;
-                right: 0;
-                text-align: center;
+            .project-tree {
+                // width: 100%;
+                padding: 0 20px;
+                text-align: left;
+
+                ul {
+                    padding-left: 5%;
+                    // line-height: 1.5em;
+                    margin: 0;
+                    list-style: none;
+                }
             }
 
-            .canvas {
-                left: 0; 
-                top: 0;
-                z-index: 0;
-            }
+            .viewport {
+                position: relative;
+                height: 100%;
+                width: 100%;
 
-            .canvas-ui {
-                left: 0; 
-                top: 0;
-                z-index: 1;
+                canvas {
+                    cursor: none;
+                    position: absolute;
+                    margin-left: auto;
+                    margin-right: auto;
+                    left: 0;
+                    right: 0;
+                    text-align: center;
+                }
+
+                .canvas {
+                    left: 0; 
+                    top: 0;
+                    z-index: 0;
+                }
+
+                .canvas-ui {
+                    left: 0; 
+                    top: 0;
+                    z-index: 1;
+                }
             }
         }
     }

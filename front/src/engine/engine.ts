@@ -10,7 +10,9 @@ import Vec2                              from "./utils/vector2d";
 import MouseController, { MouseButtons } from "./utils/mouseController";
 import KeyboardController                from "./utils/keyboardController";
 import { clamp, fastRounding }           from "./utils/math";
-import Serializer from "./shapes/serializer";
+import Serializer from "./utils/serializer";
+import Drawable from "./shapes/drawable";
+import Group from "./shapes/group";
 
 /**
  * Possible engine states
@@ -21,7 +23,9 @@ enum EngineState {
     TRANSLATE,
     ROTATE,
     SCALE,
-    DRAW
+    DRAW,
+    GROUP,
+    UNGROUP
 }
 
 /**
@@ -50,8 +54,8 @@ export default class Engine {
     private mouse:          MouseController;
     private keyboard:       KeyboardController;
     // I hope y'all like polymorphism, there's a lot of it here
-    private shapes:         Array<Shape>;
-    private selectedShapes: Set<Shape>   = new Set<Shape>();
+    private shapes:         Array<Drawable>;
+    private selectedShapes: Set<Drawable>   = new Set<Drawable>();
     private tempShape:      Shape | null = null;
     private selectedNode:   Node | null  = null;
     private scale                        = 10.0;
@@ -82,7 +86,7 @@ export default class Engine {
         this.cursor = new Vec2(this.canvas.width / 2, this.canvas.height / 2);
     }
 
-    get shapeList(): Array<Shape> {
+    get shapeList(): Array<Drawable> {
         return this.shapes;
     }
 
@@ -268,7 +272,8 @@ export default class Engine {
         if (this.engineState === EngineState.MOVEPOINT && this.mouse.getPressedButton === MouseButtons.LEFT) {
             this.selectedNode = null;
             for (const shape of this.shapes) {
-                this.selectedNode = shape.hitNode(this.cursor);
+                if (shape instanceof Shape)
+                    this.selectedNode = shape.hitNode(this.cursor);
                 if (this.selectedNode !== null) break;
             }
         } else if (this.engineState === EngineState.MOVEPOINT && this.mouse.getReleasedButton === MouseButtons.LEFT) {
@@ -287,9 +292,9 @@ export default class Engine {
             if (this.mouse.getHeldButton === MouseButtons.LEFT) {
                 this.selectedShapes.clear();
                 for (const shape of this.shapes) {
-                    shape.isSelected = false;
+                    shape.setIsSelected = false;
                     if (shape.isInRectangle(this.cursorOldPos, this.cursor)) {
-                        shape.isSelected = true;
+                        shape.setIsSelected = true;
                         this.selectedShapes.add(shape);
                     }
                 }
@@ -333,6 +338,18 @@ export default class Engine {
 
                 this.selectedShapes.clear();
             }
+        }
+
+        if (this.engineState === EngineState.GROUP && this.shapes.length !== 0) {
+            this.shapes.push(new Group("Group", Array.from(this.selectedShapes)));
+
+            this.shapes = this.shapes.filter(shape => {
+                return !this.selectedShapes.has(shape);
+            });
+
+            this.selectedShapes.clear();
+            this.engineState = EngineState.SELECT;
+            console.log(this.shapes);
         }
 
         const updateTime = performance.now() - t1;
@@ -561,7 +578,7 @@ export default class Engine {
         // this.ctx.restore();
         this.ctxUI.save();
             this.ctxUI.setLineDash([10, 15]);
-            this.ctxUI.strokeStyle = "rgba(100, 100, 100, 0.5)";
+            this.ctxUI.strokeStyle = "rgba(255, 255, 255, 0.3)";
             this.ctxUI.beginPath();
             this.ctxUI.moveTo(curV.x, 0);
             this.ctxUI.lineTo(curV.x, this.canvas.height);

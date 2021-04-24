@@ -14,7 +14,7 @@ export default class KeyboardController {
             it's as simple as that
         */
         document.addEventListener("keydown", (e: KeyboardEvent) => {
-            console.log(e.code);
+            // console.log(e.code);
             this.heldButton = e.code;
             this.pressedButton = e.code;
             this.isPressed = true;

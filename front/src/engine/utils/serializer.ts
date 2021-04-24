@@ -1,17 +1,20 @@
-import Arc from "./arc";
-import Bezier from "./bezier";
-import Circle from "./circle";
-import Ellipse from "./ellipse";
-import Line from "./line";
-import Rectangle from "./rect";
-import Serializable from "./serializable";
-import Shape, { ShapeObject } from "./shape";
+import SetToJSON from "./setToJSON";
+import Arc from "../shapes/arc";
+import Bezier from "../shapes/bezier";
+import Circle from "../shapes/circle";
+import Ellipse from "../shapes/ellipse";
+import Group from "../shapes/group";
+import Line from "../shapes/line";
+import Rectangle from "../shapes/rect";
+import Serializable from "../shapes/serializable";
+import Shape, { ShapeObject } from "../shapes/shape";
 
 /**
  * This is the dumbest class, because it only works with shapes,
  * so it's not universal. ffs
  */
 export default class Serializer {
+
     /**
      * Serializes a serializable object into a regular object with no type.
      * @param { Serializable } object Serializable object
@@ -19,6 +22,13 @@ export default class Serializer {
      */
     public static serialize(object: Serializable): any {
         object.type = object.constructor.name;
+
+        if (object instanceof Group) {
+            (object as Group).getShapes.forEach(shape => {
+                shape.type = shape.constructor.name;
+            });
+        }
+
         return JSON.parse(JSON.stringify(object));
     }
 
@@ -55,6 +65,10 @@ export default class Serializer {
             case "Arc": {
                 shape = Shape.cloneFromObject<Arc>(Arc, obj);
                 return shape;
+            }
+            case "Group": {
+                return null;
+                break;
             }
             default: return null;
         }

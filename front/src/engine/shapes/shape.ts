@@ -1,7 +1,8 @@
 import Node from "./node";
 import Vec2 from "../utils/vector2d";
 import Matrix from "../utils/matrix";
-import Serializable from "./serializable"
+// import Serializable from "./serializable"
+import Drawable from "./drawable";
 
 export interface ShapeObject {
     type: string;
@@ -15,7 +16,7 @@ export interface ShapeObject {
 /**
  * Abstract shape class, use as basis for every other shape
  */
-export default abstract class Shape implements Serializable {
+export default abstract class Shape implements Drawable {
     /**
      * For the sake of my sanity, shapes are not going to have > 3 nodes
      * @private
@@ -25,6 +26,8 @@ export default abstract class Shape implements Serializable {
     public    color: string;
     public    name: string;
     public    isSelected: boolean;
+    public    topLeftCorner: Vec2;
+    public    bottomRightCorner: Vec2;
     /**
      * An array of nodes in a shape. The number of nodes is dictated by maxNodes
      * @protected
@@ -42,6 +45,8 @@ export default abstract class Shape implements Serializable {
         this.color = "#888";
         this.isSelected = false;
         this.type = this.constructor.name;
+        this.topLeftCorner = new Vec2(0, 0);
+        this.bottomRightCorner = new Vec2(20, 20);
     }
 
     protected WorldToScreen(v: Vec2): Vec2 {
@@ -141,6 +146,10 @@ export default abstract class Shape implements Serializable {
             }
         }
         return true;
+    }
+
+    set setIsSelected(val: boolean) {
+        this.isSelected = val;
     }
 
     translate(deltaDist: Vec2): void {
