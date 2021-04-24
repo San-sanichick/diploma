@@ -393,9 +393,7 @@ export default class Engine {
         }
 
         if (this.engineState === EngineState.UNGROUP && this.selectedShapes.size === 1) {
-            const group = [...this.selectedShapes][0] as Group;
-
-            console.log(group);
+            const group = Array.from(this.selectedShapes)[0] as Group;
 
             for (const shape of group.getObjects) {
                 shape.setIsSelected = false;
@@ -410,8 +408,17 @@ export default class Engine {
         const updateTime = performance.now() - t1;
         
         // rendering
-        this.render(true, updateTime);
+        const t2 = performance.now();
+        this.render();
+        const renderTime = performance.now() - t2;
 
+        this.renderDebug({ text: "Update time", metric: updateTime },
+                         { text: "Render time", metric: renderTime },
+                         { text: "Shapes on scene", metric: this.shapes.length },
+                         { text: "Temp shape", metric: this.tempShape?.name ?? "none" },
+                         { text: "Zoom level", metric: this.scale });
+
+        
         // :)
         this.mouse.resetPressAndRelease();
         this.keyboard.resetKeyController();
@@ -462,10 +469,10 @@ export default class Engine {
     /**
      * Render method, gets called at the end of each update
      */
-    private render(debug = false, performanceTime?: number): void {
+    private render(): void {
         // console.log(debug);
         if (this.ctx === null || this.ctxUI === null) return;
-        const t2 = performance.now();
+        
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctxUI.clearRect(0, 0, this.canvasUI.width, this.canvasUI.height);
         // this.ctx.fillStyle = "#191e38";
@@ -630,20 +637,6 @@ export default class Engine {
         // draw cursor
         const curV = this.WorldToScreen(this.cursor);
 
-        // this.ctx.save();
-        //     this.ctx.setLineDash([10, 15]);
-        //     this.ctx.strokeStyle = "rgba(100, 100, 100, 0.5)";
-        //     this.ctx.beginPath();
-        //     this.ctx.moveTo(curV.x, 0);
-        //     this.ctx.lineTo(curV.x, this.canvas.height);
-        //     this.ctx.closePath();
-        //     this.ctx.stroke();
-        //     this.ctx.beginPath();
-        //     this.ctx.moveTo(0, curV.y);
-        //     this.ctx.lineTo(this.canvas.width, curV.y);
-        //     this.ctx.closePath();
-        //     this.ctx.stroke();
-        // this.ctx.restore();
         this.ctxUI.save();
             this.ctxUI.setLineDash([10, 15]);
             this.ctxUI.strokeStyle = "rgba(255, 255, 255, 0.3)";
@@ -660,30 +653,13 @@ export default class Engine {
             this.ctxUI.stroke();
         this.ctxUI.restore();
 
-
-        // this.ctx.save();
-        //     this.ctx.strokeStyle = "rgba(150, 150, 150, 0.5)";
-        //     this.ctx.beginPath();
-        //     this.ctx.arc(curV.x, curV.y, 5, 0, 2 * Math.PI);
-        //     this.ctx.closePath();
-        //     this.ctx.stroke();
-        // this.ctx.restore();
-
         this.ctxUI.save();
-            this.ctxUI.strokeStyle = "rgba(150, 150, 150, 0.5)";
+            this.ctxUI.strokeStyle = "rgba(255, 255, 255, 1)";
             this.ctxUI.beginPath();
-            this.ctxUI.arc(curV.x, curV.y, 5, 0, 2 * Math.PI);
+            this.ctxUI.strokeRect(curV.x - 6, curV.y - 6, 12, 12);
             this.ctxUI.closePath();
-            this.ctxUI.stroke();
+            // this.ctxUI.stroke();
         this.ctxUI.restore();
-
-        // this.ctx.font = "14px sans-serif";
-        // this.ctx.fillStyle = "#fff";
-        // this.ctx.fillText(`x: ${this.mouse.getCurrentPosition().x}, y: ${this.mouse.getCurrentPosition().y}`, 
-        //                         this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 10);
-
-        // this.ctx.fillText(`x: ${this.cursor.x}, y: ${this.cursor.y}`, 
-        //                         this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 25);
 
         this.ctxUI.font = "14px sans-serif";
         this.ctxUI.fillStyle = "#fff";
@@ -692,27 +668,20 @@ export default class Engine {
 
         this.ctxUI.fillText(`x: ${this.cursor.x}, y: ${this.cursor.y}`, 
                                 this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 25);
-
-        const renderTime = performance.now() - t2;
-
-        // for debug purposes
-        if (debug) {
-            this.ctxUI.font = "18px sans-serif";
-            this.ctxUI.fillStyle = "#ccc";
-            this.ctxUI.fillText(`Render time (per frame): ${(renderTime).toPrecision(3)}ms`,      10, 20);
-
-            if (performanceTime) 
-                this.ctxUI.fillText(`Update time (per frame): ${(performanceTime).toPrecision(3)}ms`, 10, 40);
-            
-            this.ctxUI.fillText(`FPS: ${Math.trunc(1000 / renderTime)}`,                          10, 60);
-            this.ctxUI.fillText(`Shapes on scene: ${this.shapes.length}`,                         10, 80);
-            this.ctxUI.fillText(`Temp shape: ${this.tempShape?.name ?? "none"}`,                  10, 100);
-            this.ctxUI.fillText(`Selected node: ${this.selectedNode ?? "none"}`,                  10, 120);
-            this.ctxUI.fillText(`Zoom level: ${this.scale}`,                                      10, 140);
-        }
     }
 
-    // private renderDebug()
+    private renderDebug(...performance: { text: string; metric: number | string }[]) {
+        if (this.ctxUI === null) return;
+
+        const gap = 20;
+        this.ctxUI.font = "18px sans-serif";
+        this.ctxUI.fillStyle = "#ccc";
+
+        for (let i = 0; i < performance.length; i++) {
+            const perf = performance[i];
+            this.ctxUI?.fillText(`${perf.text}: ${perf.metric}`, 10, gap * (2 + i));
+        }
+    }
 }
 
 export { EngineState, Shapes }
