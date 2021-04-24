@@ -10,6 +10,7 @@ export interface ShapeObject {
     color: string;
     name: string;
     isSelected: boolean;
+    // eslint-disable-next-line
     nodes: Array<any>;
 }
 

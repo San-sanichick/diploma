@@ -20,6 +20,7 @@ export default class Serializer {
      * @param { Serializable } object Serializable object
      * @returns { any } serialized object
      */
+    // eslint-disable-next-line
     public static serialize(object: Serializable): any {
         object.type = object.constructor.name;
 

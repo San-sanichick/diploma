@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@smartweb/vue-flash-message": "^1.0.0-alpha.12",
-    "axios": ">=0.21.1",
+    "axios": "^0.20.0",
     "axios-auth-refresh": "^3.0.0",
     "core-js": "^3.6.5",
     "cors": "^2.8.5",
@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
+    "@types/resize-observer-browser": "^0.1.5",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "@vue/cli-plugin-babel": "~4.5.0",
@@ -30,8 +31,8 @@
     "@vue/cli-service": "~4.5.0",
     "@vue/compiler-sfc": "^3.0.0",
     "@vue/eslint-config-typescript": "^5.0.2",
-    "eslint": "^6.7.2",
-    "eslint-plugin-vue": "^7.0.0-0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-vue": "^7.9.0",
     "node-sass": "^4.12.0",
     "sass-loader": "^8.0.2",
     "typescript": "~3.9.3"

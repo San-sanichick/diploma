@@ -2,6 +2,12 @@ import Vec2 from "../utils/vector2d";
 import Serializable from "./serializable";
 
 // TODO: RETHINK THIS
+/**
+ * Base interface for every object, that can be rendered by the engine
+ * 
+ * Yes, it is an afterthought, what are you gonna do about it?
+ * @interface
+ */
 export default interface Drawable extends Serializable{
     name: string;
     topLeftCorner: Vec2;

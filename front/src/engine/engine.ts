@@ -1,3 +1,6 @@
+import Serializer                        from "./utils/serializer";
+import Drawable                          from "./shapes/drawable";
+import Group                             from "./shapes/group";
 import Shape                             from "./shapes/shape";
 import Node                              from "./shapes/node";
 import Line                              from "./shapes/line";
@@ -10,9 +13,6 @@ import Vec2                              from "./utils/vector2d";
 import MouseController, { MouseButtons } from "./utils/mouseController";
 import KeyboardController                from "./utils/keyboardController";
 import { clamp, fastRounding }           from "./utils/math";
-import Serializer from "./utils/serializer";
-import Drawable from "./shapes/drawable";
-import Group from "./shapes/group";
 
 /**
  * Possible engine states
@@ -55,17 +55,30 @@ export default class Engine {
     private keyboard:       KeyboardController;
     // I hope y'all like polymorphism, there's a lot of it here
     private shapes:         Array<Drawable>;
-    private selectedShapes: Set<Drawable>   = new Set<Drawable>();
-    private tempShape:      Shape | null = null;
-    private selectedNode:   Node | null  = null;
-    private scale                        = 10.0;
-    private grid                         = 1.0;
-    private offset:         Vec2         = new Vec2(0.0, 0.0);
+    private selectedShapes: Set<Drawable> = new Set<Drawable>();
+    private tempShape:      Shape | null  = null;
+    private selectedNode:   Node | null   = null;
+    private scale                         = 10.0;
+    private grid                          = 1.0;
+    private offset:         Vec2          = new Vec2(0.0, 0.0);
     private cursor:         Vec2;
-    private cursorOldPos:   Vec2         = new Vec2(0.0, 0.0);
-    public engineState:     EngineState  = EngineState.SELECT;
-    public curTypeToDraw:   Shapes       = Shapes.NONE;
+    private cursorOldPos:   Vec2          = new Vec2(0.0, 0.0);
+    public engineState:     EngineState   = EngineState.SELECT;
+    public curTypeToDraw:   Shapes        = Shapes.NONE;
 
+    /**
+     * Engine constructor. Requires a viewport with two canvases: the UI canvas (class: 'canvas-ui') and
+     * main canvas (class: 'canvas').
+     * 
+     * Additionally, width and height of the vewport can be specified,
+     * but if this width and heigh does not match the width and height, specified by CSS properties of
+     * the viewport, then the view will be distorted to fit
+     * 
+     * @param viewport Viewport div with two canvases: the UI canvas, and the active canvas, 
+     * on which everything will be drawn
+     * @param width optional width of the viewport
+     * @param height optonal height of the viewport
+     */
     constructor(viewport: HTMLDivElement, width?: number, height?: number) {
         this.viewport      = viewport;
         this.canvas        = viewport.querySelector(".canvas") as HTMLCanvasElement;
@@ -73,21 +86,49 @@ export default class Engine {
         this.ctx           = this.canvas.getContext("2d");
         this.ctxUI         = this.canvasUI.getContext("2d");
 
-        if (this.ctx === null) throw new Error("error when getting 2d context");
+        if (this.ctx === null || this.ctxUI === null) throw new Error("An error has occured while gitting context from canvas");
         
         this.shapes        = new Array<Shape>();
         this.mouse         = new MouseController(this.canvasUI);
         this.keyboard      = new KeyboardController();
-        this.canvas.width  = width ?? 500;
-        this.canvas.height = height ?? 500;
-        this.canvasUI.width = width ?? 500;
-        this.canvasUI.height = height ?? 500;
+
+        const w = parseInt(getComputedStyle(this.viewport).width);
+        const h = parseInt(getComputedStyle(this.viewport).height);
+        this.canvas.width  = width ?? w;
+        this.canvas.height = height ?? h;
+        this.canvasUI.width = width ?? w;
+        this.canvasUI.height = height ?? h;
+
+        // we don't want to hardcode the size of the window, so we add
+        // an event listener for the resize event
+        if (width === undefined && height === undefined) {
+            // window.addEventListener("resize", (e: Event) => {
+            //     const w = parseInt(getComputedStyle(this.viewport).width);
+            //     const h = parseInt(getComputedStyle(this.viewport).height);
+            //     this.canvas.width  = w;
+            //     this.canvas.height = h;
+            //     this.canvasUI.width = w;
+            //     this.canvasUI.height = h;
+            // });
+            new ResizeObserver(() => {
+                const w = parseInt(getComputedStyle(this.viewport).width);
+                const h = parseInt(getComputedStyle(this.viewport).height);
+                this.canvas.width  = w;
+                this.canvas.height = h;
+                this.canvasUI.width = w;
+                this.canvasUI.height = h;
+            }).observe(this.viewport);
+        }
 
         this.cursor = new Vec2(this.canvas.width / 2, this.canvas.height / 2);
     }
 
     get shapeList(): Array<Drawable> {
         return this.shapes;
+    }
+
+    get selectedElements() {
+        return Array.from(this.selectedShapes);
     }
 
     private WorldToScreen(v: Vec2): Vec2 {
@@ -135,7 +176,7 @@ export default class Engine {
         };
     }
 
-    public load(data: any) {
+    public load(data: { offset: {x: number; y: number}; scale: number; shapes: [] }) {
         const arr: Array<Shape> = new Array<Shape>();
 
         for (const obj of data.shapes) {
@@ -349,7 +390,6 @@ export default class Engine {
 
             this.selectedShapes.clear();
             this.engineState = EngineState.SELECT;
-            console.log(this.shapes);
         }
 
         const updateTime = performance.now() - t1;
@@ -542,10 +582,12 @@ export default class Engine {
         this.ctx.restore();
 
         this.ctx.save();
-        this.shapes.forEach(shape => {
-            shape.renderSelf(this.ctx!);
-            shape.renderNodes(this.ctx!);
-        });
+            // can't use foreach, TS is screaming abount ctx being possibly null
+            // what a bloody idiot
+            for (const shape of this.shapes) {
+                shape.renderSelf(this.ctx);
+                shape.renderNodes(this.ctx);
+            }
         this.ctx.restore();
 
         this.ctx.save();

@@ -1,5 +1,3 @@
-import Vec2 from "./vector2d";
-
 export default class Matrix {
     private matrix: Array<Array<number>>;
 

@@ -17,7 +17,7 @@
         <ul v-show="isOpen">
             <tree-item
                 class="item"
-                v-for="(child, index) in item.shapes"
+                v-for="(child, index) in item.objects"
                 :key="index"
                 :item="child"
                 @selected="$emit('selected', child)"
@@ -43,7 +43,7 @@
         },
         computed: {
             isCollapsable: function(): boolean {
-                return this.item.shapes && this.item.shapes.length;
+                return this.item.objects && this.item.objects.length;
             }
         },
         methods: {

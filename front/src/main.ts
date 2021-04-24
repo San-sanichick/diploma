@@ -61,7 +61,7 @@ router.beforeEach(async (to, from, next) => {
     }
 });
 
-
+// eslint-disable-next-line
 async function refreshAuthLogic(failedRequest: any) {
     const refreshToken = localStorage.getItem("refreshToken");
     if (refreshToken !== "undefined") {
