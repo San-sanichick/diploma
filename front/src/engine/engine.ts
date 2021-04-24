@@ -362,6 +362,14 @@ export default class Engine {
         this.keyboard.resetKeyController();
     }
 
+    public addToSelection(item: Drawable) {
+        this.selectedShapes.add(item);
+    }
+
+    public removeFromSelection(item: Drawable) {
+        this.selectedShapes.delete(item);
+    }
+
     /**
      * Render method, inteded for file save. Renders the scene on an offscreen canvas
      * of fixed size (but not actual offscreenCanvas, as that feature is not implemented in

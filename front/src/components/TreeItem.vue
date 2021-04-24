@@ -1,11 +1,18 @@
 <template>
     <li>
-        <div
-            class="item"
-            :class="{ selected: item.isSelected }"
-            @click="toggle">
-            <button v-if="isCollapsable"> {{ isOpen ? "-" : "+" }} </button>
-            {{ item.name }}
+        <div class="item">
+            <button
+                @click="toggle"
+                v-if="isCollapsable"
+                > 
+                {{ isOpen ? "-" : "+" }}
+            </button>
+            <span 
+                :class="{ selected: item.isSelected }"
+                @click="select"
+                >
+                {{ item.name }}
+            </span>
         </div>
         <ul v-show="isOpen">
             <tree-item
@@ -13,6 +20,7 @@
                 v-for="(child, index) in item.shapes"
                 :key="index"
                 :item="child"
+                @selected="$emit('selected', child)"
             ></tree-item>
         </ul>
     </li>
@@ -43,6 +51,9 @@
                 if (this.isCollapsable) {
                     this.isOpen = !this.isOpen;
                 }
+            },
+            select() {
+                this.$emit("selected", this.item);
             }
         }
     })
@@ -61,7 +72,7 @@
         font-weight: bold;
     }
     ul {
-        padding-left: 5%;
+        padding-left: 10%;
         // line-height: 1.5em;
         margin: 0;
         list-style: none;

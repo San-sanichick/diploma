@@ -30,7 +30,9 @@
         <div class="editor">
             <div class="project-tree">
                 <ul>
-                    <TreeItem :item="shapesOnScene" />
+                    <TreeItem 
+                        :item="shapesOnScene"
+                        @selected="selectElementHandler" />
                 </ul>
             </div>
             <div class="viewport" ref="viewport" tabindex="1">
@@ -62,6 +64,8 @@
     // import Shape from "../../engine/shapes/shape";
     import axios from 'axios';
     import Drawable from '@/engine/shapes/drawable';
+    import Shape from '@/engine/shapes/shape';
+    import Group from '@/engine/shapes/group';
     // import Serializer from '@/engine/shapes/serializer';
 
     export default defineComponent({
@@ -110,7 +114,7 @@
             setEngineState(e: Event) {
                 const button = e.target as HTMLButtonElement;
                 const state = button.value;
-                console.log(state);
+                // console.log(state);
                 switch(state) {
                     case "MOVEPOINT": 
                         this.engine.engineState = EngineState.MOVEPOINT;
@@ -212,6 +216,16 @@
                     target.href = filePath;
                     // target.click();
                 }
+            },
+            selectElementHandler(item: Drawable) {
+                if (item instanceof Shape || item instanceof Group) {
+                    item.setIsSelected = !item.isSelected;
+                    if (item.isSelected) {
+                        this.engine.addToSelection(item);
+                    } else {
+                        this.engine.removeFromSelection(item);
+                    }
+                }
             }
         }
     })
@@ -244,7 +258,7 @@
                 text-align: left;
 
                 ul {
-                    padding-left: 5%;
+                    padding-left: 10%;
                     // line-height: 1.5em;
                     margin: 0;
                     list-style: none;
