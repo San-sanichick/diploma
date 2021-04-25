@@ -6,6 +6,10 @@ export default class Circle extends Shape {
         super(name, 2);
     }
 
+    get centerOfShape(): Vec2 {
+        return this.nodes[0].getPosition;
+    }
+
     renderSelf(ctx: CanvasRenderingContext2D) {
         if (this.nodes.length <= 1) return;
 

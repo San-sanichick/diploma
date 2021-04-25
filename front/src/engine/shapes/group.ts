@@ -43,10 +43,10 @@ export default class Group implements Drawable {
     translate(deltaDist: Vec2): void {
         this.objects.forEach(shape => shape.translate(deltaDist));
     }
-    rotate(angle: number): void {
-        this.objects.forEach(shape => shape.rotate(angle));
+    rotate(angle: number, pos: Vec2): void {
+        this.objects.forEach(shape => shape.rotate(angle, pos));
     }
-    resize(sizeCoeff: number, pos: Vec2): void {
+    resize(sizeCoeff: Vec2, pos: Vec2): void {
         this.objects.forEach(shape => shape.resize(sizeCoeff, pos));
     }
     renderSelf(ctx: CanvasRenderingContext2D): void {

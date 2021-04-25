@@ -85,7 +85,7 @@ export default class ProjectController {
 
     public async updateProject(req: Request, res: Response) {
         const token = getToken(req.headers);
-        console.log(req.body);  
+        // console.log(req.body);  
         if (token) {
             const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
 
@@ -123,7 +123,6 @@ export default class ProjectController {
 
     public async updateProjectConfig(req: Request, res: Response) {
         const token = getToken(req.headers);
-        console.log(req.body);  
         if (token) {
             const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
 
@@ -175,7 +174,7 @@ export default class ProjectController {
                             const projectData = await readFile(`${userPath}/save.json`);
                             const save = JSON.parse(projectData as unknown as string);
                             console.log(projectData);
-                            console.log("HAHAHA", save);
+                            // console.log("HAHAHA", save);
                             res.status(200).json({
                                 msg: `Проект ${project.name} успешно загружен`,
                                 data: save
@@ -221,10 +220,8 @@ export default class ProjectController {
 
             if (token) {
                 const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
-                // console.log(req.params.id);
                 const project = await ProjectModel.findByIdAndDelete(req.params.id);
 
-                // const user = await UserModel.findById(decoded.id);
                 if (project !== null) {
                     const user = await UserModel.findByIdAndUpdate(
                         decoded.id, 
@@ -240,8 +237,6 @@ export default class ProjectController {
                         }
                     )
                     if (user !== null) {
-                        console.log("HAHAHAHA");
-
                         const populated = await user.populate("projects").execPopulate();
 
                         // we need to remove the project folder when we're done

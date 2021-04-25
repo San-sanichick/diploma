@@ -130,7 +130,7 @@ export default class MouseController {
      * the beginning of a new frame. This is a very stupid way of doing
      * this, but it works
      */ 
-    public resetPressAndRelease(): void {
+    public resetMouseController(): void {
         this.pressedButton = null;
         this.releasedButton = null;
     }

@@ -11,7 +11,7 @@
                 :class="{ selected: item.isSelected }"
                 @click="select"
                 >
-                {{ item.name }}
+                {{ item.name }} {{ item.centerOfShape }}
             </span>
         </div>
         <ul v-show="isOpen">
@@ -72,7 +72,7 @@
         font-weight: bold;
     }
     ul {
-        padding-left: 10%;
+        padding-left: 40px;
         // line-height: 1.5em;
         margin: 0;
         list-style: none;

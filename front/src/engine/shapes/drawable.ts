@@ -16,8 +16,8 @@ export default interface Drawable extends Serializable{
     setIsSelected: boolean;
     isInRectangle(rectPoint1: Vec2, rectPoint2: Vec2): boolean;
     translate(deltaDist: Vec2): void;
-    rotate(angle: number): void;
-    resize(sizeCoeff: number, pos: Vec2): void;
+    rotate(angle: number, pos: Vec2): void;
+    resize(sizeCoeff: Vec2, pos: Vec2): void;
     renderSelf(ctx: CanvasRenderingContext2D): void;
     renderNodes(ctx: CanvasRenderingContext2D): void;
 }

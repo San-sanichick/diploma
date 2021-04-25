@@ -31,6 +31,7 @@ enum EngineState {
 /**
  * Supported shapes
  */
+// TODO: Implement ARC and POLYLINE
 enum Shapes {
     NONE,
     LINE,
@@ -38,7 +39,8 @@ enum Shapes {
     CIRCLE,
     ELLIPSE,
     BEZIER,
-    ARC
+    ARC,
+    POLYLINE
 }
 
 /**
@@ -63,6 +65,7 @@ export default class Engine {
     private offset:         Vec2          = new Vec2(0.0, 0.0);
     private cursor:         Vec2;
     private cursorOldPos:   Vec2          = new Vec2(0.0, 0.0);
+    private cursorPosPivot: Vec2          = new Vec2(0, 0);
     public engineState:     EngineState   = EngineState.SELECT;
     public curTypeToDraw:   Shapes        = Shapes.NONE;
 
@@ -164,16 +167,6 @@ export default class Engine {
     }
 
     public save() {
-        // const shapeArr = [];
-        // for (let i = 0; i < this.shapes.length; i++) {
-        //     shapeArr.push(Serializer.serialize(this.shapes[i]));
-        // }
-
-        // return {
-        //     offset: this.offset,
-        //     scale: this.scale,
-        //     shapes: shapeArr
-        // };
         return {
             offset: this.offset,
             scale: this.scale,
@@ -182,18 +175,8 @@ export default class Engine {
     }
 
     public load(data: { offset: {x: number; y: number}; scale: number; shapes: [] }) {
-        // const arr: Array<Shape> = new Array<Shape>();
-
-        // for (const obj of data.shapes) {
-        //     const shape = Serializer.deserialize(obj);
-        //     if (shape != null) {
-        //         arr.push(shape);
-        //     } else {
-        //         throw new TypeError("Shape deserialized to null, check input string for errors");
-        //     }
-        // }
-
         this.shapes = [];
+        this.selectedShapes.clear();
         this.shapes = Serializer.deserialize(data.shapes);
         this.scale = data.scale;
         this.offset = new Vec2(data.offset.x, data.offset.y);
@@ -364,19 +347,34 @@ export default class Engine {
         if (this.engineState === EngineState.SCALE) {
             if (this.mouse.getPressedButton === MouseButtons.LEFT) {
                 this.cursorOldPos = Vec2.copyFrom(this.cursor);
+                this.cursorPosPivot = Vec2.copyFrom(this.cursor);
             }
 
             if (this.mouse.getHeldButton === MouseButtons.LEFT) {
                 for (const shape of this.selectedShapes) {
                     if (this.cursor.equals(this.cursorOldPos)) break;
-                    shape.resize(1, this.cursor);
+                    shape.resize(this.cursor.subtract(this.cursorPosPivot), this.cursorPosPivot);
                 }
             }
-            this.cursorOldPos = Vec2.copyFrom(this.cursorOldPos);
+            this.cursorOldPos = Vec2.copyFrom(this.cursor);
+        }
+
+        if (this.engineState === EngineState.ROTATE) {
+            if (this.mouse.getPressedButton === MouseButtons.LEFT) {
+                this.cursorOldPos = Vec2.copyFrom(this.cursor);
+                this.cursorPosPivot = Vec2.copyFrom(this.cursor);
+            }
+
+            if (this.mouse.getHeldButton === MouseButtons.LEFT) {
+                for (const shape of this.selectedShapes) {
+                    if (this.cursor.equals(this.cursorOldPos)) break;
+                    shape.rotate(this.cursor.subtract(this.cursorOldPos).x, this.cursorPosPivot);
+                }
+            }
+            this.cursorOldPos = Vec2.copyFrom(this.cursor);
         }
 
         if (this.selectedShapes.size != 0) {
-            // console.log(this.keyboard.getPressedButton);
             if (this.keyboard.getPressedButton === "Delete") {
                 this.shapes = this.shapes.filter(shape => {
                     return !this.selectedShapes.has(shape);
@@ -398,16 +396,19 @@ export default class Engine {
         }
 
         if (this.engineState === EngineState.UNGROUP && this.selectedShapes.size === 1) {
-            const group = Array.from(this.selectedShapes)[0] as Group;
+            const obj = Array.from(this.selectedShapes)[0];
 
-            for (const shape of group.getObjects) {
-                shape.setIsSelected = false;
-                this.shapes.push(shape);
+            if(obj instanceof Group) {
+                const group = obj as Group;
+                for (const shape of group.getObjects) {
+                    shape.setIsSelected = false;
+                    this.shapes.push(shape);
+                }
+    
+                this.selectedShapes.clear();
+                this.shapes.splice(this.shapes.indexOf(group), 1);
+                this.engineState = EngineState.SELECT;
             }
-
-            this.selectedShapes.clear();
-            this.shapes.splice(this.shapes.indexOf(group), 1);
-            this.engineState = EngineState.SELECT;
         }
 
         const updateTime = performance.now() - t1;
@@ -419,13 +420,14 @@ export default class Engine {
 
         this.renderDebug({ text: "Update time", metric: updateTime },
                          { text: "Render time", metric: renderTime },
+                         { text: "FPS", metric: Math.trunc(1000 / renderTime) },
                          { text: "Shapes on scene", metric: this.shapes.length },
                          { text: "Temp shape", metric: this.tempShape?.name ?? "none" },
                          { text: "Zoom level", metric: this.scale });
 
         
         // :)
-        this.mouse.resetPressAndRelease();
+        this.mouse.resetMouseController();
         this.keyboard.resetKeyController();
     }
 
@@ -684,7 +686,11 @@ export default class Engine {
 
         for (let i = 0; i < performance.length; i++) {
             const perf = performance[i];
-            this.ctxUI?.fillText(`${perf.text}: ${perf.metric}`, 10, gap * (2 + i));
+            let metric = perf.metric;
+            if (typeof metric === "number") {
+                metric = metric.toPrecision(3);
+            }
+            this.ctxUI?.fillText(`${perf.text}: ${metric}`, 10, gap * (2 + i));
         }
     }
 }

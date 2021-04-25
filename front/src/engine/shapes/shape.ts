@@ -3,6 +3,7 @@ import Vec2 from "../utils/vector2d";
 import Matrix from "../utils/matrix";
 // import Serializable from "./serializable"
 import Drawable from "./drawable";
+import { clamp, fastRounding, mapRange } from "../utils/math";
 
 export interface ShapeObject {
     type: string;
@@ -162,6 +163,24 @@ export default abstract class Shape implements Drawable {
         }
     }
 
+    get centerOfShape(): Vec2 {
+        let sumX = 0,
+            sumY = 0;
+        for (const node of this.nodes) {
+            sumX += node.getPosition.x;
+            sumY += node.getPosition.y;
+        }
+
+        sumX /= this.nodes.length;
+        sumY /= this.nodes.length;
+
+        return new Vec2(fastRounding(sumX), fastRounding(sumY));
+    }
+
+    get maxNodeNumber() {
+        return this.maxNodes;
+    }
+
     translate(deltaDist: Vec2): void {
         // Translation matrix
         const trMatrix = new Matrix([
@@ -186,8 +205,50 @@ export default abstract class Shape implements Drawable {
         }
     }
 
-    rotate(angle: number): void {
-        // later
+    // works well on circles, absolutely breaks on
+    // rectangles
+    rotate(angle: number, pos: Vec2): void {
+        // translate to origin
+        angle = angle * (Math.PI / 180);
+
+        const trMatrix = new Matrix([
+            [1, 0, 0],
+            [0, 1, 0],
+            [-pos.x, -pos.y, 1]
+        ]);
+        
+        const rtMatrix = new Matrix([
+            [ Math.cos(angle), Math.sin(angle), 0],
+            [-Math.sin(angle), Math.cos(angle), 0],
+            [0               , 0              , 1]
+        ]);
+
+        // move it back to initial position
+        const reTrMatrix = new Matrix([
+            [1, 0, 0],
+            [0, 1, 0],
+            [pos.x, pos.y, 1]
+        ]);
+
+        // multiply all that stuff
+        const m = Matrix.multMatrixByMatrix(Matrix.multMatrixByMatrix(trMatrix, rtMatrix), reTrMatrix);
+
+        const coords = [];
+        for (const node of this.nodes) {
+            coords.push([node.getPosition.x, node.getPosition.y, 1]);
+        }
+
+        const coordMatrix = new Matrix(coords);
+
+        const newCoord = Matrix.multMatrixByMatrix(coordMatrix, m);
+    
+
+        for (let i = 0; i < this.nodes.length; i++) {
+            const temp = new Vec2(newCoord.value[i][0], newCoord.value[i][1]);
+            // no snapping, that breaks things
+            // temp.round();
+            this.nodes[i].setPosition = temp;
+        }
     }
 
     /**
@@ -197,26 +258,31 @@ export default abstract class Shape implements Drawable {
      * @param sizeCoeff resize coefficient
      * @param pos current position of the mouse
      */
-    resize(sizeCoeff: number, pos: Vec2): void {
+    resize(sizeCoeff: Vec2, pos: Vec2): void {
+        console.log(sizeCoeff);
+        if (sizeCoeff.x < 0) {
+            sizeCoeff.x = mapRange(sizeCoeff.x, 0, -100000, 0, 1);
+        }
+
         // translate to origin
         const trMatrix = new Matrix([
             [1, 0, 0],
             [0, 1, 0],
-            [-pos.x, -pos.y, 0]
-        ])
+            [-pos.x, -pos.y, 1]
+        ]);
 
         // scale matrix
         const scMatrix = new Matrix([
-            [sizeCoeff  , 0          , 0        ],
-            [0          , sizeCoeff  , 0        ],
-            [0          , 0          , 1        ]
+            [sizeCoeff.x, 0          , 0],
+            [0          , sizeCoeff.x, 0],
+            [0          , 0          , 1]
         ]);
 
         // move it back to initial position
         const reTrMatrix = new Matrix([
             [1, 0, 0],
             [0, 1, 0],
-            [pos.x, pos.y, 0]
+            [pos.x, pos.y, 1]
         ]);
 
         // multiply all that stuff
@@ -234,7 +300,11 @@ export default abstract class Shape implements Drawable {
         // console.log(newCoord.value);
         // get some bullshit result
         for (let i = 0; i < this.nodes.length; i++) {
-            this.nodes[i].setPosition = new Vec2(newCoord.value[i][0], newCoord.value[i][1]);
+            for (let i = 0; i < this.nodes.length; i++) {
+                const temp = new Vec2(newCoord.value[i][0], newCoord.value[i][1]);
+                // temp.round();
+                this.nodes[i].setPosition = temp;
+            }
         }
     }
 

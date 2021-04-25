@@ -86,16 +86,14 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
-    import TreeItem from "../../components/TreeItem.vue"
+    import TreeItem from "@/components/TreeItem.vue";
     // import Properties from "../../components/draggable/properties.vue";
-
-    import Engine, { EngineState, Shapes } from "../../engine/engine";
-    // import Shape from "../../engine/shapes/shape";
+    import Engine, { EngineState, Shapes } from "@/engine/engine";
+    
     import axios from 'axios';
     import Drawable from '@/engine/shapes/drawable';
     import Shape from '@/engine/shapes/shape';
     import Group from '@/engine/shapes/group';
-    // import Serializer from '@/engine/shapes/serializer';
 
     export default defineComponent({
         components: {
@@ -193,10 +191,9 @@
                 
             },
             async saveProject() {
-                const data = this.engine.save();
-                const id = this.$route.params.id;
-
                 try {
+                    const data = this.engine.save();
+                    const id = this.$route.params.id;
                     const res = await axios.patch(`projects/save`, { id, data });
 
                     this.$flashMessage.show({
@@ -213,17 +210,11 @@
                 }
             },
             async loadProject() {
-                // try {
-                //     this.engine.load(this.str);
-                // } catch (e) {
-                //     console.error(e);
-                // }
                 const id = this.$route.params.id;
 
                 try {
                     const res = await axios.get(`projects/get/${id}`);
                     const data = res.data;
-                    // console.log(data.data);
                     this.engine.load(data.data);
 
                     this.$flashMessage.show({
@@ -245,7 +236,6 @@
 
                 if (target !== null && filePath !== undefined) {
                     target.href = filePath;
-                    // target.click();
                 }
             },
             selectElementHandler(item: Drawable) {
@@ -305,7 +295,7 @@
                 overflow: auto;
 
                 ul {
-                    padding-left: 10%;
+                    padding-left: 20px;
                     // line-height: 1.5em;
                     margin: 0;
                     list-style: none;
