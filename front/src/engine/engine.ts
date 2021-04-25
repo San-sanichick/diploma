@@ -164,32 +164,37 @@ export default class Engine {
     }
 
     public save() {
-        const shapeArr = [];
-        for (let i = 0; i < this.shapes.length; i++) {
-            shapeArr.push(Serializer.serialize(this.shapes[i]));
-        }
+        // const shapeArr = [];
+        // for (let i = 0; i < this.shapes.length; i++) {
+        //     shapeArr.push(Serializer.serialize(this.shapes[i]));
+        // }
 
+        // return {
+        //     offset: this.offset,
+        //     scale: this.scale,
+        //     shapes: shapeArr
+        // };
         return {
             offset: this.offset,
             scale: this.scale,
-            shapes: shapeArr
-        };
+            shapes: Serializer.serialize(this.shapes)
+        }
     }
 
     public load(data: { offset: {x: number; y: number}; scale: number; shapes: [] }) {
-        const arr: Array<Shape> = new Array<Shape>();
+        // const arr: Array<Shape> = new Array<Shape>();
 
-        for (const obj of data.shapes) {
-            const shape = Serializer.deserialize(obj);
-            if (shape != null) {
-                arr.push(shape);
-            } else {
-                throw new TypeError("Shape deserialized to null, check input string for errors");
-            }
-        }
+        // for (const obj of data.shapes) {
+        //     const shape = Serializer.deserialize(obj);
+        //     if (shape != null) {
+        //         arr.push(shape);
+        //     } else {
+        //         throw new TypeError("Shape deserialized to null, check input string for errors");
+        //     }
+        // }
 
         this.shapes = [];
-        this.shapes = [...arr];
+        this.shapes = Serializer.deserialize(data.shapes);
         this.scale = data.scale;
         this.offset = new Vec2(data.offset.x, data.offset.y);
     }
