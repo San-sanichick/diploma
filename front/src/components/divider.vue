@@ -32,6 +32,7 @@
                 this.x = e.clientX;
                 this.y = e.clientY;
                 this.leftWidth = this.leftEl?.getBoundingClientRect().width;
+                this.divider?.classList.toggle("selected");
                 document.body.style.cursor = "col-resize";
                 document.addEventListener("mousemove", this.mouseMoveHandler);
                 document.addEventListener("mouseup", this.mouseUpHandler);
@@ -59,6 +60,7 @@
                     
                     // this.divider.style.removeProperty("cursor");
                     document.body.style.removeProperty("cursor");
+                    this.divider?.classList.toggle("selected");
 
                     // this.leftEl.style.removeProperty("userSelect");
                     // this.leftEl.style.removeProperty("pointerEvents");
@@ -74,13 +76,15 @@
 </script>
 
 <style lang="scss" scoped>
-    .divider {
-        width: 2px;
-        background-color: black;
-        cursor: ew-resize;
+    @import "../assets/scss/config.scss";
 
-        &:hover {
-            background-color: blue;
-        }
+    .divider {
+        width: 5px;
+        background-color: $darkPrimary;
+        cursor: ew-resize;
+    }
+
+    .selected {
+        background-color: $primary;
     }
 </style>

@@ -293,10 +293,11 @@
 
             .project-tree {
                 // width: 100%;
+                // min-width: 200px;
                 // padding: 10px 20px;
                 text-align: left;
                 // resize: horizontal;
-                overflow: auto;
+                overflow-x: auto;
 
                 ul {
                     padding-left: 20px;
