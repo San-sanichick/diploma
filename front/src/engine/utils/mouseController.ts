@@ -43,7 +43,8 @@ export default class MouseController {
         });
 
         canvas.addEventListener("mousedown", (e) => {
-            e.preventDefault();
+            // e.preventDefault();
+            console.log("down");
             this.heldButton = e.button;
             this.pressedButton = e.button;
             this.isPressed = true;
@@ -53,7 +54,7 @@ export default class MouseController {
         });
 
         canvas.addEventListener("mouseup", (e) => {
-            e.preventDefault();
+            // e.preventDefault();
             this.releasedButton = e.button;
             this.heldButton = null;
             this.isHeld = false;

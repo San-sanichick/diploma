@@ -105,14 +105,6 @@ export default class Engine {
         // we don't want to hardcode the size of the window, so we add
         // an event listener for the resize event
         if (width === undefined && height === undefined) {
-            // window.addEventListener("resize", (e: Event) => {
-            //     const w = parseInt(getComputedStyle(this.viewport).width);
-            //     const h = parseInt(getComputedStyle(this.viewport).height);
-            //     this.canvas.width  = w;
-            //     this.canvas.height = h;
-            //     this.canvasUI.width = w;
-            //     this.canvasUI.height = h;
-            // });
             new ResizeObserver(() => {
                 const w = parseInt(getComputedStyle(this.viewport).width);
                 const h = parseInt(getComputedStyle(this.viewport).height);
@@ -120,6 +112,10 @@ export default class Engine {
                 this.canvas.height = h;
                 this.canvasUI.width = w;
                 this.canvasUI.height = h;
+
+                // force redraw, beacuse otherwise there is flickering
+                // see https://stackoverflow.com/questions/3543358/resizing-a-html-canvas-blanks-its-contents
+                this.render();
             }).observe(this.viewport);
         }
 
@@ -670,11 +666,8 @@ export default class Engine {
 
         this.ctxUI.font = "14px sans-serif";
         this.ctxUI.fillStyle = "#fff";
-        this.ctxUI.fillText(`x: ${this.mouse.getCurrentPosition().x}, y: ${this.mouse.getCurrentPosition().y}`, 
-                                this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 10);
-
         this.ctxUI.fillText(`x: ${this.cursor.x}, y: ${this.cursor.y}`, 
-                                this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 25);
+                                this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 20);
     }
 
     private renderDebug(...performance: { text: string; metric: number | string }[]) {

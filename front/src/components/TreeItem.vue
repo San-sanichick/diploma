@@ -11,7 +11,7 @@
                 :class="{ selected: item.isSelected }"
                 @click="select"
                 >
-                {{ item.name }} {{ item.centerOfShape }}
+                {{ item.name }}
             </span>
         </div>
         <ul v-show="isOpen">

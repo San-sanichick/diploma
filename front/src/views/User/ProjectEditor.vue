@@ -37,6 +37,7 @@
                         @selected="selectElementHandler" />
                 </ul>
             </div>
+            <Divider />
             <div class="viewport" 
                 ref="viewport" 
                 tabindex="1">
@@ -44,6 +45,8 @@
                 class="canvas-ui" ref="canvas-ui"/>
                 <canvas class="canvas" ref="canvas"/>
             </div>
+            <!-- <Divider /> -->
+            <div class="properties"></div>
         </div>
     </div>
     <!-- <teleport to="body">
@@ -88,6 +91,7 @@
     import { defineComponent } from 'vue';
     import TreeItem from "@/components/TreeItem.vue";
     // import Properties from "../../components/draggable/properties.vue";
+    import Divider from "@/components/divider.vue";
     import Engine, { EngineState, Shapes } from "@/engine/engine";
     
     import axios from 'axios';
@@ -98,7 +102,8 @@
     export default defineComponent({
         components: {
             // Properties,
-            TreeItem
+            TreeItem,
+            Divider
         },
         data() {
             return {
@@ -282,16 +287,15 @@
 
         .editor {
             align-self: flex-start;
-            display: grid;
-            grid-template-columns: 0.5fr 6fr;
+            display: flex;
             width: 100%;
             height: 100%;
 
             .project-tree {
-                width: 100%;
+                // width: 100%;
                 // padding: 10px 20px;
                 text-align: left;
-                resize: horizontal;
+                // resize: horizontal;
                 overflow: auto;
 
                 ul {
@@ -330,6 +334,10 @@
                     top: 0;
                     z-index: 1;
                 }
+            }
+
+            .properties {
+                width: 5%;
             }
         }
     }

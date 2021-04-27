@@ -173,7 +173,7 @@ export default class ProjectController {
                         try {
                             const projectData = await readFile(`${userPath}/save.json`);
                             const save = JSON.parse(projectData as unknown as string);
-                            console.log(projectData);
+                            // console.log(projectData);
                             // console.log("HAHAHA", save);
                             res.status(200).json({
                                 msg: `Проект ${project.name} успешно загружен`,
@@ -241,7 +241,7 @@ export default class ProjectController {
 
                         // we need to remove the project folder when we're done
                         const dir = await del( [ `UserProjects/${user._id}/${project._id}` ] );
-                        console.log(dir);
+                        // console.log(dir);
 
                         res.status(200).json({msg: `Проект ${project!.name} был успешно удалён`, data: populated.projects})
                     }
