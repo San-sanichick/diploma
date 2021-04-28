@@ -30,70 +30,40 @@
             </div>
         </div>
         <div class="editor">
-            <div class="project-tree">
-                <ul>
-                    <TreeItem 
-                        :item="shapesOnScene"
-                        @selected="selectElementHandler" />
-                </ul>
-            </div>
-            <Divider />
-            <div class="viewport" 
-                ref="viewport" 
-                tabindex="1">
-                <canvas 
-                class="canvas-ui" ref="canvas-ui"/>
-                <canvas class="canvas" ref="canvas"/>
-            </div>
-            <!-- <Divider /> -->
-            <div class="properties"></div>
+            <SplitView>
+                <Pane>
+                    <div class="project-tree">
+                        <ul>
+                            <TreeItem 
+                                :item="shapesOnScene"
+                                @selected="selectElementHandler" />
+                        </ul>
+                    </div>
+                </Pane>
+                <Pane style="flex: 20 1 auto">
+                    <div class="viewport" 
+                        ref="viewport" 
+                        tabindex="1">
+                        <canvas 
+                        class="canvas-ui" ref="canvas-ui"/>
+                        <canvas class="canvas" ref="canvas"/>
+                    </div>
+                </Pane>
+                <Pane>
+                    <div class="properties"></div>
+                </Pane>
+            </SplitView>
         </div>
     </div>
-    <!-- <teleport to="body">
-        <Properties>
-            <template v-slot:header>
-                Свойства
-            </template>
-            <template v-slot:main> 
-                <div v-if="selectedShapes">
-                    <div v-if="selectedShapes.length === 1">
-                        <table>
-                            <tr>
-                                <td>Имя: </td>
-                                <td>{{ selectedShapes[0].name }}</td>
-                            </tr>
-                            <tr>
-                                <td>Тип: </td>
-                                <td>{{ selectedShapes[0].type }}</td>
-                            </tr>
-                            <tr v-if="selectedShapes[0].type !== 'Group'">
-                                <td>Узлы: </td>
-                                <td>
-                                    {{ castToShape(selectedShapes[0]).numberOfNodes }}
-                                </td>
-                            </tr>
-                            <tr v-else>
-                                <td>Число объектов в группе: </td>
-                                <td>{{ castToGroup(selectedShapes[0]).getShapes.length }}</td>
-                            </tr>
-                        </table>
-                    </div>
-                    <div v-if="selectedShapes.length > 1">
-                        Выделенно несколько объектов
-                    </div>
-                </div>
-            </template>
-        </Properties>
-    </teleport> -->
 </template>
 
 <script lang="ts">
     import { defineComponent } from 'vue';
     import TreeItem from "@/components/TreeItem.vue";
-    // import Properties from "../../components/draggable/properties.vue";
-    import Divider from "@/components/divider.vue";
+    import SplitView from "@/components/panes/SplitView.vue";
+    import Pane from "@/components/panes/Pane.vue";
+
     import Engine, { EngineState, Shapes } from "@/engine/engine";
-    
     import axios from 'axios';
     import Drawable from '@/engine/shapes/drawable';
     import Shape from '@/engine/shapes/shape';
@@ -101,9 +71,9 @@
 
     export default defineComponent({
         components: {
-            // Properties,
-            TreeItem,
-            Divider
+            SplitView,
+            Pane,
+            TreeItem
         },
         data() {
             return {
@@ -274,7 +244,7 @@
         flex-flow: column;
         align-items: center;
         width: 99%;
-        height: calc(100% - 70px);
+        height: calc(100% - 65px);
         // padding: 90px 0 0 0;
         .page-header-editor {
             width: 80%;
@@ -293,8 +263,9 @@
 
             .project-tree {
                 // width: 100%;
-                // min-width: 200px;
+                min-width: 200px;
                 // padding: 10px 20px;
+                // position: relative;
                 text-align: left;
                 // resize: horizontal;
                 overflow-x: auto;
@@ -311,6 +282,7 @@
                 position: relative;
                 height: 100%;
                 width: 100%;
+                // min-width: 800px;
 
                 canvas {
                     cursor: none;
@@ -338,7 +310,10 @@
             }
 
             .properties {
-                width: 5%;
+                // position: relative;
+                min-width: 150px;
+                // width: 100%;
+                // max-width: 300px;
             }
         }
     }

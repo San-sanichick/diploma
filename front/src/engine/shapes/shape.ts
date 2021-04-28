@@ -268,7 +268,7 @@ export default abstract class Shape implements Drawable {
         const trMatrix = new Matrix([
             [1, 0, 0],
             [0, 1, 0],
-            [-pos.x, -pos.y, 1]
+            [-this.centerOfShape.x, -this.centerOfShape.y, 1]
         ]);
 
         // scale matrix
@@ -282,7 +282,7 @@ export default abstract class Shape implements Drawable {
         const reTrMatrix = new Matrix([
             [1, 0, 0],
             [0, 1, 0],
-            [pos.x, pos.y, 1]
+            [this.centerOfShape.x, this.centerOfShape.y, 1]
         ]);
 
         // multiply all that stuff

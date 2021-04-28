@@ -1,3 +1,4 @@
+import { fastRounding } from "../utils/math";
 import Vec2 from "../utils/vector2d";
 import Drawable from "./drawable";
 
@@ -21,6 +22,20 @@ export default class Group implements Drawable {
             object.setIsSelected = false;
             this.objects.push(object);
         }
+    }
+    
+    get centerOfShape(): Vec2 {
+        let sumX = 0,
+            sumY = 0;
+        for (const obj of this.objects) {
+            sumX += obj.centerOfShape.x;
+            sumY += obj.centerOfShape.y;
+        }
+
+        sumX /= this.objects.length;
+        sumY /= this.objects.length;
+
+        return new Vec2(fastRounding(sumX), fastRounding(sumY));
     }
 
     set setIsSelected(val: boolean) {

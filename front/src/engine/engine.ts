@@ -68,6 +68,8 @@ export default class Engine {
     private cursorPosPivot: Vec2          = new Vec2(0, 0);
     public engineState:     EngineState   = EngineState.SELECT;
     public curTypeToDraw:   Shapes        = Shapes.NONE;
+    private fps                           = 0;
+    private fpsMeasurements: number[]     = [];
 
     /**
      * Engine constructor. Requires a viewport with two canvases: the UI canvas (class: 'canvas-ui') and
@@ -89,8 +91,18 @@ export default class Engine {
         this.ctx           = this.canvas.getContext("2d");
         this.ctxUI         = this.canvasUI.getContext("2d");
 
+        
+
         if (this.ctx === null || this.ctxUI === null) throw new Error("An error has occured while gitting context from canvas");
         
+        // if ( this.ctx.imageSmoothingEnabled && this.ctxUI.imageSmoothingEnabled) {
+        //     console.log("supported");
+        //     this.ctx.imageSmoothingEnabled = true;
+        //     this.ctx.imageSmoothingQuality = "high";
+        //     this.ctxUI.imageSmoothingEnabled = true;
+        //     this.ctxUI.imageSmoothingQuality = "low";
+        // }
+
         this.shapes        = new Array<Shape>();
         this.mouse         = new MouseController(this.canvasUI);
         this.keyboard      = new KeyboardController();
@@ -144,8 +156,6 @@ export default class Engine {
      */
     public init(): boolean {
         if (this.ctx === null) return false;
-
-        console.log(this.shapes);
 
         Shape.worldGrid = this.grid;
         this.ctx.lineWidth = 1;
@@ -364,6 +374,10 @@ export default class Engine {
             if (this.mouse.getHeldButton === MouseButtons.LEFT) {
                 for (const shape of this.selectedShapes) {
                     if (this.cursor.equals(this.cursorOldPos)) break;
+                    // const a = shape.centerOfShape.subtract(this.cursorPosPivot);
+                    // const b = this.cursorPosPivot.subtract(this.cursor);
+                    // const angle = Math.acos(Vec2.dot(a, b) / (a.mag() * b.mag()));
+
                     shape.rotate(this.cursor.subtract(this.cursorOldPos).x, this.cursorPosPivot);
                 }
             }
@@ -411,12 +425,18 @@ export default class Engine {
         
         // rendering
         const t2 = performance.now();
+        this.fpsMeasurements.push(t2);
         this.render();
-        const renderTime = performance.now() - t2;
+        
+        // uhh, better fps measurment, I guess?
+        const msPassed = this.fpsMeasurements[this.fpsMeasurements.length - 1] - this.fpsMeasurements[0];
+        if (msPassed >= 1000) {
+            this.fps = 1000 / (performance.now() - t2);
+            this.fpsMeasurements = [];
+        }
 
-        this.renderDebug({ text: "Update time", metric: updateTime },
-                         { text: "Render time", metric: renderTime },
-                         { text: "FPS", metric: Math.trunc(1000 / renderTime) },
+        this.renderDebug({ text: "FPS", metric: fastRounding(this.fps) },
+                         { text: "Update time", metric: updateTime.toFixed(3) },
                          { text: "Shapes on scene", metric: this.shapes.length },
                          { text: "Temp shape", metric: this.tempShape?.name ?? "none" },
                          { text: "Zoom level", metric: this.scale });
@@ -679,11 +699,8 @@ export default class Engine {
 
         for (let i = 0; i < performance.length; i++) {
             const perf = performance[i];
-            let metric = perf.metric;
-            if (typeof metric === "number") {
-                metric = metric.toPrecision(3);
-            }
-            this.ctxUI?.fillText(`${perf.text}: ${metric}`, 10, gap * (2 + i));
+            const metric = perf.metric;
+            this.ctxUI?.fillText(`${perf.text}: ${metric}`, 20, gap * (2 + i));
         }
     }
 }

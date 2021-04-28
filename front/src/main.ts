@@ -61,6 +61,7 @@ router.beforeEach(async (to, from, next) => {
     }
 });
 
+// TODO: REPLACE THIS WITH MANUAL CHECK WITHOUT A LIB, MAJOR SECURITY ISSUE
 // eslint-disable-next-line
 async function refreshAuthLogic(failedRequest: any) {
     const refreshToken = localStorage.getItem("refreshToken");
