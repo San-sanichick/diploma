@@ -402,31 +402,30 @@ export default class Engine {
             }
         }
 
-        if (this.engineState === EngineState.GROUP && this.selectedShapes.size !== 0) {
-            this.shapes.push(new Group("Group", Array.from(this.selectedShapes)));
-
-            this.shapes = this.shapes.filter(shape => {
-                return !this.selectedShapes.has(shape);
-            });
-
-            this.selectedShapes.clear();
-            this.engineState = EngineState.SELECT;
+        if (this.engineState === EngineState.GROUP) {
+            this.group();
         }
 
-        if (this.engineState === EngineState.UNGROUP && this.selectedShapes.size === 1) {
-            const obj = Array.from(this.selectedShapes)[0];
+        if (this.engineState === EngineState.UNGROUP) {
+            this.ungroup();
+        }
 
-            if(obj instanceof Group) {
-                const group = obj as Group;
-                for (const shape of group.getObjects) {
-                    shape.setIsSelected = false;
-                    this.shapes.push(shape);
-                }
-    
-                this.selectedShapes.clear();
-                this.shapes.splice(this.shapes.indexOf(group), 1);
-                this.engineState = EngineState.SELECT;
-            }
+        if (this.engineState === EngineState.GROUP && this.keyboard.getPressedButton === 'g'
+            && this.keyboard.isShiftHeld) {
+                 this.group();
+        }
+
+        if (this.keyboard.isCtrlHeld && !this.keyboard.isAltHeld && this.keyboard.getPressedButton === 'KeyG') {
+
+            this.engineState = EngineState.GROUP;
+            this.group();
+        }
+
+        if (this.keyboard.isCtrlHeld && this.keyboard.isAltHeld
+            && this.keyboard.getPressedButton === 'KeyG') {
+
+            this.engineState = EngineState.UNGROUP;
+            this.ungroup();
         }
 
         const updateTime = performance.now() - t1;
@@ -453,6 +452,37 @@ export default class Engine {
         // :)
         this.mouse.resetMouseController();
         this.keyboard.resetKeyController();
+    }
+
+    private group() {
+        if (this.selectedElements.length !== 0) {
+            this.shapes.push(new Group("Group", Array.from(this.selectedShapes)));
+
+            this.shapes = this.shapes.filter(shape => {
+                return !this.selectedShapes.has(shape);
+            });
+
+            this.selectedShapes.clear();
+            this.engineState = EngineState.SELECT;
+        }
+    }
+
+    private ungroup() {
+        if (this.selectedShapes.size === 1) {
+            const obj = Array.from(this.selectedShapes)[0];
+
+            if(obj instanceof Group) {
+                const group = obj as Group;
+                for (const shape of group.getObjects) {
+                    shape.setIsSelected = false;
+                    this.shapes.push(shape);
+                }
+
+                this.selectedShapes.clear();
+                this.shapes.splice(this.shapes.indexOf(group), 1);
+                this.engineState = EngineState.SELECT;
+            }
+        }
     }
 
     public addToSelection(item: Drawable) {
