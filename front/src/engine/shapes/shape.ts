@@ -209,7 +209,7 @@ export default abstract class Shape implements Drawable {
     // rectangles
     rotate(angle: number, pos: Vec2): void {
         // translate to origin
-        angle = angle * (Math.PI / 180);
+        // angle = angle * (Math.PI / 180);
 
         const trMatrix = new Matrix([
             [1, 0, 0],

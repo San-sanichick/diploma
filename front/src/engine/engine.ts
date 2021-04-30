@@ -40,7 +40,8 @@ enum Shapes {
     ELLIPSE,
     BEZIER,
     ARC,
-    POLYLINE
+    POLYLINE,
+    POLYGON
 }
 
 /**
@@ -65,7 +66,7 @@ export default class Engine {
     private offset:         Vec2          = new Vec2(0.0, 0.0);
     private cursor:         Vec2;
     private cursorOldPos:   Vec2          = new Vec2(0.0, 0.0);
-    private cursorPosPivot: Vec2          = new Vec2(0, 0);
+    private cursorPosPivot: Vec2 | null   = new Vec2(0, 0);
     public engineState:     EngineState   = EngineState.SELECT;
     public curTypeToDraw:   Shapes        = Shapes.NONE;
     private fps                           = 0;
@@ -356,7 +357,7 @@ export default class Engine {
                 this.cursorPosPivot = Vec2.copyFrom(this.cursor);
             }
 
-            if (this.mouse.getHeldButton === MouseButtons.LEFT) {
+            if (this.mouse.getHeldButton === MouseButtons.LEFT && this.cursorPosPivot !== null) {
                 for (const shape of this.selectedShapes) {
                     if (this.cursor.equals(this.cursorOldPos)) break;
                     shape.resize(this.cursor.subtract(this.cursorPosPivot), this.cursorPosPivot);
@@ -371,15 +372,22 @@ export default class Engine {
                 this.cursorPosPivot = Vec2.copyFrom(this.cursor);
             }
 
-            if (this.mouse.getHeldButton === MouseButtons.LEFT) {
+            if (this.mouse.getHeldButton === MouseButtons.LEFT && this.cursorPosPivot !== null) {
                 for (const shape of this.selectedShapes) {
                     if (this.cursor.equals(this.cursorOldPos)) break;
-                    // const a = shape.centerOfShape.subtract(this.cursorPosPivot);
-                    // const b = this.cursorPosPivot.subtract(this.cursor);
-                    // const angle = Math.acos(Vec2.dot(a, b) / (a.mag() * b.mag()));
+                    const a = new Vec2(this.cursorPosPivot.x + 2, this.cursorPosPivot.y).subtract(this.cursorPosPivot);
+                    const b = this.cursorPosPivot.subtract(this.cursor);
 
-                    shape.rotate(this.cursor.subtract(this.cursorOldPos).x, this.cursorPosPivot);
+                    const angle1 = Math.atan2(a.y, a.x);
+                    const angle2 = Math.atan2(b.y, b.x);
+
+
+                    const angle = angle1 - angle2;
+
+                    shape.rotate(angle / 10, this.cursorPosPivot);
                 }
+            } else {
+                this.cursorPosPivot = null;
             }
             this.cursorOldPos = Vec2.copyFrom(this.cursor);
         }
@@ -491,11 +499,16 @@ export default class Engine {
     // TODO: Split drawing into subroutines, so that this function is not so bloody huge
     /**
      * Render method, gets called at the end of each update
+     * 
+     * Important note: during render, the Y coordinate is flipped
      */
     private render(): void {
-        // console.log(debug);
         if (this.ctx === null || this.ctxUI === null) return;
-        
+
+        // ! Modern problems require modern solutions. Although, frankly,
+        // ! idfk how to do this better
+        this.ctx.setTransform(1, 0, 0, -1, 0, this.canvas.height);
+
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctxUI.clearRect(0, 0, this.canvasUI.width, this.canvasUI.height);
         // this.ctx.fillStyle = "#191e38";
@@ -522,20 +535,20 @@ export default class Engine {
         const height = worldBottomRight.y - worldTopLeft.y;
 
         // Instead of drawing width * height amount of points, we're gonna draw
-        // width + height amount of lines, increasing our FPS from ~140 to ~300-400 (or 1-2ms per frame)
+        // width + height amount of LINES, increasing our FPS from ~140 to ~300-400 (or 1-2ms per frame)
 
         /**
          * Canvas draws lines in an especially retarded way
          * 
          * Assume this is a line from (2,5) to (4,5) on a canvas:
          * 
-         *                      0         10
+         *                      012345678910
          *                    0 ###########
-         *                      #.........#
-         *                      #....|....#
-         *                      #....|....#
-         *                      #....|....#
-         *                      #.........#
+         *                    1 #.........#
+         *                    2 #....|....#
+         *                    3 #....|....#
+         *                    4 #....|....#
+         *                    5 #.........#
          *                    6 ###########
          * 
          * A normal person would assume that the dots are pixels, but not JS.
@@ -610,20 +623,29 @@ export default class Engine {
             this.ctx.closePath();
             this.ctx.stroke();
 
-            this.ctx.font = "12px sans-serif";
-            this.ctx.fillStyle = "#ccc";
-            this.ctx.fillText("x", origin.x + 50, origin.y);
-            this.ctx.fillText("y", origin.x, origin.y + 50);
-        // this.ctx.restore();
+            // this monstrosity, because otherwise the text is drawn upside-down,
+            // which is hillarious, and also undesirable
+            this.ctx.save();
+                this.ctx.font = "12px sans-serif";
+                this.ctx.fillStyle = "#ccc";
+                this.ctx.translate(origin.x + 50, origin.y);
+                this.ctx.scale(1, -1);
+                this.ctx.fillText("x", 0, 0);
+                this.ctx.scale(1, -1);
+                this.ctx.translate(-(origin.x + 50), -origin.y);
+                this.ctx.translate(origin.x, origin.y + 50);
+                this.ctx.scale(1, -1);
+                this.ctx.fillText("y", 0, 0);
+            this.ctx.restore();
 
         Shape.worldOffset = this.offset;
         Shape.worldScale  = this.scale;
 
         // this.ctx.save();
-            if (this.tempShape !== null) {
-                this.tempShape.renderSelf(this.ctx);
-                this.tempShape.renderNodes(this.ctx);
-            }
+        if (this.tempShape !== null) {
+            this.tempShape.renderSelf(this.ctx);
+            this.tempShape.renderNodes(this.ctx);
+        }
         // this.ctx.restore();
 
         this.ctx.save();
@@ -656,8 +678,25 @@ export default class Engine {
             }
         }
         this.ctx.restore();
+
+        if (this.engineState === EngineState.ROTATE && this.cursorPosPivot !== null) {
+            this.ctxUI.save();
+                const sx = (this.cursorPosPivot.x - this.offset.x) * offset;
+                const sy = (this.cursorPosPivot.y - this.offset.y) * offset;
+                const ex = (this.cursor.x       - this.offset.x) * offset;
+                const ey = (this.cursor.y       - this.offset.y) * offset;
+
+                this.ctxUI.beginPath();
+                this.ctxUI.strokeStyle = "rgba(80, 20, 30, 1)";
+                this.ctxUI.moveTo(sx, sy);
+                this.ctxUI.lineTo(ex, ey);
+                this.ctxUI.closePath();
+                this.ctxUI.stroke();
+            this.ctxUI.restore();
+        }
         
         // draw cursor
+        this.ctxUI.transform(1, 0, 0, -1, 0, this.canvasUI.height);
         const curV = this.WorldToScreen(this.cursor);
 
         this.ctxUI.save();
@@ -684,10 +723,12 @@ export default class Engine {
             // this.ctxUI.stroke();
         this.ctxUI.restore();
 
-        this.ctxUI.font = "14px sans-serif";
-        this.ctxUI.fillStyle = "#fff";
-        this.ctxUI.fillText(`x: ${this.cursor.x}, y: ${this.cursor.y}`, 
-                                this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 20);
+        // this.ctxUI.font = "14px sans-serif";
+        // this.ctxUI.fillStyle = "#fff";
+        // this.ctxUI.fillText(`x: ${this.cursor.x}, y: ${this.cursor.y}`, 
+        //                         this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 20);
+
+        this.ctxUI.transform(1, 0, 0, -1, 0, this.canvasUI.height);
     }
 
     private renderDebug(...performance: { text: string; metric: number | string }[]) {

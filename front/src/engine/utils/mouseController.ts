@@ -29,7 +29,8 @@ export default class MouseController {
         canvas.addEventListener("mousemove", (e) => {
             const boundingRect = canvas.getBoundingClientRect();
             this.curPos.x = e.clientX - boundingRect.x;
-            this.curPos.y = e.clientY - boundingRect.y;
+            // inverse of regular y coord, otherwise it is upside-down
+            this.curPos.y = (boundingRect.bottom - e.clientY);
         });
 
         canvas.addEventListener("wheel", (e) => {
