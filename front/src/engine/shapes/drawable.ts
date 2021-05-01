@@ -10,6 +10,7 @@ import Serializable from "./serializable";
  */
 export default interface Drawable extends Serializable{
     name: string;
+    icon: string;
     topLeftCorner: Vec2;
     bottomRightCorner: Vec2;
     isSelected: boolean;

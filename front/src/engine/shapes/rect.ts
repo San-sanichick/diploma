@@ -4,7 +4,7 @@ import Vec2 from "../utils/vector2d";
 
 export default class Rectangle extends Shape {
     constructor(name = "Rectangle") {
-        super(name, 2);
+        super(name, 2, "rect.svg");
     }
 
     getNextNode(pos: Vec2): Node | null {

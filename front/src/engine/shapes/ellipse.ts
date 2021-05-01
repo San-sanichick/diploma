@@ -3,7 +3,7 @@ import Vec2 from "../utils/vector2d";
 
 export default class Ellipse extends Shape {
     constructor(name = "Ellipse") {
-        super(name, 3);
+        super(name, 3, "ellipse.svg");
     }
 
     renderSelf(ctx: CanvasRenderingContext2D) {

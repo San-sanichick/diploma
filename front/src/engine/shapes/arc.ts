@@ -3,7 +3,7 @@ import Vec2 from "../utils/vector2d";
 
 export default class Arc extends Shape {
     constructor(name = "Arc") {
-        super(name, 3);
+        super(name, 3, "arc.svg");
     }
 
     renderSelf(ctx: CanvasRenderingContext2D) {

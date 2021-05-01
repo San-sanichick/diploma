@@ -1,5 +1,5 @@
 <template>
-    <div v-click-away="closeMenu"> v-if="showMenu" class="context-menu" :style="{left: `${xPos}px`, top: `${yPos}px`}">
+    <div v-if="showMenu" class="context-menu" :style="{left: `${xPos}px`, top: `${yPos}px`}">
         <slot :project="project">
 
         </slot>
@@ -8,12 +8,8 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
-    import { directive } from "vue3-click-away";
 
     export default defineComponent({
-        directives: {
-            ClickAway: directive
-        },
         data() {
             return {
                 xPos: 0,
@@ -37,8 +33,16 @@
                 this.yPos = e.clientY;
                 this.showMenu = !this.showMenu;
             },
-            closeMenu(): void {
-                this.showMenu = false;
+            closeMenu(e: Event | undefined): void {
+                if (e) {
+                    const target = e.target as HTMLElement;
+                
+                    if (!this.$el.contains(target)) {
+                        this.showMenu = false;
+                    }
+                } else {
+                    this.showMenu = false;
+                }
             }
         }
     })

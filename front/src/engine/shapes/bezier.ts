@@ -3,7 +3,7 @@ import Vec2 from "../utils/vector2d";
 
 export default class Bezier extends Shape {
     constructor(name = "Bezier") {
-        super(name, 4);
+        super(name, 4, "bezier.svg");
     }
 
     renderSelf(ctx: CanvasRenderingContext2D) {

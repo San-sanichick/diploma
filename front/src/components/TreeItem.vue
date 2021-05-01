@@ -4,19 +4,24 @@
             <button
                 @click="toggle"
                 v-if="isCollapsable"
+                class="arrow"
+                :class="{ 'opened': isOpen }"
                 > 
-                {{ isOpen ? "-" : "+" }}
             </button>
-            <span 
+            <div 
+                class="item-content"
                 :class="{ selected: item.isSelected }"
                 @click="select"
                 >
-                {{ item.name }}
-            </span>
+                <div v-if="item.icon" class="item-image"
+                    :style="{ backgroundImage: 'url(' + require('@/assets/shapeIcons/' + item.icon) + ')' }"></div>
+                <span class="item-text">
+                    {{ item.name }}
+                </span>
+            </div>
         </div>
         <ul v-show="isOpen">
             <tree-item
-                class="item"
                 v-for="(child, index) in item.objects"
                 :key="index"
                 :item="child"
@@ -60,26 +65,83 @@
 </script>
 
 <style lang="scss" scoped>
+    @import "../assets/scss/config.scss";
+    @import "../assets/scss/buttonMixins.scss";
+
     .item {
         white-space: nowrap;
         user-select: none;
+        display: flex;
+        flex-flow: row;
+        height: 30px;
+        
 
-        span {
+        .arrow {
+            @include button-destyle;
+            position: relative;
+            border: 5px solid black;
+            border-top-color: transparent;
+            border-right-color: transparent;
+            border-bottom-color: transparent;
+            width: 0px;
+            height: 0px;
+            padding: 0;
+            margin: 13px 10px 0px 5px;
             cursor: pointer;
+            top: -2px;
+            left: 5px;
+        }
+
+        .opened {
+            border-top-color: black;
+            border-left-color: transparent;
+            border-right-color: transparent;
+            border-bottom-color: transparent;
+            top: 0px;
+            left: 2px;
+        }
+        
+        .item-content {
+            cursor: pointer;
+            display: flex;
+            flex-flow: row;
+            align-items: center;
+            padding-right: 10px;
+
+            .item-image {
+                width: 30px;
+                height: 30px;
+                // cause I don't wanna waste time recoloring
+                // bloody icons in Figma
+                filter: brightness(0) saturate(100%);
+                background-size: contain;
+                background-repeat: no-repeat;
+            }
+        }
+
+        .selected {
+            background-color: $primaryTransparent;
+            color: white;
+
+            .item-image {
+                filter: brightness(100) saturate(100%);
+            }
         }
     }
 
-    .selected {
-        background-color: #ccc;
-    }
+    
 
     .bold {
         font-weight: bold;
     }
     ul {
-        padding-left: 40px;
         // line-height: 1.5em;
         margin: 0;
         list-style: none;
+        // padding-left: 20px;
+
+        li {
+            padding-left: 20px;
+        }
     }
 </style>

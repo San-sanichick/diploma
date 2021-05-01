@@ -27,6 +27,7 @@ export default abstract class Shape implements Drawable {
     private   maxNodes: number;
     public    color: string;
     public    name: string;
+    public    icon: string;
     public    isSelected: boolean;
     public    topLeftCorner: Vec2;
     public    bottomRightCorner: Vec2;
@@ -40,11 +41,12 @@ export default abstract class Shape implements Drawable {
     public static worldGrid: number;
     public static magnitude = 0.5;
 
-    constructor(name = "shape", maxNodes: number) {
+    constructor(name = "shape", maxNodes: number, icon: string) {
         this.maxNodes = maxNodes;
         this.name = name;
         this.nodes = new Array<Node>();
         this.color = "#888";
+        this.icon = icon
         this.isSelected = false;
         this.type = this.constructor.name;
         this.topLeftCorner = new Vec2(0, 0);

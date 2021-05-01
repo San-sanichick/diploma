@@ -4,6 +4,7 @@ import Drawable from "./drawable";
 
 export default class Group implements Drawable {
     public  name: string;
+    public  icon: string;
     public  topLeftCorner: Vec2;
     public  bottomRightCorner: Vec2;
     public  isSelected: boolean;
@@ -12,6 +13,7 @@ export default class Group implements Drawable {
 
     constructor(name: string, objects: Array<Drawable>) {
         this.name = name;
+        this.icon = "group.svg";
         this.isSelected = false;
         this.type = this.constructor.name;
         this.topLeftCorner = new Vec2(0, 0);

@@ -29,7 +29,10 @@
         <div class="editor">
             <SplitView>
                 <Pane>
-                    <div class="project-tree">
+                    <div class="project-tree panel">
+                        <div class="panel-header">
+                            Дерево проекта
+                        </div>
                         <ul>
                             <TreeItem 
                                 :item="shapesOnScene"
@@ -47,7 +50,33 @@
                     </div>
                 </Pane>
                 <Pane>
-                    <div class="properties"></div>
+                    <div class="properties panel">
+                        <div class="panel-header">
+                            Свойства
+                        </div>
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Свойство</th>
+                                    <th>Значение</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>test</td>
+                                    <td>val</td>
+                                </tr>
+                                <tr>
+                                    <td>test</td>
+                                    <td>val</td>
+                                </tr>
+                                <tr>
+                                    <td>test</td>
+                                    <td>val</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </Pane>
             </SplitView>
         </div>
@@ -81,11 +110,11 @@
                 shapes: Shapes,
                 engineState: EngineState,
                 toolSelectOptions: [
-                    { id: 0, name: "Выделение", img: "/toolIcons/select.svg", action: EngineState.SELECT, hotkey: "A" },
-                    { id: 1, name: "Перенос вершин", img: "/toolIcons/point_edit.svg", action: EngineState.MOVEPOINT, hotkey: "V" },
-                    { id: 2, name: "Перенос", img: "/toolIcons/move.svg", action: EngineState.TRANSLATE, hotkey: "M" },
-                    { id: 3, name: "Поворот", img: "/toolIcons/rotate.svg", action: EngineState.ROTATE, hotkey: "R" },
-                    { id: 4, name: "Масштабирование", img: "/toolIcons/resize.svg", action: EngineState.SCALE, hotkey: "S" }
+                    { id: 0, name: "Выделение",       img: "/toolIcons/select.svg",     action: EngineState.SELECT,    hotkey: "A" },
+                    { id: 1, name: "Перенос вершин",  img: "/toolIcons/point_edit.svg", action: EngineState.MOVEPOINT, hotkey: "V" },
+                    { id: 2, name: "Перенос",         img: "/toolIcons/move.svg",       action: EngineState.TRANSLATE, hotkey: "M" },
+                    { id: 3, name: "Поворот",         img: "/toolIcons/rotate.svg",     action: EngineState.ROTATE,    hotkey: "R" },
+                    { id: 4, name: "Масштабирование", img: "/toolIcons/resize.svg",     action: EngineState.SCALE,     hotkey: "S" }
                 ],
                 shapeSelectOptions: [
                     { id: 0, name: "Линия"        , img: "/shapeIcons/line.svg",      action: Shapes.LINE,        hotkey: "" },
@@ -278,19 +307,29 @@
             width: 100%;
             height: 100%;
 
-            .project-tree {
-                // width: 100%;
+            .panel {
                 min-width: 200px;
-                padding: 20px 0px;
+
+                .panel-header {
+                    background-color: $primary;
+                    color: white;
+                    text-align: left;
+                    padding: 16.5px 15px;
+                }
+            }
+
+            .project-tree {
+                
                 // position: relative;
                 text-align: left;
                 // resize: horizontal;
                 overflow-x: auto;
 
                 ul {
-                    padding-left: 20px;
+                    padding-left: 0px;
                     // line-height: 1.5em;
-                    margin: 0;
+                    // padding: 0;
+                    // margin: 10px 0;
                     list-style: none;
                 }
             }
@@ -327,10 +366,29 @@
             }
 
             .properties {
-                // position: relative;
-                min-width: 200px;
-                // width: 100%;
-                // max-width: 300px;
+
+                table {
+                    width: 100%;
+                    text-align: left;
+                    border-collapse: collapse;
+                    thead {
+                        tr {
+                            border-bottom: 1px solid $darkPrimary;
+                        }
+                    }
+
+                    tr {
+                        padding: 5px;
+
+                        td, th {
+                            padding: 5px 10px;
+                            
+                            &:first-of-type {
+                                border-right: 1px solid $darkPrimary;
+                            }
+                        }
+                    }
+                }
             }
         }
     }

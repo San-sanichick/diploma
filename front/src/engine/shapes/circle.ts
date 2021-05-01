@@ -3,7 +3,7 @@ import Vec2 from "../utils/vector2d";
 
 export default class Circle extends Shape {
     constructor(name = "Circle") {
-        super(name, 2);
+        super(name, 2, "circle.svg");
     }
 
     get centerOfShape(): Vec2 {

@@ -3,7 +3,7 @@ import Vec2 from "../utils/vector2d";
 
 export default class Line extends Shape {
     constructor(name = "Line") {
-        super(name, 2);
+        super(name, 2, "line.svg");
     }
 
     renderSelf(ctx: CanvasRenderingContext2D): void {
