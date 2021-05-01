@@ -143,6 +143,16 @@ export default class Engine {
         return Array.from(this.selectedShapes);
     }
 
+    get mouseCoordinates() {
+        return this.cursor;
+    }
+
+    public scaleValue(val?: number) {
+        if (val === undefined) return this.scale;
+
+        this.scale = val;
+    }
+
     private WorldToScreen(v: Vec2): Vec2 {
         return v.subtract(this.offset).multiply(this.scale);
     }
@@ -160,6 +170,7 @@ export default class Engine {
 
         Shape.worldGrid = this.grid;
         this.ctx.lineWidth = 1;
+        this.ctx.translate(0.5, 0.5);
 
         return true;
     }
@@ -248,7 +259,7 @@ export default class Engine {
 
         const mouseBeforeZoom = this.ScreenToWorld(Vec2.copyFrom(this.mouse.getCurrentPosition()));
         
-        if(this.mouse.mouseScrolled) {
+        if (this.mouse.mouseScrolled) {
             this.scale += this.mouse.getDelta * -0.2;
             this.scale = clamp(this.scale, 3, 200);
         }
@@ -624,13 +635,15 @@ export default class Engine {
         let worldX = worldTopLeft.x,
             worldY = worldTopLeft.y;
 
+        const gridOffset = 0.5;
+
         // horizontal lines
         for (let i = 0; i < width; i++) {
             const x = fastRounding(sx + offset * i);
             if (worldX % 5 == 0) this.ctx.lineWidth = 2;
             this.ctx.beginPath();
-            this.ctx.moveTo(x + 0.5, 0.5);
-            this.ctx.lineTo(x + 0.5, this.canvas.height + 0.5);
+            this.ctx.moveTo(x + gridOffset, gridOffset);
+            this.ctx.lineTo(x + gridOffset, this.canvas.height + gridOffset);
             this.ctx.closePath();
             this.ctx.stroke();
             this.ctx.lineWidth = 1;
@@ -642,8 +655,8 @@ export default class Engine {
             const y = fastRounding(sy + offset * j);
             if (worldY % 5 == 0) this.ctx.lineWidth = 2;
             this.ctx.beginPath();
-            this.ctx.moveTo(                    0.5, y + 0.5);
-            this.ctx.lineTo(this.canvas.width + 0.5, y + 0.5);
+            this.ctx.moveTo(                    gridOffset, y + gridOffset);
+            this.ctx.lineTo(this.canvas.width + gridOffset, y + gridOffset);
             this.ctx.closePath();
             this.ctx.stroke();
             this.ctx.lineWidth = 1;
@@ -692,6 +705,8 @@ export default class Engine {
 
         Shape.worldOffset = this.offset;
         Shape.worldScale  = this.scale;
+
+        this.ctx.lineWidth = 1;
 
         // this.ctx.save();
         if (this.tempShape !== null) {

@@ -59,6 +59,15 @@
                 </Pane>
             </SplitView>
         </div>
+        <div class="page-footer-editor">
+            <div class="mouse-coordinates">X: {{ mousePosition.x }}, Y: {{ mousePosition.y }}</div>
+            <div></div>
+            <div class="slider">
+                <!-- don't ask me where these numbers come from, it's magic -->
+                <span>{{ Math.round((scale / 10) * 100) }}%</span>
+                <input class="editor-scale" type="range" name="editor-scale" v-model="scale" min="3" max="200">
+            </div>
+        </div>
     </div>
 </template>
 
@@ -137,6 +146,31 @@
                 },
                 set(option: { id: number; name: string; img: string; action: EngineState; hotkey: string }) {
                     this.engine.engineState = option.action;
+                }
+            },
+            mousePosition(): { x: number; y: number } {
+                if (this.engine.mouseCoordinates) {
+                    return {
+                        x: this.engine.mouseCoordinates.x,
+                        y: this.engine.mouseCoordinates.y
+                    }
+                } else {
+                    return {
+                        x: 0,
+                        y: 0
+                    }
+                }
+            },
+            scale: {
+                get(): number | undefined {
+                    if (this.engine && this.engine.scaleValue) {
+                        return this.engine.scaleValue();
+                    } else {
+                        return 0;
+                    }
+                },
+                set(val: number) {
+                    this.engine.scaleValue(val);
                 }
             }
         },
@@ -359,6 +393,33 @@
 
                 
             // }
+        }
+
+        .page-footer-editor {
+            width: calc(100% - 30px);
+            background-color: $middlePrimary;
+            color: white;
+            font-size: 1.5ch;
+            padding: 3px 15px;
+            display: grid;
+            grid-template-columns: max-content auto max-content;
+            align-items: center;
+
+            .mouse-coordinates {
+                width: auto;
+                text-align: left;
+            }
+
+            .slider {
+                display: flex;
+                flex-flow: row;
+                justify-content: center;
+
+                .editor-scale {
+                    margin-left: 15px;
+                    background-color: green;
+                }
+            }
         }
     }
 </style>
