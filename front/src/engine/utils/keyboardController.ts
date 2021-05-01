@@ -17,7 +17,7 @@ export default class KeyboardController {
             it's as simple as that
         */
         document.addEventListener("keydown", (e: KeyboardEvent) => {
-            e.preventDefault();
+            // e.preventDefault();
             // uhh, this is stupid
             if (e.code === "ControlLeft" || 
                 e.code === "AltLeft" ||
@@ -33,6 +33,8 @@ export default class KeyboardController {
             this.shift = e.shiftKey;
             this.ctrl = e.ctrlKey;
             this.alt = e.altKey;
+
+            // if (this.ctrl && this.pressedButton === "KeyG") return;
 
             this.releasedButton = null;
         });

@@ -206,6 +206,28 @@ export default class Engine {
         requestAnimationFrame(updateRoutine);
     }
 
+    // this is quite silly, really
+    private hotKeyStateSwitchHandler() {
+        switch(this.keyboard.getPressedButton) {
+            case "KeyA":
+                this.engineState = EngineState.SELECT;
+                break;
+            case "KeyV":
+                this.engineState = EngineState.MOVEPOINT;
+                break;
+            case "KeyM":
+                this.engineState = EngineState.TRANSLATE;
+                break;
+            case "KeyR":
+                this.engineState = EngineState.ROTATE;
+                break;
+            case "KeyS":
+                this.engineState = EngineState.SCALE;
+                break;
+            default: return;
+        }
+
+    }
 
     /**
      * Update method, has to be run through requestAnimationFrame
@@ -237,6 +259,7 @@ export default class Engine {
         this.cursor = mouseAfterZoom.add(new Vec2(0.5, 0.5).multiply(this.grid));
         this.cursor.floor();
 
+        this.hotKeyStateSwitchHandler();
 
         // TODO: Change cursor icon based on engine state
         out:
@@ -454,7 +477,7 @@ export default class Engine {
         this.keyboard.resetKeyController();
     }
 
-    private group() {
+    public group() {
         if (this.selectedElements.length !== 0) {
             this.shapes.push(new Group("Group", Array.from(this.selectedShapes)));
 
@@ -467,7 +490,7 @@ export default class Engine {
         }
     }
 
-    private ungroup() {
+    public ungroup() {
         if (this.selectedShapes.size === 1) {
             const obj = Array.from(this.selectedShapes)[0];
 

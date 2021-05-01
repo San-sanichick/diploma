@@ -64,6 +64,7 @@
 
 <style lang="scss">
     @import "../../assets/scss/config.scss";
+    @import "../../assets/scss/editorMixins.scss";
 
     .dropdown-container {
         z-index: 20000;
@@ -86,8 +87,7 @@
             .dropdown-trigger {
                 width: 35px;
                 height: 35px;
-                background-repeat: no-repeat;
-                background-size: contain;
+                @include editor-dropdown-button-style;
             }
             
 
@@ -114,7 +114,9 @@
 
         .dropdown-options-container {
             z-index: 2000;
+            margin-left: 5px;
             position: absolute;
+            top: 110px;
 
             .dropdown-options-triangle {
                 border: 10px solid $middlePrimary;
@@ -122,7 +124,7 @@
                 border-right-color: transparent;
                 border-top-color: transparent;
                 width: 0;
-                margin-left: 15px;
+                margin-left: 10px;
             }
 
             .dropdown-options {

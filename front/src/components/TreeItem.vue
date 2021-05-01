@@ -62,6 +62,7 @@
 <style lang="scss" scoped>
     .item {
         white-space: nowrap;
+        user-select: none;
 
         span {
             cursor: pointer;

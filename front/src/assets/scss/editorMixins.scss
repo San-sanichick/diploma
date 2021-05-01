@@ -1,0 +1,18 @@
+@import "./config.scss";
+
+@mixin editor-button-style {
+    background-color: $middlePrimary;
+    background-repeat: no-repeat;
+    background-size: contain;
+    cursor: pointer;
+
+    &:hover {
+        background-color: $primary;
+    }
+}
+
+@mixin editor-dropdown-button-style {
+    background-repeat: no-repeat;
+    background-size: cover;
+    cursor: pointer;
+}

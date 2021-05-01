@@ -1,7 +1,6 @@
 <template>
     <div class="page-editor">
         <div class="page-header-editor">
-            <button @click="goBack">back</button>
             <div class="editor-tools">
                 <Dropdown 
                     :options="toolSelectOptions"
@@ -14,33 +13,18 @@
                     :options="shapeSelectOptions"
                     v-model:selected="shapeSelected" />
             </div>
+            <div class="header-button-container">
+                <button title="Группировать (Ctrl+G)" @click="engine.group()" class="editor-group"></button>
+                <button title="Разгруппировать (Ctrl+Alt+G)" @click="engine.ungroup()" class="editor-ungroup"></button>
+            </div>
             <div></div>
-            <div class="editor-save"></div>
-            <div class="editor-load"></div>
-            <!-- <div>
-                <button :value="engineState[0]" @click="setEngineState">select</button>
-                <button :value="engineState[1]" @click="setEngineState">point edit</button>
-                <button :value="engineState[2]" @click="setEngineState">translate</button>
-                <button :value="engineState[3]" @click="setEngineState">rotate</button>
-                <button :value="engineState[4]" @click="setEngineState">scale</button>
+            <div class="header-button-container">
+                <button title="Сохранить на сервере" @click="saveProject" class="editor-save"></button>
+                <button title="Загрузить с сервера"  @click="loadProject" class="editor-load"></button>
             </div>
-            <div>
-                <button :value="shapes[1]" @click="setEngineState">line </button>
-                <button :value="shapes[2]" @click="setEngineState">rectangle</button>
-                <button :value="shapes[3]" @click="setEngineState">circle</button>
-                <button :value="shapes[4]" @click="setEngineState">ellipse</button>
-                <button :value="shapes[5]" @click="setEngineState">bezier curve</button>
-                <button :value="shapes[6]" @click="setEngineState">arc</button>
+            <div class="header-button-container">
+                <button title="Назад" class="editor-back" @click="goBack"></button>
             </div>
-            <div>
-                <button @click="saveProject">save</button>
-                <button @click="loadProject">load</button>
-                <a download="file.png" @click="saveAsImage">save as png</a>
-            </div>
-            <div>
-                <button :value="engineState[6]" @click="setEngineState">group</button>
-                <button :value="engineState[7]" @click="setEngineState">ungroup</button>
-            </div> -->
         </div>
         <div class="editor">
             <SplitView>
@@ -113,7 +97,6 @@
                     { id: 6, name: "Полилиния",     img: "/shapeIcons/polyline.svg",  action: Shapes.POLYLINE,    hotkey: "" },
                     { id: 7, name: "Многоугольник", img: "/shapeIcons/polygon.svg",   action: Shapes.POLYGON,     hotkey: "" },
                 ],
-                toolSelected: { id: 0, name: "Выделение", img: "/toolIcons/select.svg", action: EngineState.SELECT, hotkey: "A" },
                 shapeSelected: { id: 0, name: "Линия"        , img: "/shapeIcons/line.svg",       action: Shapes.LINE,        hotkey: "" },
             }
         },
@@ -126,6 +109,16 @@
             },
             selectedShapes(): Array<Drawable> {
                 return this.engine.selectedElements;
+            },
+            // first time I used this, this is very noice
+            toolSelected: {
+                get(): { id: number; name: string; img: string; action: EngineState; hotkey: string } {
+                    const option = this.toolSelectOptions.find(opt => opt.action === this.engine.engineState);
+                    return option ?? this.toolSelectOptions[0];
+                },
+                set(option: { id: number; name: string; img: string; action: EngineState; hotkey: string }) {
+                    this.engine.engineState = option.action;
+                }
             }
         },
         created() {
@@ -143,12 +136,6 @@
             }
         },
         watch: {
-            toolSelected: {
-                handler() {
-                    console.log("WATCHIN");
-                    this.engine.engineState = this.toolSelected.action;
-                }
-            },
             shapeSelected: {
                 handler() {
                     this.engine.engineState = EngineState.DRAW;
@@ -159,57 +146,6 @@
         methods: {
             goBack() {
                 this.$router.push(`/${this.$store.getters.getUser._id}/projects`);
-            },
-            setEngineState() {
-                // console.log(state);
-                // switch(state) {
-                //     case EngineState.MOVEPOINT: 
-                //         this.engine.engineState = EngineState.MOVEPOINT;
-                //         break;
-                //     case "SELECT": 
-                //         this.engine.engineState = EngineState.SELECT;
-                //         break;
-                //     case "TRANSLATE": 
-                //         this.engine.engineState = EngineState.TRANSLATE;
-                //         break;
-                //     case "ROTATE": 
-                //         this.engine.engineState = EngineState.ROTATE;
-                //         break;
-                //     case "SCALE": 
-                //         this.engine.engineState = EngineState.SCALE;
-                //         break;
-                //     case "GROUP":
-                //         this.engine.engineState = EngineState.GROUP;
-                //         break;
-                //     case "UNGROUP":
-                //         this.engine.engineState = EngineState.UNGROUP;
-                //         break;
-                //     case "LINE":
-                //         this.engine.engineState = EngineState.DRAW;
-                //         this.engine.curTypeToDraw = Shapes.LINE;
-                //         break;
-                //     case "RECT":
-                //         this.engine.engineState = EngineState.DRAW;
-                //         this.engine.curTypeToDraw = Shapes.RECT;
-                //         break;
-                //     case "CIRCLE":
-                //         this.engine.engineState = EngineState.DRAW;
-                //         this.engine.curTypeToDraw=  Shapes.CIRCLE;
-                //         break;
-                //     case "ELLIPSE":
-                //         this.engine.engineState = EngineState.DRAW;
-                //         this.engine.curTypeToDraw = Shapes.ELLIPSE;
-                //         break;
-                //     case "BEZIER":
-                //         this.engine.engineState = EngineState.DRAW;
-                //         this.engine.curTypeToDraw=  Shapes.BEZIER;
-                //         break;
-                //     case "ARC":
-                //         this.engine.engineState = EngineState.DRAW;
-                //         this.engine.curTypeToDraw = Shapes.ARC;
-                //         break;
-                // }
-                
             },
             async saveProject() {
                 try {
@@ -283,21 +219,56 @@
 </script>
 
 <style lang="scss">
+    @import "../../assets/scss/config.scss";
+    @import "../../assets/scss/editorMixins.scss";
+
     .page-editor {
         padding: 65px 0 0 0;
         
         display: flex;
         flex-flow: column;
         align-items: center;
-        width: 99%;
+        width: 100%;
         height: calc(100% - 65px);
         // padding: 90px 0 0 0;
         .page-header-editor {
-            width: 80%;
-            margin: 20px 0;
+            width: 100%;
+            background-color: $middlePrimary;
             display: grid;
-            gap: 0 2%;
-            grid-template-columns: 1fr 1fr auto 1fr 1fr;
+            grid-template-columns: max-content max-content max-content auto max-content max-content max-content;
+
+            .header-button-container {
+
+                button {
+                    background-color: $middlePrimary;
+                    outline: none;
+                    border: none;
+                    width: 55px;
+                    height: 55px;
+                    padding: 5px;
+                    @include editor-button-style;
+                }
+
+                .editor-group {
+                    background-image: url("../../assets/toolIcons/group.svg");
+                }
+
+                .editor-ungroup {
+                    background-image: url("../../assets/toolIcons/ungroup.svg");
+                }
+
+                .editor-save {
+                    background-image: url("../../assets/toolIcons/save.svg");
+                }
+
+                .editor-load {
+                    background-image: url("../../assets/toolIcons/load.svg");
+                }
+
+                .editor-back {
+                    background-image: url("../../assets/toolIcons/back.svg");
+                }
+            }
         }
 
         .editor {
@@ -310,7 +281,7 @@
             .project-tree {
                 // width: 100%;
                 min-width: 200px;
-                // padding: 10px 20px;
+                padding: 20px 0px;
                 // position: relative;
                 text-align: left;
                 // resize: horizontal;
@@ -357,7 +328,7 @@
 
             .properties {
                 // position: relative;
-                min-width: 150px;
+                min-width: 200px;
                 // width: 100%;
                 // max-width: 300px;
             }
