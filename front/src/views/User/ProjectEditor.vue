@@ -54,28 +54,7 @@
                         <div class="panel-header">
                             Свойства
                         </div>
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Свойство</th>
-                                    <th>Значение</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td>test</td>
-                                    <td>val</td>
-                                </tr>
-                                <tr>
-                                    <td>test</td>
-                                    <td>val</td>
-                                </tr>
-                                <tr>
-                                    <td>test</td>
-                                    <td>val</td>
-                                </tr>
-                            </tbody>
-                        </table>
+                        <Properties :item="selectedShape" />
                     </div>
                 </Pane>
             </SplitView>
@@ -89,6 +68,7 @@
     import Dropdown from "@/components/dropdown/Dropdown.vue";
     import SplitView from "@/components/panes/SplitView.vue";
     import Pane from "@/components/panes/Pane.vue";
+    import Properties from "@/components/Properties.vue";
 
     import Engine, { EngineState, Shapes } from "@/engine/engine";
     import axios from 'axios';
@@ -101,6 +81,7 @@
             SplitView,
             Pane,
             TreeItem,
+            Properties,
             Dropdown
         },
         data() {
@@ -136,8 +117,17 @@
                     objects: this.engine.shapeList
                 };
             },
-            selectedShapes(): Array<Drawable> {
-                return this.engine.selectedElements;
+            selectedShape(): Drawable | null | Array<Drawable> {
+                if (this.engine.selectedElements) {
+                    if (this.engine.selectedElements.length === 1) {
+                        return this.engine.selectedElements[0];
+                    } else if (this.engine.selectedElements.length > 1) {
+                        return this.engine.selectedElements;
+                    }
+                } else {
+                    return null;
+                }
+                return null;
             },
             // first time I used this, this is very noice
             toolSelected: {
@@ -314,7 +304,7 @@
                     background-color: $primary;
                     color: white;
                     text-align: left;
-                    padding: 16.5px 15px;
+                    padding: 12px 15px;
                 }
             }
 
@@ -365,31 +355,10 @@
                 }
             }
 
-            .properties {
+            // .properties {
 
-                table {
-                    width: 100%;
-                    text-align: left;
-                    border-collapse: collapse;
-                    thead {
-                        tr {
-                            border-bottom: 1px solid $darkPrimary;
-                        }
-                    }
-
-                    tr {
-                        padding: 5px;
-
-                        td, th {
-                            padding: 5px 10px;
-                            
-                            &:first-of-type {
-                                border-right: 1px solid $darkPrimary;
-                            }
-                        }
-                    }
-                }
-            }
+                
+            // }
         }
     }
 </style>

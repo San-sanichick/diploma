@@ -564,8 +564,7 @@ export default class Engine {
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         this.ctxUI.clearRect(0, 0, this.canvasUI.width, this.canvasUI.height);
-        // this.ctx.fillStyle = "#191e38";
-        this.ctx.fillStyle = "#272d38";
+        this.ctx.fillStyle = "#003236";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         const worldTopLeft: Vec2      = this.ScreenToWorld(new Vec2(0, 0));
@@ -620,7 +619,7 @@ export default class Engine {
          * ONE. PIXEL. WIDTH.
          */
         this.ctx.save();
-        this.ctx.strokeStyle = "#323848";
+        this.ctx.strokeStyle = "#173f42";
 
         let worldX = worldTopLeft.x,
             worldY = worldTopLeft.y;
