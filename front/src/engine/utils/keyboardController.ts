@@ -15,6 +15,9 @@ export default class KeyboardController {
             The keyboard listeners get added to the entire document, and not
             the canvas, because with canvas it doesn't bloody work,
             it's as simple as that
+
+            To do key combinations it is required to call preventDefault(), to prevent
+            browser hotkeys from triggering (why the FUCK does ctrl+G trigger A SEARCH BAR)
         */
         document.addEventListener("keydown", (e: KeyboardEvent) => {
             // e.preventDefault();
@@ -33,8 +36,6 @@ export default class KeyboardController {
             this.shift = e.shiftKey;
             this.ctrl = e.ctrlKey;
             this.alt = e.altKey;
-
-            // if (this.ctrl && this.pressedButton === "KeyG") return;
 
             this.releasedButton = null;
         });

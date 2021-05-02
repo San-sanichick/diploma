@@ -436,6 +436,12 @@ export default class Engine {
             }
         }
 
+        if (this.keyboard.isCtrlHeld && !this.keyboard.isAltHeld && this.keyboard.getPressedButton === "KeyG") {
+            this.engineState = EngineState.GROUP;
+        } else if (this.keyboard.isCtrlHeld && this.keyboard.isAltHeld && this.keyboard.getPressedButton === "KeyG") {
+            this.engineState = EngineState.UNGROUP;
+        }
+
         if (this.engineState === EngineState.GROUP) {
             this.group();
         }
@@ -444,23 +450,23 @@ export default class Engine {
             this.ungroup();
         }
 
-        if (this.engineState === EngineState.GROUP && this.keyboard.getPressedButton === 'g'
-            && this.keyboard.isShiftHeld) {
-                 this.group();
-        }
+        // if (this.engineState === EngineState.GROUP && this.keyboard.getPressedButton === 'g'
+        //     && this.keyboard.isShiftHeld) {
+        //          this.group();
+        // }
 
-        if (this.keyboard.isCtrlHeld && !this.keyboard.isAltHeld && this.keyboard.getPressedButton === 'KeyG') {
+        // if (this.keyboard.isCtrlHeld && !this.keyboard.isAltHeld && this.keyboard.getPressedButton === 'KeyG') {
 
-            this.engineState = EngineState.GROUP;
-            this.group();
-        }
+        //     this.engineState = EngineState.GROUP;
+        //     this.group();
+        // }
 
-        if (this.keyboard.isCtrlHeld && this.keyboard.isAltHeld
-            && this.keyboard.getPressedButton === 'KeyG') {
+        // if (this.keyboard.isCtrlHeld && this.keyboard.isAltHeld
+        //     && this.keyboard.getPressedButton === 'KeyG') {
 
-            this.engineState = EngineState.UNGROUP;
-            this.ungroup();
-        }
+        //     this.engineState = EngineState.UNGROUP;
+        //     this.ungroup();
+        // }
 
         const updateTime = performance.now() - t1;
         
@@ -746,21 +752,21 @@ export default class Engine {
         }
         this.ctx.restore();
 
-        if (this.engineState === EngineState.ROTATE && this.cursorPosPivot !== null) {
-            this.ctxUI.save();
-                const sx = (this.cursorPosPivot.x - this.offset.x) * offset;
-                const sy = (this.cursorPosPivot.y - this.offset.y) * offset;
-                const ex = (this.cursor.x       - this.offset.x) * offset;
-                const ey = (this.cursor.y       - this.offset.y) * offset;
+        // if (this.engineState === EngineState.ROTATE && this.cursorPosPivot !== null) {
+        //     this.ctxUI.save();
+        //         const sx = (this.cursorPosPivot.x - this.offset.x) * offset;
+        //         const sy = (this.cursorPosPivot.y - this.offset.y) * offset;
+        //         const ex = (this.cursor.x       - this.offset.x) * offset;
+        //         const ey = (this.cursor.y       - this.offset.y) * offset;
 
-                this.ctxUI.beginPath();
-                this.ctxUI.strokeStyle = "rgba(80, 20, 30, 1)";
-                this.ctxUI.moveTo(sx, sy);
-                this.ctxUI.lineTo(ex, ey);
-                this.ctxUI.closePath();
-                this.ctxUI.stroke();
-            this.ctxUI.restore();
-        }
+        //         this.ctxUI.beginPath();
+        //         this.ctxUI.strokeStyle = "rgba(80, 20, 30, 1)";
+        //         this.ctxUI.moveTo(sx, sy);
+        //         this.ctxUI.lineTo(ex, ey);
+        //         this.ctxUI.closePath();
+        //         this.ctxUI.stroke();
+        //     this.ctxUI.restore();
+        // }
         
         // draw cursor
         this.ctxUI.transform(1, 0, 0, -1, 0, this.canvasUI.height);
