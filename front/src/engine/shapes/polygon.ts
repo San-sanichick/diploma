@@ -3,11 +3,11 @@ import Vec2 from "../utils/vector2d";
 import Node from "./node";
 
 export default class Polygon extends Shape {
-    private verticies: number;
+    public vertices: number;
 
     constructor(name = "Polygon", verticies: number) {
         super(name, 2, "polygon.svg");
-        this.verticies = verticies;
+        this.vertices = verticies;
     }
 
     getNextNode(pos: Vec2): Node | null {
@@ -25,10 +25,10 @@ export default class Polygon extends Shape {
 
             const angle = angle1 - angle2;
             
-            for (let i = 1; i < this.verticies; i++) {
+            for (let i = 1; i < this.vertices; i++) {
                 this.nodes.push(new Node(new Vec2(
-                    x + radius * Math.cos(angle + 2 * Math.PI * i / this.verticies), 
-                    y + radius * Math.sin(angle + 2 * Math.PI * i / this.verticies)), 
+                    x + radius * Math.cos(angle + 2 * Math.PI * i / this.vertices), 
+                    y + radius * Math.sin(angle + 2 * Math.PI * i / this.vertices)), 
                     this));
             }
 
@@ -74,17 +74,17 @@ export default class Polygon extends Shape {
                 ctx.beginPath();
                 ctx.moveTo(ev.x, ev.y);
                 // fuck if I know why it has to be this way
-                for (let i = 1; i < this.verticies; i++) {
+                for (let i = 1; i < this.vertices; i++) {
                     ctx.lineTo(
-                        sv.x - radius * Math.cos(angle + 2 * Math.PI * i / this.verticies), 
-                        sv.y - radius * Math.sin(angle + 2 * Math.PI * i / this.verticies)
+                        sv.x - radius * Math.cos(angle + 2 * Math.PI * i / this.vertices), 
+                        sv.y - radius * Math.sin(angle + 2 * Math.PI * i / this.vertices)
                     );
                 }
 
                 ctx.closePath();
                 ctx.stroke();
             ctx.restore();
-        } else if (this.nodes.length === this.verticies) {
+        } else if (this.nodes.length === this.vertices) {
             const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
 
             ctx.save();

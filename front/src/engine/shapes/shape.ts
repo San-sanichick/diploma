@@ -11,6 +11,7 @@ export interface ShapeObject {
     color: string;
     name: string;
     isSelected: boolean;
+    vertices?: number;
     // eslint-disable-next-line
     nodes: Array<any>;
 }
@@ -43,6 +44,8 @@ export default abstract class Shape implements Drawable {
     public static worldOffset: Vec2;
     public static worldGrid: number;
     public static magnitude = 0.5;
+    // hacks
+    public vertices?: number;
 
     constructor(name = "shape", maxNodes: number, icon: string) {
         this.maxNodes = maxNodes;
@@ -87,6 +90,7 @@ export default abstract class Shape implements Drawable {
     public static cloneFromObject<T extends Shape>(type: { new(name: string, maxNodes: number): T}, obj: ShapeObject): T {
         const temp = new type(obj.name, obj.maxNodes);
         temp.type = obj.type;
+        temp.vertices = obj.vertices;
         // temp.nodes = [...obj.nodes];
 
         obj.nodes.forEach(node => {
@@ -94,6 +98,7 @@ export default abstract class Shape implements Drawable {
         })
 
         temp.color = obj.color;
+        console.log(temp);
         return temp;
     }
 

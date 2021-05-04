@@ -9,6 +9,8 @@ import Rectangle from "../shapes/rect";
 import Serializable from "../shapes/serializable";
 import Shape, { ShapeObject } from "../shapes/shape";
 import Drawable from "../shapes/drawable";
+import Polygon from "../shapes/polygon";
+import Polyline from "../shapes/polyline";
 
 /**
  * This is the dumbest class, because it only works with shapes,
@@ -82,6 +84,14 @@ export default class Serializer {
                 }
                 case "Group": {
                     arr.push(new Group(obj.name, Serializer.deserialize(obj.objects)));
+                    break;
+                }
+                case "Polygon": {
+                    arr.push(Shape.cloneFromObject<Polygon>(Polygon, obj as ShapeObject));
+                    break;
+                }
+                case "Polyline": {
+                    arr.push(Shape.cloneFromObject<Polyline>(Polyline, obj as ShapeObject));
                     break;
                 }
                 default: {
