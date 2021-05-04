@@ -295,9 +295,14 @@ export default class Engine {
                     case Shapes.BEZIER:
                         this.tempShape = new Bezier("Bezier " + this.shapes.length);
                         break;
-                    case Shapes.POLYGON:
-                        this.tempShape = new Polygon("Polygon", 50);
+                    case Shapes.POLYGON: {
+                        // not the most elegant solution
+                        const verticies = prompt("Введите число вершин", "4");
+                        let val = parseInt(verticies ? verticies : "4");
+                        val = val > 2 ? val : 3;
+                        this.tempShape = new Polygon("Polygon", val);
                         break;
+                    }
                     case Shapes.POLYLINE:
                         this.tempShape = new Polyline("Polyline");
                         break;
@@ -491,7 +496,7 @@ export default class Engine {
         }
 
         this.renderDebug({ text: "FPS", metric: fastRounding(this.fps) },
-                         { text: "Update time", metric: updateTime.toFixed(3) },
+                         { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },
                          { text: "Shapes on scene", metric: this.shapes.length },
                          { text: "Temp shape", metric: this.tempShape?.name ?? "none" },
                          { text: "Zoom level", metric: this.scale });
@@ -803,11 +808,6 @@ export default class Engine {
             this.ctxUI.closePath();
             // this.ctxUI.stroke();
         this.ctxUI.restore();
-
-        // this.ctxUI.font = "14px sans-serif";
-        // this.ctxUI.fillStyle = "#fff";
-        // this.ctxUI.fillText(`x: ${this.cursor.x}, y: ${this.cursor.y}`, 
-        //                         this.mouse.getCurrentPosition().x + 10, this.mouse.getCurrentPosition().y + 20);
 
         this.ctxUI.transform(1, 0, 0, -1, 0, this.canvasUI.height);
     }
