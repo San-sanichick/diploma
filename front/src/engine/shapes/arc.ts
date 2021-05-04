@@ -13,7 +13,8 @@ export default class Arc extends Shape {
             const radius = this.nodes[0].getPosition.subtract(this.nodes[1].getPosition).mag();
 
             const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
-            const ev: Vec2 = this.WorldToScreen(this.nodes[1].getPosition);
+            const mv: Vec2 = this.WorldToScreen(this.nodes[1].getPosition);
+            const ev: Vec2 = this.WorldToScreen(this.nodes[2].getPosition);
 
             ctx.strokeStyle = this.isSelected ? "red" : this.color;
 

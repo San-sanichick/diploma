@@ -52,6 +52,13 @@
                 isOpen: false
             }
         },
+        watch: {
+            selected: {
+                handler() {
+                    this.$emit("dropdown-focused", this.id);
+                }
+            },
+        },
         methods: {
             onClickHandler(option: { id: number; name: string; img: string; action: any; hotkey: string }) {
                 // this.selected = option;

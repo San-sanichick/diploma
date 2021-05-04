@@ -13,6 +13,8 @@ import Vec2                              from "./utils/vector2d";
 import MouseController, { MouseButtons } from "./utils/mouseController";
 import KeyboardController                from "./utils/keyboardController";
 import { clamp, fastRounding }           from "./utils/math";
+import Polygon from "./shapes/polygon";
+import Polyline from "./shapes/polyline";
 
 /**
  * Possible engine states
@@ -293,6 +295,12 @@ export default class Engine {
                     case Shapes.BEZIER:
                         this.tempShape = new Bezier("Bezier " + this.shapes.length);
                         break;
+                    case Shapes.POLYGON:
+                        this.tempShape = new Polygon("Polygon", 50);
+                        break;
+                    case Shapes.POLYLINE:
+                        this.tempShape = new Polyline("Polyline");
+                        break;
                     default:
                         break out;
                 }
@@ -305,6 +313,19 @@ export default class Engine {
             this.tempShape.setNodeColor(NodeColors.ACTIVE);
         }
 
+        // this works
+        if (this.mouse.getReleasedButton === MouseButtons.RIGHT) {
+            if (this.tempShape !== null) {
+                if (this.tempShape instanceof Polyline) {
+                    this.tempShape.setMaxNodeNumber = this.tempShape.numberOfNodes;
+                    this.tempShape.setNodeColor(NodeColors.INACTIVE);
+                    this.tempShape.color = "#fff";
+                    this.shapes.push(this.tempShape);
+                    this.tempShape = null;
+                    this.selectedNode = null;
+                }
+            }
+        }
 
         if (this.mouse.getReleasedButton === MouseButtons.LEFT) {
             if (this.tempShape !== null) {
@@ -315,19 +336,22 @@ export default class Engine {
 
                     switch(this.curTypeToDraw) {
                         case Shapes.LINE:
-                            this.shapes.push(Shape.clone<Line>(Line, this.tempShape));
+                            this.shapes.push(this.tempShape);
                             break;
                         case Shapes.RECT:
-                            this.shapes.push(Shape.clone<Rectangle>(Rectangle, this.tempShape));
+                            this.shapes.push(this.tempShape);
                             break;
                         case Shapes.CIRCLE:
-                            this.shapes.push(Shape.clone<Circle>(Circle, this.tempShape));
+                            this.shapes.push(this.tempShape);
                             break;
                         case Shapes.ELLIPSE:
-                            this.shapes.push(Shape.clone<Ellipse>(Ellipse, this.tempShape));
+                            this.shapes.push(this.tempShape);
                             break;
                         case Shapes.BEZIER:
-                            this.shapes.push(Shape.clone<Bezier>(Bezier, this.tempShape));
+                            this.shapes.push(this.tempShape);
+                            break;
+                        case Shapes.POLYGON:
+                            this.shapes.push(this.tempShape);
                             break;
                         default:
                             break;
@@ -340,6 +364,7 @@ export default class Engine {
             }
         }   
 
+        // TODO: Make nodes deletable (is that even a word?)
         if (this.engineState === EngineState.MOVEPOINT && this.mouse.getPressedButton === MouseButtons.LEFT) {
             this.selectedNode = null;
             for (const shape of this.shapes) {
@@ -410,16 +435,16 @@ export default class Engine {
             if (this.mouse.getHeldButton === MouseButtons.LEFT && this.cursorPosPivot !== null) {
                 for (const shape of this.selectedShapes) {
                     if (this.cursor.equals(this.cursorOldPos)) break;
-                    const a = new Vec2(this.cursorPosPivot.x + 2, this.cursorPosPivot.y).subtract(this.cursorPosPivot);
-                    const b = this.cursorPosPivot.subtract(this.cursor);
+                    // const a = new Vec2(this.cursorPosPivot.x + 2, this.cursorPosPivot.y).subtract(this.cursorPosPivot);
+                    // const b = this.cursorPosPivot.subtract(this.cursor);
 
-                    const angle1 = Math.atan2(a.y, a.x);
-                    const angle2 = Math.atan2(b.y, b.x);
+                    // const angle1 = Math.atan2(a.y, a.x);
+                    // const angle2 = Math.atan2(b.y, b.x);
 
 
-                    const angle = angle1 - angle2;
+                    // const angle = angle1 - angle2;
 
-                    shape.rotate(angle / 10, this.cursorPosPivot);
+                    shape.rotate(-this.cursor.subtract(this.cursorOldPos).x / 100, this.cursorPosPivot);
                 }
             } else {
                 this.cursorPosPivot = null;
@@ -450,24 +475,6 @@ export default class Engine {
         if (this.engineState === EngineState.UNGROUP) {
             this.ungroup();
         }
-
-        // if (this.engineState === EngineState.GROUP && this.keyboard.getPressedButton === 'g'
-        //     && this.keyboard.isShiftHeld) {
-        //          this.group();
-        // }
-
-        // if (this.keyboard.isCtrlHeld && !this.keyboard.isAltHeld && this.keyboard.getPressedButton === 'KeyG') {
-
-        //     this.engineState = EngineState.GROUP;
-        //     this.group();
-        // }
-
-        // if (this.keyboard.isCtrlHeld && this.keyboard.isAltHeld
-        //     && this.keyboard.getPressedButton === 'KeyG') {
-
-        //     this.engineState = EngineState.UNGROUP;
-        //     this.ungroup();
-        // }
 
         const updateTime = performance.now() - t1;
         
@@ -677,7 +684,7 @@ export default class Engine {
             
             this.ctx.strokeStyle = "rgba(0, 150, 150, 1)";
             this.ctx.beginPath();
-            this.ctx.arc(origin.x, origin.y, 5, 0, 2 * Math.PI);
+            this.ctx.rect(origin.x - 5, origin.y - 5, 10, 10);
             // this.ctx.closePath();
             this.ctx.stroke();
 
@@ -698,16 +705,16 @@ export default class Engine {
             // this monstrosity, because otherwise the text is drawn upside-down,
             // which is hillarious, and also undesirable
             this.ctx.save();
-                this.ctx.font = "12px sans-serif";
+                this.ctx.font = "16px Open Sans";
                 this.ctx.fillStyle = "#ccc";
                 this.ctx.translate(origin.x + 50, origin.y);
                 this.ctx.scale(1, -1);
-                this.ctx.fillText("x", 0, 0);
+                this.ctx.fillText("X", 0, 0);
                 this.ctx.scale(1, -1);
                 this.ctx.translate(-(origin.x + 50), -origin.y);
                 this.ctx.translate(origin.x, origin.y + 50);
                 this.ctx.scale(1, -1);
-                this.ctx.fillText("y", 0, 0);
+                this.ctx.fillText("Y", 0, 0);
             this.ctx.restore();
 
         Shape.worldOffset = this.offset;
@@ -809,7 +816,7 @@ export default class Engine {
         if (this.ctxUI === null) return;
 
         const gap = 20;
-        this.ctxUI.font = "18px sans-serif";
+        this.ctxUI.font = "18px Open Sans";
         this.ctxUI.fillStyle = "#ccc";
 
         for (let i = 0; i < performance.length; i++) {

@@ -23,7 +23,6 @@ export default class Circle extends Shape {
         
         ctx.save();
             ctx.setLineDash([5, 15]);
-            
             ctx.beginPath();
             ctx.moveTo(sv.x, sv.y);
             ctx.lineTo(ev.x, ev.y);
@@ -33,7 +32,6 @@ export default class Circle extends Shape {
 
         ctx.save();
             ctx.fillStyle = "";
-            // ctx.strokeStyle = this.color;
             ctx.setLineDash([]);
             ctx.beginPath();
             ctx.arc(sv.x, sv.y, radius * Shape.worldScale * Shape.worldGrid, 0, 2 * Math.PI, false);

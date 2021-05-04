@@ -121,6 +121,7 @@
                     { id: 7, name: "Многоугольник", img: "/shapeIcons/polygon.svg",   action: Shapes.POLYGON,     hotkey: "" },
                 ],
                 shapeSelected: { id: 0, name: "Линия", img: "/shapeIcons/line.svg", action: Shapes.LINE, hotkey: "" },
+                toolId: 0,
                 focused: [ true, false ]
             }
         },
@@ -146,13 +147,19 @@
             // first time I used this, this is very noice
             toolSelected: {
                 get(): { id: number; name: string; img: string; action: EngineState; hotkey: string } {
-                    const option = this.toolSelectOptions.find(opt => opt.action === this.engine.engineState);
+                    let option = this.toolSelectOptions.find(opt => opt.action === this.engine.engineState);
 
-                    // if (this.engine.engineState === EngineState.DRAW) return this.toolSelected;
-
+                    // hacky solutions to modern problems
+                    if (this.engine.engineState === EngineState.DRAW) {
+                        option = this.toolSelectOptions.find(opt => opt.id === this.toolId);
+                        return option ?? this.toolSelectOptions[0];
+                    } 
+                    // console.log(this.toolSelected);
                     return option ?? this.toolSelectOptions[0];
                 },
                 set(option: { id: number; name: string; img: string; action: EngineState; hotkey: string }) {
+                    // if (this.engine.engineState === EngineState.DRAW) return;
+                    console.log(option);
                     this.engine.engineState = option.action;
                 }
             },
@@ -177,8 +184,9 @@
                         return 0;
                     }
                 },
-                set(val: number) {
-                    this.engine.scaleValue(val);
+                set(val: string) {
+                    // this is silly, why the fuck does range element return a STRING
+                    this.engine.scaleValue(parseInt(val));
                 }
             }
         },
@@ -201,6 +209,22 @@
                 handler() {
                     this.engine.engineState = EngineState.DRAW;
                     this.engine.curTypeToDraw = this.shapeSelected.action;
+                }
+            },
+            toolSelected: {
+                handler() {
+                    this.toolId = this.toolSelected.id;
+                }
+            },
+            // hacks
+            focused: {
+                handler(newVal: boolean[]) {
+                    if (newVal[0]) {
+                        this.engine.engineState = this.toolSelected.action;
+                    } else if (newVal[1]) {
+                        this.engine.engineState = EngineState.DRAW;
+                        this.engine.curTypeToDraw = this.shapeSelected.action;
+                    }
                 }
             }
         },
@@ -271,8 +295,6 @@
                 this.focused = this.focused.map(f => f = false);
                 // this.focused[id] = true;
                 this.focused.splice(id, 1, true);
-                
-
             },
             // These two are absolutely stupid,
             // but it has to be done, since Vue does not support casting in templates.

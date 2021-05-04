@@ -21,7 +21,10 @@ export interface ShapeObject {
 export default abstract class Shape implements Drawable {
     public    type: string | undefined;
     /**
-     * For the sake of my sanity, shapes are not going to have > 3 nodes
+     * Max nodes specifies how many node does the user have to place, to draw the shape,
+     * but not the overall maximum of nodes the shape can have.
+     * 
+     * For example, a Rectangle has 4 nodes. And a Polygon can have any number of nodes 
      * @private
      */
     private   maxNodes: number;
@@ -175,7 +178,6 @@ export default abstract class Shape implements Drawable {
 
         sumX /= this.nodes.length;
         sumY /= this.nodes.length;
-
         return new Vec2(fastRounding(sumX), fastRounding(sumY));
     }
 
@@ -183,6 +185,14 @@ export default abstract class Shape implements Drawable {
         return this.maxNodes;
     }
 
+    set setMaxNodeNumber(newMaxNodes: number) {
+        this.maxNodes = newMaxNodes;
+    }
+
+    /**
+     * Translates the shape in space by a given distance
+     * @param deltaDist distance
+     */
     translate(deltaDist: Vec2): void {
         // Translation matrix
         const trMatrix = new Matrix([
@@ -202,13 +212,15 @@ export default abstract class Shape implements Drawable {
         
         for (let i = 0; i < this.nodes.length; i++) {
             const temp = new Vec2(newCoord.value[i][0], newCoord.value[i][1]);
-            temp.round();
             this.nodes[i].setPosition = temp;
         }
     }
 
-    // works well on circles, absolutely breaks on
-    // rectangles
+    /**
+     * Rotates the shape relative to given pivot point
+     * @param angle Angle to rotate by
+     * @param pos pivot point
+     */
     rotate(angle: number, pos: Vec2): void {
         // translate to origin
         // angle = angle * (Math.PI / 180);
@@ -247,18 +259,16 @@ export default abstract class Shape implements Drawable {
 
         for (let i = 0; i < this.nodes.length; i++) {
             const temp = new Vec2(newCoord.value[i][0], newCoord.value[i][1]);
-            // no snapping, that breaks things
-            // temp.round();
             this.nodes[i].setPosition = temp;
         }
     }
 
     /**
-     * Resizes the shape relative to current mouse position
+     * Resizes the shape relative to pivot point
      * 
      * Also it doesn't bloody work
      * @param sizeCoeff resize coefficient
-     * @param pos current position of the mouse
+     * @param pos pivot point
      */
     resize(sizeCoeff: Vec2, pos: Vec2): void {
         console.log(sizeCoeff);
