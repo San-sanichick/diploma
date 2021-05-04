@@ -3,14 +3,16 @@
         class="dropdown-container"
         v-click-away="onClickAway">
         <div class="dropdown-trigger-container"
-            :class="[{ 'triggered': isOpen }, { 'focused': focused }]">
+            :class="[{ 'triggered': isOpen }, { 'focused': focused }]"
+            @click="$emit('dropdown-focused', id)"
+            >
             <div
                 class="dropdown-trigger"
                 :title="selected.name"
                 :style="{ backgroundImage: 'url(' + require('@/assets' + selected.img) + ')' }">
             </div>
             <div class="dropdown-trigger-triangle"
-                @click="isOpen = !isOpen"></div>
+                @click="triggered"></div>
         </div>
         <div class="dropdown-options-container" v-if="isOpen">
             <div class="dropdown-options-triangle"></div>
@@ -38,8 +40,9 @@
         directives: {
             ClickAway: directive
         },
-        emits: ["update:selected"],
+        emits: ["update:selected", "dropdown-focused"],
         props: {
+            id: Number,
             focused: Boolean,
             options: Array,
             selected: Object
@@ -57,6 +60,10 @@
             },
             onClickAway() {
                 this.isOpen = false;
+            },
+            triggered() {
+                this.isOpen = !this.isOpen;
+                this.$emit("dropdown-focused", this.id);
             }
         }
     })

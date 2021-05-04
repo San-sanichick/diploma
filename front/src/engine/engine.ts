@@ -243,6 +243,7 @@ export default class Engine {
     /**
      * Update method, has to be run through requestAnimationFrame
      */
+    // TODO: Split updating into subroutines, so that this function is not so bloody huge as well
     private update(): void {
         const t1 = performance.now();
 

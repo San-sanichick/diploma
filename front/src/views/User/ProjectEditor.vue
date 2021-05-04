@@ -3,14 +3,18 @@
         <div class="page-header-editor">
             <div class="editor-tools">
                 <Dropdown 
+                    :id="0"
                     :options="toolSelectOptions"
-                    :focused="true"
+                    :focused="focused[0]"
+                    @dropdown-focused="handleFocused"
                     v-model:selected="toolSelected" />
             </div>
             <div class="editor-shapes">
                 <Dropdown 
-                :focused="false"
+                    :id="1"
+                    :focused="focused[1]"
                     :options="shapeSelectOptions"
+                    @dropdown-focused="handleFocused"
                     v-model:selected="shapeSelected" />
             </div>
             <div class="header-button-container">
@@ -116,7 +120,8 @@
                     { id: 6, name: "Полилиния",     img: "/shapeIcons/polyline.svg",  action: Shapes.POLYLINE,    hotkey: "" },
                     { id: 7, name: "Многоугольник", img: "/shapeIcons/polygon.svg",   action: Shapes.POLYGON,     hotkey: "" },
                 ],
-                shapeSelected: { id: 0, name: "Линия"        , img: "/shapeIcons/line.svg",       action: Shapes.LINE,        hotkey: "" },
+                shapeSelected: { id: 0, name: "Линия", img: "/shapeIcons/line.svg", action: Shapes.LINE, hotkey: "" },
+                focused: [ true, false ]
             }
         },
         computed: {
@@ -142,6 +147,9 @@
             toolSelected: {
                 get(): { id: number; name: string; img: string; action: EngineState; hotkey: string } {
                     const option = this.toolSelectOptions.find(opt => opt.action === this.engine.engineState);
+
+                    // if (this.engine.engineState === EngineState.DRAW) return this.toolSelected;
+
                     return option ?? this.toolSelectOptions[0];
                 },
                 set(option: { id: number; name: string; img: string; action: EngineState; hotkey: string }) {
@@ -258,6 +266,14 @@
                     }
                 }
             },
+            handleFocused(id: number) {
+                console.log(id);
+                this.focused = this.focused.map(f => f = false);
+                // this.focused[id] = true;
+                this.focused.splice(id, 1, true);
+                
+
+            },
             // These two are absolutely stupid,
             // but it has to be done, since Vue does not support casting in templates.
             // Well, yet, at the very least
@@ -339,11 +355,11 @@
                     color: white;
                     text-align: left;
                     padding: 12px 15px;
+                    user-select: none;
                 }
             }
 
             .project-tree {
-                
                 // position: relative;
                 text-align: left;
                 // resize: horizontal;

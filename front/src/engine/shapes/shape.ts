@@ -19,11 +19,11 @@ export interface ShapeObject {
  * Abstract shape class, use as basis for every other shape
  */
 export default abstract class Shape implements Drawable {
+    public    type: string | undefined;
     /**
      * For the sake of my sanity, shapes are not going to have > 3 nodes
      * @private
      */
-    public    type: string | undefined;
     private   maxNodes: number;
     public    color: string;
     public    name: string;

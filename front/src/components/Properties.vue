@@ -38,7 +38,7 @@
             <tbody v-else-if="Array.isArray(item)">
                 <tr>
                     <td>
-                        Выделенно
+                        Выделено
                     </td>
                     <td>
                         {{ item.length }}
@@ -56,7 +56,7 @@
             <tbody>
                 <tr>
                     <td>
-                        Выделенно
+                        Выделено
                     </td>
                     <td>
                         0
@@ -104,6 +104,7 @@
     @import "../assets/scss/config.scss";
     table {
         width: 100%;
+        margin: 0;
         text-align: left;
         border-collapse: collapse;
         thead {
@@ -117,6 +118,7 @@
 
             td, th {
                 padding: 5px 10px;
+                width: 50%;
                 
                 &:first-of-type {
                     border-right: 1px solid $darkPrimary;

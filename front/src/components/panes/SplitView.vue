@@ -7,11 +7,28 @@
             Divider
         },
         mounted() {
-            console.log(this.getChildren);
+            console.log(this.panes);
+
+            for (const divider of this.dividers) {
+                divider.addEventListener("mousedown", (e: MouseEvent) => {
+                    const x = e.clientX;
+                    const prevPane = divider.previousElementSibling;
+                    const nextPane = divider.nextElementSibling;
+
+                    divider.addEventListener("mousemove", (e: MouseEvent) => {
+                        const dx = e.clientX - x;
+
+
+                    })
+                })
+            }
         },
         computed: {
-            getChildren() {
-                return Array.from(this.$el.children as HTMLCollection).filter((node) => node.className !== "pane-divider");
+            panes() {
+                return Array.from(this.$el.children as HTMLCollection).filter((node) => node.className !== "pane-divider") as HTMLElement[];
+            },
+            dividers() {
+                return Array.from(this.$el.children as HTMLCollection).filter(node => node.className === "pane-divider") as HTMLElement[];
             }
         },
         render() {
