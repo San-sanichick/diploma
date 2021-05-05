@@ -66,9 +66,13 @@
         <div class="page-footer-editor">
             <div class="mouse-coordinates">X: {{ mousePosition.x }}, Y: {{ mousePosition.y }}</div>
             <div></div>
+            <div class="snap-controls">
+                <input type="checkbox" name="snap" id="snap" v-model="isSnap">
+                <label for="snap">Привязка к сетке</label>
+            </div>
             <div class="slider">
                 <!-- don't ask me where these numbers come from, it's magic -->
-                <span>{{ Math.round((scale / 10) * 100) }}%</span>
+                <span>Масштаб: {{ Math.round((scale / 10) * 100) }}%</span>
                 <input class="editor-scale" type="range" name="editor-scale" v-model="scale" min="3" max="200">
             </div>
         </div>
@@ -101,8 +105,6 @@
             return {
                 id: this.$route.params.id,
                 engine: {} as Engine,
-                shapes: Shapes,
-                engineState: EngineState,
                 toolSelectOptions: [
                     { id: 0, name: "Выделение",       img: "/toolIcons/select.svg",     action: EngineState.SELECT,    hotkey: "A" },
                     { id: 1, name: "Перенос вершин",  img: "/toolIcons/point_edit.svg", action: EngineState.MOVEPOINT, hotkey: "V" },
@@ -159,20 +161,19 @@
                 },
                 set(option: { id: number; name: string; img: string; action: EngineState; hotkey: string }) {
                     // if (this.engine.engineState === EngineState.DRAW) return;
-                    console.log(option);
                     this.engine.engineState = option.action;
                 }
             },
-            mousePosition(): { x: number; y: number } {
+            mousePosition(): { x: string; y: string } {
                 if (this.engine.mouseCoordinates) {
                     return {
-                        x: this.engine.mouseCoordinates.x,
-                        y: this.engine.mouseCoordinates.y
+                        x: this.engine.mouseCoordinates.x.toFixed(2),
+                        y: this.engine.mouseCoordinates.y.toFixed(2)
                     }
                 } else {
                     return {
-                        x: 0,
-                        y: 0
+                        x: "0",
+                        y: "0"
                     }
                 }
             },
@@ -188,6 +189,18 @@
                     // this is silly, why the fuck does range element return a STRING
                     this.engine.scaleValue(parseInt(val));
                 }
+            },
+            isSnap: {
+                get(): boolean {
+                    if (this.engine && this.engine.isSnap) {
+                        return this.engine.isSnap;
+                    } else {
+                        return false;
+                    }
+                },
+                set(val: boolean) {
+                    this.engine.isSnap = val;
+                } 
             }
         },
         created() {
@@ -440,12 +453,27 @@
             font-size: 1.5ch;
             padding: 3px 15px;
             display: grid;
-            grid-template-columns: max-content auto max-content;
+            grid-template-columns: max-content auto max-content max-content;
             align-items: center;
+            column-gap: 20px;
 
             .mouse-coordinates {
                 width: auto;
                 text-align: left;
+            }
+
+            .snap-controls {
+                display: flex;
+                flex-flow: row;
+                justify-content: center;
+
+                input {
+                    margin: auto 5px;
+                }
+
+                label {
+                    margin-bottom: 1px;
+                }
             }
 
             .slider {
@@ -454,7 +482,7 @@
                 justify-content: center;
 
                 .editor-scale {
-                    margin-left: 15px;
+                    margin-left: 6px;
                     background-color: green;
                 }
             }

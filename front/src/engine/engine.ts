@@ -27,7 +27,8 @@ enum EngineState {
     SCALE,
     DRAW,
     GROUP,
-    UNGROUP
+    UNGROUP,
+    WAIT
 }
 
 /**
@@ -69,6 +70,7 @@ export default class Engine {
     private cursor:         Vec2;
     private cursorOldPos:   Vec2          = new Vec2(0.0, 0.0);
     private cursorPosPivot: Vec2 | null   = new Vec2(0, 0);
+    public  isSnap                        = false;
     public engineState:     EngineState   = EngineState.SELECT;
     public curTypeToDraw:   Shapes        = Shapes.NONE;
     private fps                           = 0;
@@ -271,7 +273,8 @@ export default class Engine {
         this.offset = this.offset.add(mouseBeforeZoom.subtract(mouseAfterZoom));
         
         this.cursor = mouseAfterZoom.add(new Vec2(0.5, 0.5).multiply(this.grid));
-        this.cursor.floor();
+        // this.cursor.floor();
+        if (this.isSnap) this.cursor.floor();
 
         this.hotKeyStateSwitchHandler();
 
@@ -299,7 +302,7 @@ export default class Engine {
                         // not the most elegant solution
                         const verticies = prompt("Введите число вершин", "4");
                         let val = parseInt(verticies ? verticies : "4");
-                        val = val > 2 ? val : 3;
+                        val = clamp(val, 3, 100);
                         this.tempShape = new Polygon("Polygon", val);
                         break;
                     }
@@ -496,10 +499,9 @@ export default class Engine {
         }
 
         this.renderDebug({ text: "FPS", metric: fastRounding(this.fps) },
+                         { text: "Render time", metric: `${(performance.now() - t2).toFixed(3)}ms` },
                          { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },
-                         { text: "Shapes on scene", metric: this.shapes.length },
-                         { text: "Temp shape", metric: this.tempShape?.name ?? "none" },
-                         { text: "Zoom level", metric: this.scale });
+                         { text: "Shapes on scene", metric: this.shapes.length });
 
         
         // :)

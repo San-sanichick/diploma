@@ -70,6 +70,7 @@ export default createStore({
             try {
                 // const dataToSend = JSON.stringify(payload);
                 const res = await axios.post(`/users/login`, payload, { skipAuthRefresh: true } as AxiosAuthRefreshRequestConfig);
+                console.log(res);
                 const user = res.data.data.user;
                 if (user) {
                     context.commit("setUser", res.data.data);

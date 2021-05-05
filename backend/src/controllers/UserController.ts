@@ -109,6 +109,7 @@ export default class UserController {
 
 
     public async loginUser(req: Request, res: Response): Promise<void> {
+        console.log(req.body);
         const
             email    = req.body.email,
             password = req.body.password,
