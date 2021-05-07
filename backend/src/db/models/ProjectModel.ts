@@ -13,6 +13,9 @@ class Project {
     @prop({required: true, default: 0})
     public files?: number;
 
+    @prop()
+    public thumbnail?: string;
+
     @prop({required: true, default: false})
     public publicAccess?: boolean
 }

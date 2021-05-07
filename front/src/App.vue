@@ -1,7 +1,19 @@
 <template>
     <router-view />
     <FlashMessage position="right bottom"/>
+    <ContextMenu />
 </template>
+
+<script lang="ts">
+    import { defineComponent } from 'vue';
+    import ContextMenu from "@/components/ContextMenu.vue";
+
+    export default defineComponent({
+        components: {
+            ContextMenu
+        }
+    })
+</script>
 
 <style lang="scss">
     body {

@@ -93,7 +93,7 @@ export default class Engine {
         this.viewport      = viewport;
         this.canvas        = viewport.querySelector(".canvas") as HTMLCanvasElement;
         this.canvasUI      = viewport.querySelector(".canvas-ui") as HTMLCanvasElement;
-        this.ctx           = this.canvas.getContext("2d");
+        this.ctx           = this.canvas.getContext("2d", { alpha: false });
         this.ctxUI         = this.canvasUI.getContext("2d");
 
         
@@ -182,7 +182,7 @@ export default class Engine {
     public saveImage(): string | undefined {
         // window.location.href = this.canvas.toDataURL("image/png").replace("image/png", "image/octet-stream");
         try {
-            return this.renderToImage().toDataURL("image/png").replace("image/png", "image/octet-stream");
+            return this.renderToImage(1000, 1000).toDataURL("image/png").replace("image/png", "image/octet-stream");
         } catch(err) {
             console.error(err);
         }
@@ -192,6 +192,7 @@ export default class Engine {
         return {
             offset: this.offset,
             scale: this.scale,
+            image: this.renderToImage(800, 400).toDataURL(),
             shapes: Serializer.serialize(this.shapes)
         }
     }
@@ -265,14 +266,14 @@ export default class Engine {
         const mouseBeforeZoom = this.ScreenToWorld(Vec2.copyFrom(this.mouse.getCurrentPosition()));
         
         if (this.mouse.mouseScrolled) {
-            this.scale += this.mouse.getDelta * -0.2;
+            this.scale += this.mouse.getDelta * -0.05;
             this.scale = clamp(this.scale, 3, 200);
         }
         
         const mouseAfterZoom = this.ScreenToWorld(Vec2.copyFrom(this.mouse.getCurrentPosition()));
         this.offset = this.offset.add(mouseBeforeZoom.subtract(mouseAfterZoom));
         
-        this.cursor = mouseAfterZoom.add(new Vec2(0.5, 0.5).multiply(this.grid));
+        this.cursor = mouseAfterZoom.add(new Vec2(0, 0).multiply(this.grid));
         // this.cursor.floor();
         if (this.isSnap) this.cursor.floor();
 
@@ -501,7 +502,8 @@ export default class Engine {
         this.renderDebug({ text: "FPS", metric: fastRounding(this.fps) },
                          { text: "Render time", metric: `${(performance.now() - t2).toFixed(3)}ms` },
                          { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },
-                         { text: "Shapes on scene", metric: this.shapes.length });
+                         { text: "Shapes on scene", metric: this.shapes.length },
+                         { text: "Scale level", metric: this.scale });
 
         
         // :)
@@ -555,27 +557,33 @@ export default class Engine {
      * 
      * Might want to offload this to a WebWorker, not that it matters too much
      */
-    private renderToImage(): HTMLCanvasElement {
+    private renderToImage(width: number, height: number): HTMLCanvasElement {
         const canvas = document.createElement("canvas") as HTMLCanvasElement;
         const ctx = canvas.getContext("2d");
 
         // TODO: Create a popup window instead, asking for the dimensions of the file
-        canvas.width = 1000;
-        canvas.height = 1000;
+        canvas.width = width * 4;
+        canvas.height = height * 4;
 
         // TODO: Scale and center shapes, requires creating a copy of the shapes array
         if (ctx !== null) {
-            ctx.fillStyle = "#272d38";
+            ctx.fillStyle = "#003236";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.setTransform(1, 0, 0, -1, 0, this.canvas.height);
 
             ctx.save();
             this.shapes.forEach(shape => {
                 shape.renderSelf(ctx);
-                shape.renderNodes(ctx);
+                // shape.renderNodes(ctx);
             });
             ctx.restore();
 
-            return canvas;
+            const resCanvas = document.createElement("canvas") as HTMLCanvasElement;
+            resCanvas.width = width;
+            resCanvas.height = height;
+            resCanvas.getContext("2d")?.drawImage(canvas, 0, 0, width, height);
+
+            return resCanvas;
         } else {
             throw new Error("Failed to get canvas context");
         }
@@ -652,11 +660,20 @@ export default class Engine {
          */
         this.ctx.save();
         this.ctx.strokeStyle = "#173f42";
+        // this.ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
 
         let worldX = worldTopLeft.x,
             worldY = worldTopLeft.y;
 
         const gridOffset = 0.5;
+
+        // let gridWidth = 1;
+
+        // if (this.scale >= 1 && this.scale <= 10)  gridWidth = 2;
+        // if (this.scale > 10 && this.scale <= 20) gridWidth = 4;
+        // if (this.scale > 20 && this.scale <= 40) gridWidth = 3;
+        // if (this.scale > 40 && this.scale <= 80) gridWidth = 2;
+        // if (this.scale > 80 && this.scale <= 160) gridWidth = 1;
 
         // horizontal lines
         for (let i = 0; i < width; i++) {
@@ -668,6 +685,7 @@ export default class Engine {
             this.ctx.closePath();
             this.ctx.stroke();
             this.ctx.lineWidth = 1;
+
             worldX++;
         }
 
@@ -681,6 +699,7 @@ export default class Engine {
             this.ctx.closePath();
             this.ctx.stroke();
             this.ctx.lineWidth = 1;
+
             worldY++;
         }
 
@@ -788,7 +807,7 @@ export default class Engine {
         const curV = this.WorldToScreen(this.cursor);
 
         this.ctxUI.save();
-            this.ctxUI.setLineDash([10, 15]);
+            this.ctxUI.setLineDash([5, 15]);
             this.ctxUI.strokeStyle = "rgba(255, 255, 255, 0.3)";
             this.ctxUI.beginPath();
             this.ctxUI.moveTo(curV.x, 0);

@@ -148,6 +148,7 @@
                 background-color: $middlePrimary;
                 color: white;
                 text-align: left;
+                border-radius: 5px;
 
                 li {
                     padding: 2px 20px 2px 2px;

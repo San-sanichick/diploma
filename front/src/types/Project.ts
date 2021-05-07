@@ -3,6 +3,7 @@ export default interface Project {
     name: string;
     dateOfCreation: Date;
     dateOfLastChange: Date;
+    thumbnail: string;
     files: number;
 }
 

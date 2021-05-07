@@ -6,7 +6,7 @@ import IProject from "../db/interfaces/ProjectInterface";
 import { ProjectModel, Project } from "../db/models/ProjectModel";
 import { UserModel } from "../db/models/UserModel";
 
-import { getToken } from "../utils/utils";
+import { decodeBase64Image, getToken } from "../utils/utils";
 import config from "../config/config";
 
 import * as fs from "fs";
@@ -17,6 +17,7 @@ import { promisify } from "util";
 
 const writeFile = promisify(fs.writeFile);
 const readFile  = promisify(fs.readFile);
+const mkdir     = promisify(fs.mkdir);
 
 export default class ProjectController {
     public async createProject(req: Request, res: Response) {
@@ -25,12 +26,13 @@ export default class ProjectController {
             const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
 
             const data = req.body;
-            console.log(data);
+            // console.log(data);
             const project: Project = {
                 name: data.name,
                 dateOfCreation: new Date(),
                 dateOfLastChange: new Date(),
                 files: 0,
+                thumbnail: "",
                 publicAccess: data.publicAccess
             };
 
@@ -44,26 +46,17 @@ export default class ProjectController {
                     
                     const updUser = await user.save();
 
-                    // create folder
-                    const userPath = path.join(__dirname, `../../UserProjects/${updUser._id}`);
-                    if (!fs.existsSync(userPath)) {
-                        fs.mkdir(userPath, (err)=> {
-                            if (err) {
-                                console.log(err);
-                            } else {
-                                console.log(`Created new user folder ${updUser._id}`);
-                            }
-                        });
+                    const projectPath = path.join(__dirname, `../../UserProjects/${updUser._id}/${newProject._id}`);
+                    const imagePath = path.join(__dirname, `../../public/${updUser._id}/${newProject._id}/`);
+                    try {
+                        await mkdir(projectPath, {recursive: true});
+                        console.log("kek");
+                        await mkdir(imagePath, {recursive: true});
+                        
+                        console.log(`Created new project folder ${newProject._id}`);
+                    } catch (err) {
+                        console.error(err);
                     }
-
-                    const p = path.join(__dirname, `../../UserProjects/${updUser._id}/${newProject._id}`);
-                    fs.mkdir(p, (err)=> {
-                        if (err) {
-                            console.log(err);
-                        } else {
-                            console.log(`Created new project folder ${newProject._id}`);
-                        }
-                    });
 
                     const newProjectFile: IProject = {
                         offset: { x: 0, y: 0 },
@@ -71,7 +64,7 @@ export default class ProjectController {
                         shapes: []
                     }
 
-                    fs.writeFileSync(`${p}/save.json`, JSON.stringify(newProjectFile));
+                    fs.writeFileSync(`${projectPath}/save.json`, JSON.stringify(newProjectFile));
 
                     res.status(200).json({msg: `Проект "${newProject.name}" был успешно создан!`, data: newProject});
                 }
@@ -96,13 +89,19 @@ export default class ProjectController {
                     const project = await ProjectModel.findById(req.body.id);
                          
                     if (project) {
-                        project.dateOfLastChange = new Date();
-                        project.save();
-
-                        const p = path.join(__dirname, `../../UserProjects/${user._id}/${project._id}/save.json`);
-
+                        const projectPath = path.join(__dirname, `../../UserProjects/${user._id}/${project._id}/`);
+                        const imagePath = path.join(__dirname, `../../public/${user._id}/${project._id}/`);
+                        const img = req.body.data.image as string;
+                        delete req.body.data.image;
+                        const imgData = decodeBase64Image(img);
+                        // const buf = Buffer.from(data, "base64");
                         try {
-                            await writeFile(p, JSON.stringify(req.body.data));
+                            await writeFile(projectPath + "save.json", JSON.stringify(req.body.data));
+                            await writeFile(imagePath + "thumb.png", imgData.data);
+
+                            project.dateOfLastChange = new Date();
+                            project.thumbnail = `${user._id}/${project._id}/thumb.png`;
+                            project.save();
 
                             res.status(200).json({
                                 msg: `Проект ${project.name} успешно сохранён`
@@ -239,11 +238,16 @@ export default class ProjectController {
                     if (user !== null) {
                         const populated = await user.populate("projects").execPopulate();
 
-                        // we need to remove the project folder when we're done
-                        const dir = await del( [ `UserProjects/${user._id}/${project._id}` ] );
-                        // console.log(dir);
+                        try {
+                            // we need to remove the project folder when we're done
+                            const dir = await del( [ `UserProjects/${user._id}/${project._id}` ] );
+                            const imgDir = await del( [ `public/${user._id}/${project._id}`] );
+                            // console.log(dir);
 
-                        res.status(200).json({msg: `Проект ${project!.name} был успешно удалён`, data: populated.projects})
+                            res.status(200).json({msg: `Проект ${project!.name} был успешно удалён`, data: populated.projects});
+                        } catch (err) {
+                            res.status(400).json({msg: "Ошибка при удалении проекта"});
+                        }
                     }
                 }
             } else  {

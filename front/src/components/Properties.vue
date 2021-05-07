@@ -108,6 +108,8 @@
         text-align: left;
         border-collapse: collapse;
         thead {
+            user-select: none;
+
             tr {
                 border-bottom: 1px solid $darkPrimary;
             }
@@ -115,6 +117,10 @@
 
         tr {
             padding: 5px;
+
+            td:first-of-type {
+                user-select: none;
+            }
 
             td, th {
                 padding: 5px 10px;

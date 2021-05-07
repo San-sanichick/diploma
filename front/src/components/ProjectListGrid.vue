@@ -1,8 +1,14 @@
 <template>
     <div class="project-grid">
         <div class="project" v-for="project in projects" :key="project._id" tabindex="0">
-            <div @dblclick="$emit('project-clicked', project._id)" @contextmenu.prevent="$refs['context-menu'].openMenu($event, project);">
-                <div class="project-image"></div>
+            <div
+                @dblclick="$emit('project-clicked', project._id)">
+                <div 
+                    v-if="project.thumbnail !== ''" 
+                    class="project-image" 
+                    :style="{ backgroundImage: 'url(' + `http://localhost:5000/${project.thumbnail}` + ')' }"
+                    ></div>
+                <div v-else class="project-image"></div>
                 <div class="project-info">
                     <h3> {{project.name}} </h3>
                     <p>Изменено: {{$filters.dateFilter(project.dateOfLastChange)}} </p>
@@ -10,30 +16,65 @@
             </div>
         </div>
     </div>
-    <ContextMenu ref="context-menu">
-        <template v-slot:default="slotProps">
-            <ul>
-                <li @click="$emit('open-project', slotProps.project._id)">Открыть</li>
-                <li @click="$emit('setup-project', slotProps.project); $refs['context-menu'].closeMenu()">Настройки</li>
-                <li @click="$emit('delete-project', slotProps.project._id); $refs['context-menu'].closeMenu()">Удалить</li>
-            </ul>
-        </template>
-    </ContextMenu>
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue';
-    import ContextMenu from "../components/ContextMenu.vue";
+    import { defineComponent, PropType } from 'vue';
+    import Project from '@/types/Project';
 
     export default defineComponent({
         emits: ["project-clicked", "open-project", "setup-project", "delete-project"],
-        components: {
-            ContextMenu
-        },
         props: {
             projects: {
-                type: Array
+                type: Object as PropType<Array<Project>>
             }
+        },
+        mounted() {
+            this.contextMenuHandler();
+        },
+        methods: {
+            contextMenuHandler() {
+                const pr = this.$el.querySelectorAll(".project") as NodeList;
+                if (this.projects) {
+                    for (let i = 0; i < this.projects.length; i++) {
+                        pr[i].addEventListener("contextmenu", (e: Event) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            const data = [
+                                {
+                                    text: "Открыть",
+                                    type: "",
+                                    handler: () => {
+                                        if(this.projects) {
+                                            console.log(this.projects[i]);
+                                            this.$emit("open-project", this.projects[i]._id);
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "Настроить",
+                                    type: "",
+                                    handler: () => {
+                                        if(this.projects){
+                                            this.$emit("setup-project", this.projects[i]);
+                                        }
+                                    }
+                                },
+                                {
+                                    text: "Удалить",
+                                    type: "",
+                                    handler: () => {
+                                        if(this.projects){
+                                            this.$emit("delete-project", this.projects[i]._id);
+                                        }
+                                    }
+                                },
+                            ];
+                            this.$emitter.emit("context-menu", {event: e, options: data});
+                        })
+                    }
+                }
+            },
         }
     })
 </script>
@@ -54,7 +95,10 @@
 
                 .project-image {
                     height: 200px;
-                    background-color: #ccc;
+                    background-repeat: no-repeat;
+                    background-size: cover;
+                    // background-color: #ccc;
+                    background-color: #003236;
                     border-radius: 8px 8px 0 0;
                 }
 

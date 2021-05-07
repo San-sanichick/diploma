@@ -250,6 +250,7 @@
                     const data = this.engine.save();
                     const id = this.$route.params.id;
                     const res = await axios.patch(`projects/save`, { id, data });
+                    console.log(res);
 
                     this.$flashMessage.show({
                         type: 'success',
@@ -456,6 +457,7 @@
             grid-template-columns: max-content auto max-content max-content;
             align-items: center;
             column-gap: 20px;
+            user-select: none;
 
             .mouse-coordinates {
                 width: auto;

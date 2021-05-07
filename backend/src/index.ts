@@ -21,6 +21,7 @@ class App {
         this._app.use(cors({
             origin: config.frontOrigin
         }));
+        this._app.use(express.static("public"));
 
         this._app.disable('x-powered-by');
         

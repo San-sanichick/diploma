@@ -1,11 +1,12 @@
 import { createApp } from 'vue';
 import { Router } from "vue-router";
-import { Store } from "vuex";
+import { MutationTree, Store } from "vuex";
 import App from './App.vue';
 import axios from "axios";
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import moment from "moment";
 import FlashMessage, { FlashMessagePlugin } from "@smartweb/vue-flash-message";
+import mitt, { Emitter } from "mitt";
 
 import router from './router';
 import store from './store';
@@ -106,6 +107,7 @@ declare module "@vue/runtime-core" {
         $router: Router;
         $store: Store<State>;
         $filters: typeof filters;
+        $emitter: Emitter;
     }
 }
 
@@ -113,6 +115,7 @@ const app = createApp(App);
 
 // ! IMPORTANT SHIT
 app.config.globalProperties.$filters = filters;
+app.config.globalProperties.$emitter = mitt();
 
 app.use(store).use(router).use(FlashMessage, {
     name: 'flashMessage',
