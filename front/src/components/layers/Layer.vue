@@ -50,5 +50,41 @@
 </script>
 
 <style lang="scss">
+    @import "../../assets/scss/config.scss";
+    @import "../../assets/scss/buttonMixins.scss";
 
+    .layer {
+        position: relative;
+        display: grid;
+        grid-template-columns: max-content auto max-content;
+        align-items: center;
+        text-align: left;
+        column-gap: 10px;
+        padding: 5px 10px;
+
+        .layer-color {
+            width: 25px;
+            height: 25px;
+            border: 1px solid $darkSecondaryGreen;
+        }
+        button {
+            width: 25px;
+            height: 25px;
+            @include button-destyle;
+
+            &:hover {
+                background-color: $lightPrimary;
+            }
+        }
+
+        &:hover {
+            color: white;
+            background-color: $primaryTransparent;
+        }
+    }
+
+    .selected {
+        color: white;
+        background-color: $lightPrimary;
+    }
 </style>

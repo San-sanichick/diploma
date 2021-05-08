@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div class="layer-list-wrapper">
         <ul class="layer-list">
             <Layer v-for="layer of layers" 
                 :key="layer.id"
@@ -49,41 +49,41 @@
 
 <style lang="scss">
     @import "../../assets/scss/config.scss";
+    @import "../../assets/scss/buttonMixins.scss";
 
-    .layer-list {
-        list-style: none;
-        padding: 0;
-        cursor: pointer;
-        user-select: none;
+    .layer-list-wrapper {
+        height: 86%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
 
-        .layer {
-            position: relative;
-            display: grid;
-            grid-template-columns: max-content auto max-content;
-            align-items: center;
-            text-align: left;
-            column-gap: 10px;
-            padding: 5px 10px;
-
-            .layer-color {
-                width: 25px;
-                height: 25px;
-                border: 1px solid $darkSecondaryGreen;
-            }
-            button {
-                width: 25px;
-                height: 25px;
-            }
-
-            &:hover {
-                color: white;
-                background-color: $primaryTransparent;
-            }
+        .layer-list {
+            // flex: 1;
+            height: 100%;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            user-select: none;
+            overflow-y: auto;
         }
 
-        .selected {
-            color: white;
-            background-color: $primaryTransparent;
+        .project-layers-buttons {
+            // flex: 1;
+            background-color: $middlePrimary;
+            padding: 5px;
+
+            button {
+                float: right;
+                @include button-destyle;
+                color: white;
+                width: 30px;
+                height: 30px;
+
+                &:hover {
+                    background-color: $primaryTransparent;
+                }
+            }
         }
     }
 </style>

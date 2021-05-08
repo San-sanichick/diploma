@@ -55,6 +55,7 @@
         color: white;
         text-align: left;
         border-radius: 5px;
+        z-index: 2000;
 
         h5 {
             margin: 0px 5px;
@@ -64,11 +65,11 @@
         
 
         .color-picker-color-container {
-            padding: 5px;
+            padding: 10px;
             display: grid;
             grid-template-columns: repeat(9, max-content);
             column-gap: 5px;
-            
+            // height: 100%;
 
             .color-option {
                 width: 10px;
