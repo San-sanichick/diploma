@@ -64,6 +64,7 @@
                         <div class="panel-header">Слои</div>
                         <LayerView 
                             :layers="layers" 
+                            @update:layer="updateLayers"
                             v-model:layer-selected="currentLayer"
                             @add="addLayer"
                             @remove="removeLayer" />
@@ -94,7 +95,7 @@
     import SplitView from "@/components/panes/SplitView.vue";
     import Pane from "@/components/panes/Pane.vue";
     import Properties from "@/components/Properties.vue";
-    import LayerView from "@/components/LayerView.vue";
+    import LayerView from "@/components/layers/LayerView.vue";
 
     import Engine, { EngineState, Shapes } from "@/engine/engine";
     import axios from 'axios';
@@ -144,8 +145,13 @@
                     objects: this.engine.shapeList
                 };
             },
-            layers(): Array<{ id: number; name: string; layerColor: string; size: number }> {
-                return this.engine.layerList;
+            layers:{
+                get(): Array<{ id: number; name: string; layerColor: number; size: number }> {
+                    return this.engine.layerList;
+                },
+                set(arr: Array<{ id: number; name: string; layerColor: number; size: number }>) {
+                    this.engine.setLayerList = arr;
+                }
             },
             currentLayer: {
                 get(): number {
@@ -338,6 +344,13 @@
             },
             removeLayer(id: number) {
                 this.engine.removeLayer(id);
+            },
+            updateLayers(layer: any) {
+                const found = this.layers.find(l => l.id === layer.id);
+                if (found) {
+                    const index = this.layers.indexOf(found);
+                    this.engine.updateLayer(index, layer);
+                }
             },
             // These two are absolutely stupid,
             // but it has to be done, since Vue does not support casting in templates.

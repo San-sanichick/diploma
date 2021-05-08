@@ -8,13 +8,14 @@ import Rectangle                         from "./shapes/rect";
 import Circle                            from "./shapes/circle";
 import Ellipse                           from "./shapes/ellipse";
 import Bezier                            from "./shapes/bezier";
+import Polygon from "./shapes/polygon";
+import Polyline from "./shapes/polyline";
 
 import Vec2                              from "./utils/vector2d";
 import MouseController, { MouseButtons } from "./utils/mouseController";
 import KeyboardController                from "./utils/keyboardController";
 import { clamp, fastRounding }           from "./utils/math";
-import Polygon from "./shapes/polygon";
-import Polyline from "./shapes/polyline";
+import colors                            from "./config/colors";
 
 /**
  * Possible engine states
@@ -50,7 +51,7 @@ enum Shapes {
 interface Layer {
     id: number;
     name: string;
-    layerColor: string;
+    layerColor: number;
     shapes: Array<Drawable>;
 }
 
@@ -123,7 +124,7 @@ export default class Engine {
 
         this.layers.push({
             id: 0,
-            layerColor: "white",
+            layerColor: 7,
             name: "Layer 0",
             shapes: new Array<Drawable>()
         });
@@ -163,14 +164,14 @@ export default class Engine {
     get shapeList(): Array<Drawable> {
         // return this.layers[0].shapes;
         if (this.layers) {
-            if (this.layers[this.currentLayer]) {
-                return this.layers[this.currentLayer].shapes;
+            if (this.layers[this.getLayerIndex]) {
+                return this.layers[this.getLayerIndex].shapes;
             }
         }
         return [];
     }
 
-    get layerList(): Array<{ id: number; name: string; layerColor: string; size: number }> {
+    get layerList(): Array<{ id: number; name: string; layerColor: number; size: number }> {
         const arr = [];
         for (const layer of this.layers) {
             arr.push({
@@ -183,11 +184,20 @@ export default class Engine {
         return arr;
     }
 
+    set setLayerList(arr: Array<{ id: number; name: string; layerColor: number; size: number }>) {
+        for (let i = 0; i < arr.length; i++) {
+            this.layers[i].id = arr[i].id;
+            this.layers[i].layerColor = arr[i].layerColor;
+            this.layers[i].name = arr[i].name;
+        }
+        console.log("ahfgaeyug", this.layers);
+    }
+
     public addLayer() {
         this.layers.push({
             id: this.layers.length + 1,
             name: "Layer " + (this.layers[this.layers.length - 1].id + 1),
-            layerColor: `rgba(${(50 + Math.random() * 100).toFixed(3)}, ${(50 + Math.random() * 100).toFixed(3)},${(50 + Math.random() * 100).toFixed(3)}, 1)`,
+            layerColor: 7,
             shapes: []
         })
     }
@@ -196,6 +206,12 @@ export default class Engine {
         this.layers = this.layers.filter(layer => layer.id !== id);
         this.currentLayer = this.layers[this.layers.length - 1].id;
         this.selectedShapes.clear();
+    }
+
+    public updateLayer(index: number, value: any) {
+        const l = this.layers[index];
+        l.layerColor = value.layerColor;
+        l.name = value.name;
     }
 
     get getLayerIndex(): number {
@@ -871,7 +887,7 @@ export default class Engine {
 
             for (const layer of this.layers) {
                 for (const shape of layer.shapes) {
-                    shape.renderSelf(this.ctx, layer.layerColor);
+                    shape.renderSelf(this.ctx, colors.get(layer.layerColor));
                     shape.renderNodes(this.ctx);
                 }
             }
