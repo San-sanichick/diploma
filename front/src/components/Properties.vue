@@ -102,34 +102,37 @@
 
 <style lang="scss" scoped>
     @import "../assets/scss/config.scss";
+    @import "../assets/scss/tableMixins.scss";
+
     table {
-        width: 100%;
-        margin: 0;
-        text-align: left;
-        border-collapse: collapse;
-        thead {
-            user-select: none;
+        @include table-style;
+        // width: 100%;
+        // margin: 0;
+        // text-align: left;
+        // border-collapse: collapse;
+        // thead {
+        //     user-select: none;
 
-            tr {
-                border-bottom: 1px solid $darkPrimary;
-            }
-        }
+        //     tr {
+        //         border-bottom: 1px solid $darkPrimary;
+        //     }
+        // }
 
-        tr {
-            padding: 5px;
+        // tr {
+        //     padding: 5px;
 
-            td:first-of-type {
-                user-select: none;
-            }
+        //     td:first-of-type {
+        //         user-select: none;
+        //     }
 
-            td, th {
-                padding: 5px 10px;
-                width: 50%;
+        //     td, th {
+        //         padding: 5px 10px;
+        //         width: 50%;
                 
-                &:first-of-type {
-                    border-right: 1px solid $darkPrimary;
-                }
-            }
-        }
+        //         &:first-of-type {
+        //             border-right: 1px solid $darkPrimary;
+        //         }
+        //     }
+        // }
     }
 </style>

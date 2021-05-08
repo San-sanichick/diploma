@@ -61,7 +61,7 @@ export default class ProjectController {
                     const newProjectFile: IProject = {
                         offset: { x: 0, y: 0 },
                         scale: 10,
-                        shapes: []
+                        layers: []
                     }
 
                     fs.writeFileSync(`${projectPath}/save.json`, JSON.stringify(newProjectFile));

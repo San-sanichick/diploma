@@ -47,6 +47,13 @@ enum Shapes {
     POLYGON
 }
 
+interface Layer {
+    id: number;
+    name: string;
+    layerColor: string;
+    shapes: Array<Drawable>;
+}
+
 /**
  * CAD engine class
  * @class
@@ -60,7 +67,10 @@ export default class Engine {
     private mouse:          MouseController;
     private keyboard:       KeyboardController;
     // I hope y'all like polymorphism, there's a lot of it here
-    private shapes:         Array<Drawable>;
+    private currentLayer:         number;
+    private layers:         Array<Layer>;
+    // private currentLayer:   number;
+
     private selectedShapes: Set<Drawable> = new Set<Drawable>();
     private tempShape:      Shape | null  = null;
     private selectedNode:   Node | null   = null;
@@ -95,7 +105,6 @@ export default class Engine {
         this.canvasUI      = viewport.querySelector(".canvas-ui") as HTMLCanvasElement;
         this.ctx           = this.canvas.getContext("2d", { alpha: false });
         this.ctxUI         = this.canvasUI.getContext("2d");
-
         
 
         if (this.ctx === null || this.ctxUI === null) throw new Error("An error has occured while gitting context from canvas");
@@ -108,7 +117,19 @@ export default class Engine {
         //     this.ctxUI.imageSmoothingQuality = "low";
         // }
 
-        this.shapes        = new Array<Shape>();
+        
+        this.layers = new Array<Layer>();
+        // console.log(object);
+
+        this.layers.push({
+            id: 0,
+            layerColor: "white",
+            name: "Layer 0",
+            shapes: new Array<Drawable>()
+        });
+        this.currentLayer = 0;
+        // this.currentLayer = 0;
+
         this.mouse         = new MouseController(this.canvasUI);
         this.keyboard      = new KeyboardController();
 
@@ -140,7 +161,50 @@ export default class Engine {
     }
 
     get shapeList(): Array<Drawable> {
-        return this.shapes;
+        // return this.layers[0].shapes;
+        if (this.layers) {
+            if (this.layers[this.currentLayer]) {
+                return this.layers[this.currentLayer].shapes;
+            }
+        }
+        return [];
+    }
+
+    get layerList(): Array<{ id: number; name: string; layerColor: string; size: number }> {
+        const arr = [];
+        for (const layer of this.layers) {
+            arr.push({
+                id: layer.id,
+                name: layer.name,
+                layerColor: layer.layerColor,
+                size: layer.shapes.length
+            })
+        }
+        return arr;
+    }
+
+    public addLayer() {
+        this.layers.push({
+            id: this.layers.length,
+            name: "Layer " + this.layers.length,
+            layerColor: "white",
+            shapes: []
+        })
+    }
+
+    public removeLayer(id: number) {
+        this.layers = this.layers.filter(layer => layer.id !== id);
+        this.currentLayer = this.layers[this.layers.length - 1].id;
+        console.log(this.layers);
+        console.log(this.currentLayer);
+    }
+
+    get getCurLayer(): number {
+        return this.currentLayer;
+    }
+
+    set setCurLayer(val: number) {
+        this.currentLayer = val;
     }
 
     get selectedElements() {
@@ -189,18 +253,41 @@ export default class Engine {
     }
 
     public save() {
+
+        const layers = [];
+        for (const layer of this.layers) {
+            layers.push({
+                id: layer.id,
+                layerColor: layer.layerColor,
+                name: layer.name,
+                shapes: Serializer.serialize(layer.shapes)
+            })
+        }
+
         return {
             offset: this.offset,
             scale: this.scale,
             image: this.renderToImage(800, 400).toDataURL(),
-            shapes: Serializer.serialize(this.shapes)
+            layers
         }
     }
 
-    public load(data: { offset: {x: number; y: number}; scale: number; shapes: [] }) {
-        this.shapes = [];
+    public load(data: { offset: {x: number; y: number}; scale: number; layers: any[] }) {
+        // this.currentLayer = [];
         this.selectedShapes.clear();
-        this.shapes = Serializer.deserialize(data.shapes);
+        if (data.layers.length !== 0) {
+            this.layers = [];
+
+            for (const layer of data.layers) {
+                this.layers.push({
+                    id: layer.id,
+                    layerColor: layer.layerColor,
+                    name: layer.name,
+                    shapes: Serializer.deserialize(layer.shapes)
+                })
+            }
+        }
+
         this.scale = data.scale;
         this.offset = new Vec2(data.offset.x, data.offset.y);
     }
@@ -210,13 +297,15 @@ export default class Engine {
      */
     public start(): void {
         const updateRoutine = () => {
-            try {
-                this.update();
-                requestAnimationFrame(updateRoutine);
-            } catch(e) {
-                console.error(e);
-                return;
-            }
+            // try {
+            //     this.update();
+            //     requestAnimationFrame(updateRoutine);
+            // } catch(e) {
+            //     console.error(e);
+            //     return;
+            // }
+            this.update();
+            requestAnimationFrame(updateRoutine);
         }
 
         requestAnimationFrame(updateRoutine);
@@ -285,19 +374,19 @@ export default class Engine {
             if (this.tempShape === null) {
                 switch(this.curTypeToDraw) {
                     case Shapes.LINE: 
-                        this.tempShape = new Line("Line " + this.shapes.length);
+                        this.tempShape = new Line();
                         break;
                     case Shapes.RECT:
-                        this.tempShape = new Rectangle("Rectangle " + this.shapes.length);
+                        this.tempShape = new Rectangle();
                         break;
                     case Shapes.CIRCLE:
-                        this.tempShape = new Circle("Circle " + this.shapes.length);
+                        this.tempShape = new Circle();
                         break;
                     case Shapes.ELLIPSE:
-                        this.tempShape = new Ellipse("Ellipse " + this.shapes.length);
+                        this.tempShape = new Ellipse();
                         break;
                     case Shapes.BEZIER:
-                        this.tempShape = new Bezier("Bezier " + this.shapes.length);
+                        this.tempShape = new Bezier();
                         break;
                     case Shapes.POLYGON: {
                         // not the most elegant solution
@@ -308,7 +397,7 @@ export default class Engine {
                         break;
                     }
                     case Shapes.POLYLINE:
-                        this.tempShape = new Polyline("Polyline");
+                        this.tempShape = new Polyline();
                         break;
                     default:
                         break out;
@@ -329,7 +418,8 @@ export default class Engine {
                     this.tempShape.setMaxNodeNumber = this.tempShape.numberOfNodes;
                     this.tempShape.setNodeColor(NodeColors.INACTIVE);
                     this.tempShape.color = "#fff";
-                    this.shapes.push(this.tempShape);
+                    // this.layers[this.currentLayer].shapes.push(this.tempShape)
+                    this.layers[this.currentLayer].shapes.push(this.tempShape)
                     this.tempShape = null;
                     this.selectedNode = null;
                 }
@@ -339,28 +429,29 @@ export default class Engine {
         if (this.mouse.getReleasedButton === MouseButtons.LEFT) {
             if (this.tempShape !== null) {
                 if (this.selectedNode === null) {
+                    console.log("HAHAHAHAHHAHHA", this.layers);
                     this.tempShape.color = "#fff";
 
                     this.tempShape.setNodeColor(NodeColors.INACTIVE);
 
                     switch(this.curTypeToDraw) {
                         case Shapes.LINE:
-                            this.shapes.push(this.tempShape);
+                            this.layers[this.currentLayer].shapes.push(this.tempShape)
                             break;
                         case Shapes.RECT:
-                            this.shapes.push(this.tempShape);
+                            this.layers[this.currentLayer].shapes.push(this.tempShape)
                             break;
                         case Shapes.CIRCLE:
-                            this.shapes.push(this.tempShape);
+                            this.layers[this.currentLayer].shapes.push(this.tempShape)
                             break;
                         case Shapes.ELLIPSE:
-                            this.shapes.push(this.tempShape);
+                            this.layers[this.currentLayer].shapes.push(this.tempShape)
                             break;
                         case Shapes.BEZIER:
-                            this.shapes.push(this.tempShape);
+                            this.layers[this.currentLayer].shapes.push(this.tempShape)
                             break;
                         case Shapes.POLYGON:
-                            this.shapes.push(this.tempShape);
+                            this.layers[this.currentLayer].shapes.push(this.tempShape)
                             break;
                         default:
                             break;
@@ -376,7 +467,7 @@ export default class Engine {
         // TODO: Make nodes deletable (is that even a word?)
         if (this.engineState === EngineState.MOVEPOINT && this.mouse.getPressedButton === MouseButtons.LEFT) {
             this.selectedNode = null;
-            for (const shape of this.shapes) {
+            for (const shape of this.layers[this.currentLayer].shapes) {
                 if (shape instanceof Shape)
                     this.selectedNode = shape.hitNode(this.cursor);
                 if (this.selectedNode !== null) break;
@@ -396,7 +487,7 @@ export default class Engine {
 
             if (this.mouse.getHeldButton === MouseButtons.LEFT) {
                 this.selectedShapes.clear();
-                for (const shape of this.shapes) {
+                for (const shape of this.layers[this.currentLayer].shapes) {
                     shape.setIsSelected = false;
                     if (shape.isInRectangle(this.cursorOldPos, this.cursor)) {
                         shape.setIsSelected = true;
@@ -463,7 +554,7 @@ export default class Engine {
 
         if (this.selectedShapes.size != 0) {
             if (this.keyboard.getPressedButton === "Delete") {
-                this.shapes = this.shapes.filter(shape => {
+                this.layers[this.currentLayer].shapes = this.layers[this.currentLayer].shapes.filter(shape => {
                     return !this.selectedShapes.has(shape);
                 });
 
@@ -502,8 +593,9 @@ export default class Engine {
         this.renderDebug({ text: "FPS", metric: fastRounding(this.fps) },
                          { text: "Render time", metric: `${(performance.now() - t2).toFixed(3)}ms` },
                          { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },
-                         { text: "Shapes on scene", metric: this.shapes.length },
-                         { text: "Scale level", metric: this.scale });
+                         { text: "Scale level", metric: this.scale },
+                         { text: "Current layer", metric: this.currentLayer },
+                         { text: "Shapes on layer", metric: this.layers[this.currentLayer].shapes.length });
 
         
         // :)
@@ -513,9 +605,9 @@ export default class Engine {
 
     public group() {
         if (this.selectedElements.length !== 0) {
-            this.shapes.push(new Group("Group", Array.from(this.selectedShapes)));
+            this.layers[this.currentLayer].shapes.push(new Group("Group", Array.from(this.selectedShapes)));
 
-            this.shapes = this.shapes.filter(shape => {
+            this.layers[this.currentLayer].shapes = this.layers[this.currentLayer].shapes.filter(shape => {
                 return !this.selectedShapes.has(shape);
             });
 
@@ -532,11 +624,11 @@ export default class Engine {
                 const group = obj as Group;
                 for (const shape of group.getObjects) {
                     shape.setIsSelected = false;
-                    this.shapes.push(shape);
+                    this.layers[this.currentLayer].shapes.push(shape);
                 }
 
                 this.selectedShapes.clear();
-                this.shapes.splice(this.shapes.indexOf(group), 1);
+                this.layers[this.currentLayer].shapes.splice(this.layers[this.currentLayer].shapes.indexOf(group), 1);
                 this.engineState = EngineState.SELECT;
             }
         }
@@ -561,29 +653,39 @@ export default class Engine {
         const canvas = document.createElement("canvas") as HTMLCanvasElement;
         const ctx = canvas.getContext("2d");
 
-        // TODO: Create a popup window instead, asking for the dimensions of the file
-        canvas.width = width * 4;
-        canvas.height = height * 4;
+        // canvas.width = width * 4;
+        // canvas.height = height * 4;
+        canvas.width = width;
+        canvas.height = height;
+
+        // const shapesCopy = Serializer.deserialize(Serializer.serialize(this.shapes));
 
         // TODO: Scale and center shapes, requires creating a copy of the shapes array
+        // TODO: Which is gonna be hell, thanks javascript
         if (ctx !== null) {
             ctx.fillStyle = "#003236";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
             ctx.setTransform(1, 0, 0, -1, 0, this.canvas.height);
 
             ctx.save();
-            this.shapes.forEach(shape => {
-                shape.renderSelf(ctx);
-                // shape.renderNodes(ctx);
-            });
+            // this.currentLayer.forEach(shape => {
+            //     shape.renderSelf(ctx);
+            //     // shape.renderNodes(ctx);
+            // });
+            this.layers.forEach(layer => {
+                layer.shapes.forEach(shape => {
+                    shape.renderSelf(ctx);
+                })
+            })
             ctx.restore();
 
-            const resCanvas = document.createElement("canvas") as HTMLCanvasElement;
-            resCanvas.width = width;
-            resCanvas.height = height;
-            resCanvas.getContext("2d")?.drawImage(canvas, 0, 0, width, height);
+            // const resCanvas = document.createElement("canvas") as HTMLCanvasElement;
+            // resCanvas.width = width;
+            // resCanvas.height = height;
+            // resCanvas.getContext("2d")?.drawImage(canvas, 0, 0, width, height);
 
-            return resCanvas;
+            // return resCanvas;
+            return canvas;
         } else {
             throw new Error("Failed to get canvas context");
         }
@@ -758,9 +860,16 @@ export default class Engine {
         this.ctx.save();
             // can't use forEach, TS is screaming abount ctx being possibly null
             // what a bloody idiot
-            for (const shape of this.shapes) {
-                shape.renderSelf(this.ctx);
-                shape.renderNodes(this.ctx);
+            // for (const shape of this.currentLayer) {
+            //     shape.renderSelf(this.ctx);
+            //     shape.renderNodes(this.ctx);
+            // }
+
+            for (const layer of this.layers) {
+                for (const shape of layer.shapes) {
+                    shape.renderSelf(this.ctx);
+                    shape.renderNodes(this.ctx);
+                }
             }
         this.ctx.restore();
 

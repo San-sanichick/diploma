@@ -43,6 +43,14 @@
                                 @selected="selectElementHandler" />
                         </ul>
                     </div>
+                    <div class="project-layers panel">
+                        <div class="panel-header">Слои</div>
+                        <LayerView 
+                            :layers="layers" 
+                            v-model:selected="currentLayer"
+                            @add="addLayer"
+                            @remove="removeLayer" />
+                    </div>
                 </Pane>
                 <Pane style="flex: 20 1 auto">
                     <div class="viewport" 
@@ -86,6 +94,7 @@
     import SplitView from "@/components/panes/SplitView.vue";
     import Pane from "@/components/panes/Pane.vue";
     import Properties from "@/components/Properties.vue";
+    import LayerView from "@/components/LayerView.vue";
 
     import Engine, { EngineState, Shapes } from "@/engine/engine";
     import axios from 'axios';
@@ -99,6 +108,7 @@
             Pane,
             TreeItem,
             Properties,
+            LayerView,
             Dropdown
         },
         data() {
@@ -133,6 +143,17 @@
                     name: "root",
                     objects: this.engine.shapeList
                 };
+            },
+            layers(): Array<{ id: number; name: string; layerColor: string; size: number }> {
+                return this.engine.layerList;
+            },
+            currentLayer: {
+                get(): number {
+                    return this.engine.getCurLayer;
+                },
+                set(val: number) {
+                    this.engine.setCurLayer = val;
+                }
             },
             selectedShape(): Drawable | null | Array<Drawable> {
                 if (this.engine.selectedElements) {
@@ -203,14 +224,12 @@
                 } 
             }
         },
-        created() {
-            this.loadProject();
-        },
         mounted() {
             try {
                 this.engine = new Engine(this.$refs.viewport as HTMLDivElement);
                 if (this.engine.init()) {
                     this.engine.start();
+                    this.loadProject();
                 }
 
             } catch (err) {
@@ -279,6 +298,7 @@
                         text: res.data.msg
                     });
                 } catch (err) {
+                    console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
                         image: require("../../assets/flashMessage/fail.svg"),
@@ -309,6 +329,14 @@
                 this.focused = this.focused.map(f => f = false);
                 // this.focused[id] = true;
                 this.focused.splice(id, 1, true);
+            },
+            addLayer() {
+                // TODO: Add color picker
+                // TODO: Change shape color rendering
+                this.engine.addLayer();
+            },
+            removeLayer(id: number) {
+                this.engine.removeLayer(id);
             },
             // These two are absolutely stupid,
             // but it has to be done, since Vue does not support casting in templates.
@@ -385,6 +413,7 @@
 
             .panel {
                 min-width: 200px;
+                // height: 50%;
 
                 .panel-header {
                     background-color: $primary;
@@ -397,6 +426,7 @@
 
             .project-tree {
                 // position: relative;
+                height: 50%;
                 text-align: left;
                 // resize: horizontal;
                 overflow-x: auto;
@@ -408,6 +438,10 @@
                     // margin: 10px 0;
                     list-style: none;
                 }
+            }
+
+            .project-layers {
+                height: 50%;
             }
 
             .viewport {
@@ -440,11 +474,6 @@
                     z-index: 1;
                 }
             }
-
-            // .properties {
-
-                
-            // }
         }
 
         .page-footer-editor {
