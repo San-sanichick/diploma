@@ -4,11 +4,10 @@
             <li class="layer" 
                 v-for="layer of layers" 
                 :key="layer.id"
-                :class="{'selected': layer.id === selected}"
-                @click="$emit('update:selected', layer.id)">
+                :class="{'selected': layer.id === layerSelected}">
                 <div class="layer-color" :style="{ backgroundColor: layer.layerColor }"></div>
-                <span>{{ layer.name }}</span>
-                <button :disabled="layers.length === 1" @click="$emit('remove', layer.id)">-</button>
+                <span @click.stop="$emit('update:layer-selected', layer.id)">{{ layer.name }}</span>
+                <button :disabled="layers.length === 1" @click="remove(layer.id)">-</button>
             </li>
         </ul>
 
@@ -21,8 +20,14 @@
 <script lang="ts">
     import { defineComponent } from 'vue'
     export default defineComponent({
-        props: ["layers", "selected"],
-        emits: ["update:selected", "remove", "add"]
+        props: ["layers", "layerSelected"],
+        emits: ["update:layer-selected", "remove", "add"],
+        methods: {
+            remove(id: number) {
+                // this.$emit("update:layer-selected", 0);
+                this.$emit("remove", id);
+            }
+        }
     })
 </script>
 

@@ -6,7 +6,7 @@ export default class Arc extends Shape {
         super(name, 3, "arc.svg");
     }
 
-    renderSelf(ctx: CanvasRenderingContext2D) {
+    renderSelf(ctx: CanvasRenderingContext2D, color?: string) {
         if (this.nodes.length <= 1) return;
 
         if (this.nodes.length < 3) {
@@ -16,7 +16,7 @@ export default class Arc extends Shape {
             const mv: Vec2 = this.WorldToScreen(this.nodes[1].getPosition);
             const ev: Vec2 = this.WorldToScreen(this.nodes[2].getPosition);
 
-            ctx.strokeStyle = this.isSelected ? "red" : this.color;
+            ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
 
             ctx.save();
                 ctx.setLineDash([5, 15]);

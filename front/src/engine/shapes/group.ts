@@ -66,8 +66,8 @@ export default class Group implements Drawable {
     resize(sizeCoeff: Vec2, pos: Vec2): void {
         this.objects.forEach(shape => shape.resize(sizeCoeff, pos));
     }
-    renderSelf(ctx: CanvasRenderingContext2D): void {
-        this.objects.forEach(shape => shape.renderSelf(ctx));
+    renderSelf(ctx: CanvasRenderingContext2D, color?: string): void {
+        this.objects.forEach(shape => shape.renderSelf(ctx, color));
     }
     renderNodes(ctx: CanvasRenderingContext2D): void {
         this.objects.forEach(shape => shape.renderNodes(ctx));

@@ -6,7 +6,7 @@ export default class Line extends Shape {
         super(name, 2, "line.svg");
     }
 
-    renderSelf(ctx: CanvasRenderingContext2D): void {
+    renderSelf(ctx: CanvasRenderingContext2D, color?: string): void {
         // console.log(Shape.worldOffset);
 
         if (this.nodes.length > 1) {
@@ -23,7 +23,7 @@ export default class Line extends Shape {
             // console.log(this.color);
             ctx.save();
                 ctx.fillStyle = "";
-                ctx.strokeStyle = this.isSelected ? "red" : this.color;
+                ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
                 ctx.beginPath();
                 ctx.moveTo(sv.x, sv.y);
                 ctx.lineTo(ev.x, ev.y);

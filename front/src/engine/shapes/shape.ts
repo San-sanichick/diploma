@@ -337,7 +337,7 @@ export default abstract class Shape implements Drawable {
      * Renders shape with a set color on a given context
      * @param ctx 2D canvas context
      */
-    abstract renderSelf(ctx: CanvasRenderingContext2D): void
+    abstract renderSelf(ctx: CanvasRenderingContext2D, color?: string): void
 
     /**
      * Renders nodes with a given color on given context

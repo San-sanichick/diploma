@@ -41,8 +41,8 @@ export default class Polygon extends Shape {
         return this.nodes[this.nodes.length - 1];
     }
 
-    renderSelf(ctx: CanvasRenderingContext2D): void {
-        ctx.strokeStyle = this.isSelected ? "red" : this.color;
+    renderSelf(ctx: CanvasRenderingContext2D, color?: string): void {
+        ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
 
         if (this.nodes.length > 1 && this.nodes.length < 3) {
             const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);

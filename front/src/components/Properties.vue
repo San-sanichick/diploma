@@ -10,15 +10,15 @@
             <tbody v-if="itemCastedToShape !== null">
                 <tr>
                     <td>Имя</td>
-                    <td>{{ item.name }}</td>
+                    <td>{{ itemCastedToShape.name }}</td>
                 </tr>
                 <tr>
                     <td>X</td>
-                    <td>{{ item.centerOfShape.x }}</td>
+                    <td>{{ itemCastedToShape.centerOfShape.x.toPrecision(4) }}</td>
                 </tr>
                 <tr>
                     <td>Y</td>
-                    <td>{{ item.centerOfShape.y }}</td>
+                    <td>{{ itemCastedToShape.centerOfShape.y.toPrecision(4) }}</td>
                 </tr>
             </tbody>
             <tbody v-else-if="itemCastedToGroup !== null">

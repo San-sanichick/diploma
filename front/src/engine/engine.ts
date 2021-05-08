@@ -185,9 +185,9 @@ export default class Engine {
 
     public addLayer() {
         this.layers.push({
-            id: this.layers.length,
-            name: "Layer " + this.layers.length,
-            layerColor: "white",
+            id: this.layers.length + 1,
+            name: "Layer " + (this.layers[this.layers.length - 1].id + 1),
+            layerColor: `rgba(${(50 + Math.random() * 100).toFixed(3)}, ${(50 + Math.random() * 100).toFixed(3)},${(50 + Math.random() * 100).toFixed(3)}, 1)`,
             shapes: []
         })
     }
@@ -195,8 +195,11 @@ export default class Engine {
     public removeLayer(id: number) {
         this.layers = this.layers.filter(layer => layer.id !== id);
         this.currentLayer = this.layers[this.layers.length - 1].id;
-        console.log(this.layers);
-        console.log(this.currentLayer);
+        this.selectedShapes.clear();
+    }
+
+    get getLayerIndex(): number {
+        return this.layers.indexOf(this.layers.find(l => l.id === this.currentLayer)!);
     }
 
     get getCurLayer(): number {
@@ -205,6 +208,7 @@ export default class Engine {
 
     set setCurLayer(val: number) {
         this.currentLayer = val;
+        this.selectedShapes.clear();
     }
 
     get selectedElements() {
@@ -419,7 +423,7 @@ export default class Engine {
                     this.tempShape.setNodeColor(NodeColors.INACTIVE);
                     this.tempShape.color = "#fff";
                     // this.layers[this.currentLayer].shapes.push(this.tempShape)
-                    this.layers[this.currentLayer].shapes.push(this.tempShape)
+                    this.layers[this.getLayerIndex].shapes.push(this.tempShape)
                     this.tempShape = null;
                     this.selectedNode = null;
                 }
@@ -436,22 +440,22 @@ export default class Engine {
 
                     switch(this.curTypeToDraw) {
                         case Shapes.LINE:
-                            this.layers[this.currentLayer].shapes.push(this.tempShape)
+                            this.layers[this.getLayerIndex].shapes.push(this.tempShape)
                             break;
                         case Shapes.RECT:
-                            this.layers[this.currentLayer].shapes.push(this.tempShape)
+                            this.layers[this.getLayerIndex].shapes.push(this.tempShape)
                             break;
                         case Shapes.CIRCLE:
-                            this.layers[this.currentLayer].shapes.push(this.tempShape)
+                            this.layers[this.getLayerIndex].shapes.push(this.tempShape)
                             break;
                         case Shapes.ELLIPSE:
-                            this.layers[this.currentLayer].shapes.push(this.tempShape)
+                            this.layers[this.getLayerIndex].shapes.push(this.tempShape)
                             break;
                         case Shapes.BEZIER:
-                            this.layers[this.currentLayer].shapes.push(this.tempShape)
+                            this.layers[this.getLayerIndex].shapes.push(this.tempShape)
                             break;
                         case Shapes.POLYGON:
-                            this.layers[this.currentLayer].shapes.push(this.tempShape)
+                            this.layers[this.getLayerIndex].shapes.push(this.tempShape)
                             break;
                         default:
                             break;
@@ -467,7 +471,7 @@ export default class Engine {
         // TODO: Make nodes deletable (is that even a word?)
         if (this.engineState === EngineState.MOVEPOINT && this.mouse.getPressedButton === MouseButtons.LEFT) {
             this.selectedNode = null;
-            for (const shape of this.layers[this.currentLayer].shapes) {
+            for (const shape of this.layers[this.getLayerIndex].shapes) {
                 if (shape instanceof Shape)
                     this.selectedNode = shape.hitNode(this.cursor);
                 if (this.selectedNode !== null) break;
@@ -487,7 +491,7 @@ export default class Engine {
 
             if (this.mouse.getHeldButton === MouseButtons.LEFT) {
                 this.selectedShapes.clear();
-                for (const shape of this.layers[this.currentLayer].shapes) {
+                for (const shape of this.layers[this.getLayerIndex].shapes) {
                     shape.setIsSelected = false;
                     if (shape.isInRectangle(this.cursorOldPos, this.cursor)) {
                         shape.setIsSelected = true;
@@ -554,7 +558,7 @@ export default class Engine {
 
         if (this.selectedShapes.size != 0) {
             if (this.keyboard.getPressedButton === "Delete") {
-                this.layers[this.currentLayer].shapes = this.layers[this.currentLayer].shapes.filter(shape => {
+                this.layers[this.getLayerIndex].shapes = this.layers[this.getLayerIndex].shapes.filter(shape => {
                     return !this.selectedShapes.has(shape);
                 });
 
@@ -595,7 +599,7 @@ export default class Engine {
                          { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },
                          { text: "Scale level", metric: this.scale },
                          { text: "Current layer", metric: this.currentLayer },
-                         { text: "Shapes on layer", metric: this.layers[this.currentLayer].shapes.length });
+                         { text: "Shapes on layer", metric: this.layers[this.getLayerIndex].shapes.length });
 
         
         // :)
@@ -605,9 +609,9 @@ export default class Engine {
 
     public group() {
         if (this.selectedElements.length !== 0) {
-            this.layers[this.currentLayer].shapes.push(new Group("Group", Array.from(this.selectedShapes)));
+            this.layers[this.getLayerIndex].shapes.push(new Group("Group", Array.from(this.selectedShapes)));
 
-            this.layers[this.currentLayer].shapes = this.layers[this.currentLayer].shapes.filter(shape => {
+            this.layers[this.getLayerIndex].shapes = this.layers[this.getLayerIndex].shapes.filter(shape => {
                 return !this.selectedShapes.has(shape);
             });
 
@@ -624,11 +628,11 @@ export default class Engine {
                 const group = obj as Group;
                 for (const shape of group.getObjects) {
                     shape.setIsSelected = false;
-                    this.layers[this.currentLayer].shapes.push(shape);
+                    this.layers[this.getLayerIndex].shapes.push(shape);
                 }
 
                 this.selectedShapes.clear();
-                this.layers[this.currentLayer].shapes.splice(this.layers[this.currentLayer].shapes.indexOf(group), 1);
+                this.layers[this.getLayerIndex].shapes.splice(this.layers[this.getLayerIndex].shapes.indexOf(group), 1);
                 this.engineState = EngineState.SELECT;
             }
         }
@@ -867,7 +871,7 @@ export default class Engine {
 
             for (const layer of this.layers) {
                 for (const shape of layer.shapes) {
-                    shape.renderSelf(this.ctx);
+                    shape.renderSelf(this.ctx, layer.layerColor);
                     shape.renderNodes(this.ctx);
                 }
             }

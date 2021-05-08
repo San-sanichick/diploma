@@ -6,7 +6,7 @@ export default class Bezier extends Shape {
         super(name, 4, "bezier.svg");
     }
 
-    renderSelf(ctx: CanvasRenderingContext2D) {
+    renderSelf(ctx: CanvasRenderingContext2D, color?: string) {
         if (this.nodes.length <= 1) return;
 
         if (this.nodes.length < 3) {
@@ -45,7 +45,7 @@ export default class Bezier extends Shape {
             const mv2: Vec2 = this.WorldToScreen(this.nodes[2].getPosition);
             const ev: Vec2  = this.WorldToScreen(this.nodes[3].getPosition);
 
-            ctx.strokeStyle = this.isSelected ? "red" : this.color;
+            ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
 
             ctx.save();
                 // ctx.strokeStyle = this.color;

@@ -19,11 +19,11 @@ export default class Rectangle extends Shape {
         return this.nodes[this.nodes.length - 1];
     }
 
-    renderSelf(ctx: CanvasRenderingContext2D) {
+    renderSelf(ctx: CanvasRenderingContext2D, color?: string) {
         if (this.nodes.length <= 1) return;
 
         ctx.fillStyle = "";
-        ctx.strokeStyle = this.isSelected ? "red" : this.color;
+        ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
 
         if (this.nodes.length === 2) {
             const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);

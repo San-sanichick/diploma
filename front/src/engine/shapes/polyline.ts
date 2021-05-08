@@ -8,7 +8,7 @@ export default class Polyline extends Shape {
         super(name, Number.MAX_VALUE, "line.svg");
     }
 
-    renderSelf(ctx: CanvasRenderingContext2D): void {
+    renderSelf(ctx: CanvasRenderingContext2D, color?: string): void {
         // console.log(Shape.worldOffset);
 
         if (this.nodes.length > 1) {
@@ -16,7 +16,7 @@ export default class Polyline extends Shape {
 
             ctx.save();
                 ctx.fillStyle = "";
-                ctx.strokeStyle = this.isSelected ? "red" : this.color;
+                ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
                 // ctx.beginPath();
                 ctx.moveTo(sv.x, sv.y);
                 // ctx.lineTo(ev.x, ev.y);

@@ -10,7 +10,7 @@ export default class Circle extends Shape {
         return this.nodes[0].getPosition;
     }
 
-    renderSelf(ctx: CanvasRenderingContext2D) {
+    renderSelf(ctx: CanvasRenderingContext2D, color?: string) {
         if (this.nodes.length <= 1) return;
 
         // calculate the radius of the circle
@@ -19,7 +19,7 @@ export default class Circle extends Shape {
         const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
         const ev: Vec2 = this.WorldToScreen(this.nodes[1].getPosition);
         
-        ctx.strokeStyle = this.isSelected ? "red" : this.color;
+        ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
         
         ctx.save();
             ctx.setLineDash([5, 15]);

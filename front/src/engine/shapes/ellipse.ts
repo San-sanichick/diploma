@@ -6,7 +6,7 @@ export default class Ellipse extends Shape {
         super(name, 3, "ellipse.svg");
     }
 
-    renderSelf(ctx: CanvasRenderingContext2D) {
+    renderSelf(ctx: CanvasRenderingContext2D, color?: string) {
         if (this.nodes.length <= 1) return;
 
         if (this.nodes.length < 3) {
@@ -47,7 +47,7 @@ export default class Ellipse extends Shape {
 
             const angle = Math.acos(Vec2.dot(mvsv, svev) / (mvsv.mag() * rad2));
 
-            ctx.strokeStyle = this.isSelected ? "red" : this.color;
+            ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
 
             ctx.save();
                 ctx.setLineDash([5, 15]);

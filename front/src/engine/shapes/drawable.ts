@@ -21,6 +21,6 @@ export default interface Drawable extends Serializable{
     translate(deltaDist: Vec2): void;
     rotate(angle: number, pos: Vec2): void;
     resize(sizeCoeff: Vec2, pos: Vec2): void;
-    renderSelf(ctx: CanvasRenderingContext2D): void;
+    renderSelf(ctx: CanvasRenderingContext2D, color?: string): void;
     renderNodes(ctx: CanvasRenderingContext2D): void;
 }

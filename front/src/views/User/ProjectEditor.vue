@@ -43,14 +43,6 @@
                                 @selected="selectElementHandler" />
                         </ul>
                     </div>
-                    <div class="project-layers panel">
-                        <div class="panel-header">Слои</div>
-                        <LayerView 
-                            :layers="layers" 
-                            v-model:selected="currentLayer"
-                            @add="addLayer"
-                            @remove="removeLayer" />
-                    </div>
                 </Pane>
                 <Pane style="flex: 20 1 auto">
                     <div class="viewport" 
@@ -67,6 +59,14 @@
                             Свойства
                         </div>
                         <Properties :item="selectedShape" />
+                    </div>
+                    <div class="project-layers panel">
+                        <div class="panel-header">Слои</div>
+                        <LayerView 
+                            :layers="layers" 
+                            v-model:layer-selected="currentLayer"
+                            @add="addLayer"
+                            @remove="removeLayer" />
                     </div>
                 </Pane>
             </SplitView>
@@ -152,6 +152,7 @@
                     return this.engine.getCurLayer;
                 },
                 set(val: number) {
+                    console.log("HAHAH" + val);
                     this.engine.setCurLayer = val;
                 }
             },
@@ -413,7 +414,7 @@
 
             .panel {
                 min-width: 200px;
-                // height: 50%;
+                // height: 100%;
 
                 .panel-header {
                     background-color: $primary;
@@ -424,9 +425,12 @@
                 }
             }
 
+            .properties {
+                height: 60%;
+            }
+
             .project-tree {
                 // position: relative;
-                height: 50%;
                 text-align: left;
                 // resize: horizontal;
                 overflow-x: auto;
@@ -441,7 +445,7 @@
             }
 
             .project-layers {
-                height: 50%;
+                height: 40%;
             }
 
             .viewport {
