@@ -1,5 +1,5 @@
 <template>
-    <div v-if="show" class="color-picker">
+    <div v-click-away="clickAway" v-if="show" class="color-picker">
         <div class="color-picker-header">
             <h5>Цвета</h5>
         </div>
@@ -36,6 +36,12 @@
                 console.log(color);
                 this.$emit("update:color", color);
                 // this.$emit("update:show", false);
+            },
+            clickAway(e: MouseEvent) {
+                const target = e.target as HTMLDivElement;
+                if (target.className !== "layer-color") {
+                    this.$emit("update:show", false);
+                }
             }
         }
     })

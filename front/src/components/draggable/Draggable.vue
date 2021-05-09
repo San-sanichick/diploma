@@ -1,13 +1,13 @@
 <template>
-    <div ref="draggable-container" class="draggable-container">
+    <div v-if="show" ref="draggable-container" class="draggable-container">
         <div ref="draggable-header" class="draggable-header" @mousedown="dragMouseDown">
             <slot name="header"></slot>
-            <button @click="collapse = !collapse">close</button>
+            <button @click="close = !close">close</button>
         </div>
-        <div class="draggable-main" v-if="!collapse">
+        <div class="draggable-main">
             <slot name="main"></slot>
         </div>
-        <div class="draggable-footer" v-if="!collapse">
+        <div class="draggable-footer">
             <slot name="footer"></slot>
         </div>
     </div>
@@ -23,6 +23,9 @@
                     x: 500,
                     y: 500
                 }
+            },
+            show: {
+                type: Boolean
             }
         },
         data() {
@@ -32,8 +35,7 @@
                     clinetY: undefined as number | undefined,
                     movementX: 0,
                     movementY: 0
-                },
-                collapse: false
+                }
             }
         },
         mounted() {
@@ -74,7 +76,7 @@
 
     .draggable-container {
         font-family: Open Sans, Arial, sans-serif;
-        position: absolute;
+        position: fixed;
         z-index: 9;
         background-color: white;
         border: 1px solid #ccc;

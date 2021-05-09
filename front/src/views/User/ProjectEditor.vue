@@ -495,7 +495,7 @@
 
         .page-footer-editor {
             width: calc(100% - 30px);
-            background-color: $middlePrimary;
+            background-color: $lightSecondaryGreen;
             color: white;
             font-size: 1.5ch;
             padding: 3px 15px;

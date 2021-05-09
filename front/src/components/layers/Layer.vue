@@ -1,13 +1,24 @@
 <template>
     <li class="layer" 
+        @click.stop="$emit('update', layer.id)"
         :class="{'selected': layer.id === layerSelected}">
         <div 
             class="layer-color" 
             :style="{ backgroundColor: colors.get(layer.layerColor) }"
             @click="toggleMenu"
             ></div>
-        <span @click.stop="$emit('update', layer.id)">{{ layer.name }}</span>
-        <button :disabled="disable" @click="$emit('remove', layer.id)">-</button>
+        <div class="layer-name-wrapper">
+            <span v-show="!edit" @dblclick="edit = true" >{{ layer.name }}</span>
+            <input
+                class="layer-name-edit" 
+                v-click-away="closeEdit"
+                v-show="edit" 
+                type="text" 
+                size="3"
+                :value="layer.name" 
+                @keyup.enter="updateLayerName">
+        </div>
+        <button :disabled="disable" @click.stop="$emit('remove', layer.id)">-</button>
         <ColorPicker
             v-model:show="show"
             :color="layer.layerColor" 
@@ -16,11 +27,15 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue'
+    import { defineComponent } from 'vue';
     import ColorPicker from "./ColorPicker.vue";
     import colors from "@/engine/config/colors";
+    import { directive } from "vue3-click-away";
 
     export default defineComponent({
+        directives: {
+            ClickAway: directive
+        },
         components: {
             ColorPicker
         },
@@ -29,7 +44,8 @@
         data() {
             return {
                 colors,
-                show: false
+                show: false,
+                edit: false
             }
         },
         methods: {
@@ -37,13 +53,31 @@
                 this.show = !this.show;
             },
             updateLayer(color: number) {
-                console.log(color);
                 this.$emit("update:layer", { 
                     id: this.layer.id,
                     layerColor: color,
                     name: this.layer.name,
                     size: this.layer.size
                 });
+            },
+            updateLayerName(e: InputEvent) {
+                // console.log(e.target?);
+                const target = e.target as HTMLInputElement;
+                const name = target.value;
+
+                this.$emit("update:layer", { 
+                    id: this.layer.id,
+                    layerColor: this.layer.layerColor,
+                    name,
+                    size: this.layer.size
+                });
+            },
+            closeEdit(e: MouseEvent) {
+                const target = e.target as HTMLInputElement;
+                console.log(target.className);
+                if (target.className !== "layer-name-edit") {
+                    this.edit = false;
+                }
             }
         }
     })
@@ -55,6 +89,8 @@
 
     .layer {
         position: relative;
+        // width: 180px;
+        margin: 0;
         display: grid;
         grid-template-columns: max-content auto max-content;
         align-items: center;
@@ -67,6 +103,25 @@
             height: 25px;
             border: 1px solid $darkSecondaryGreen;
         }
+
+        .layer-name-wrapper {
+            width: 50%;
+            
+            input {
+                display: inline;
+                // width: 40%;
+                color: white;
+                
+                margin: 0;
+                padding: 2px 5px;
+                background-color: $darkPrimary;
+                border: 1px solid $lightSecondaryGreen;
+                border-radius: 2px;
+                outline: none;
+            }
+        }
+
+
         button {
             width: 25px;
             height: 25px;
