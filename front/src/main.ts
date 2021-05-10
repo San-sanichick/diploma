@@ -117,6 +117,12 @@ const app = createApp(App);
 app.config.globalProperties.$filters = filters;
 app.config.globalProperties.$emitter = mitt();
 
+app.directive("focus", {
+    mounted(el: HTMLInputElement) {
+        el.focus();
+    }
+})
+
 app.use(store).use(router).use(FlashMessage, {
     name: 'flashMessage',
     tag: 'FlashMessage',

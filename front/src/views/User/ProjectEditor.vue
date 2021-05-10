@@ -352,6 +352,9 @@
                     this.engine.updateLayer(index, layer);
                 }
             },
+            updateSelected(item: Drawable) {
+                // this.engine.selectedElements.find(s => s.)
+            },
             // These two are absolutely stupid,
             // but it has to be done, since Vue does not support casting in templates.
             // Well, yet, at the very least

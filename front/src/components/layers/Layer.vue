@@ -8,11 +8,16 @@
             @click="toggleMenu"
             ></div>
         <div class="layer-name-wrapper">
-            <span v-show="!edit" @dblclick="edit = true" >{{ layer.name }}</span>
+            <span v-if="!edit" @dblclick="edit = true" >{{ layer.name }}</span>
+            <!-- FOR THE LOVE OF GOD -->
+            <!-- WHY IS THE WIDTH FOR INPUT -->
+            <!-- DETRMINED BY ITS SIZE VALUE -->
+            <!-- THAT IS ACTUALLY RETARDED -->
             <input
                 class="layer-name-edit" 
                 v-click-away="closeEdit"
-                v-show="edit" 
+                v-focus
+                v-if="edit" 
                 type="text" 
                 size="3"
                 :value="layer.name" 
@@ -64,6 +69,7 @@
                 // console.log(e.target?);
                 const target = e.target as HTMLInputElement;
                 const name = target.value;
+                this.edit = false;
 
                 this.$emit("update:layer", { 
                     id: this.layer.id,

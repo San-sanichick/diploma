@@ -10,7 +10,10 @@
             <tbody v-if="itemCastedToShape !== null">
                 <tr>
                     <td>Имя</td>
-                    <td>{{ itemCastedToShape.name }}</td>
+                    <td v-if="!edit" @dblclick="edit = true">{{ itemCastedToShape.name }}</td>
+                    <td v-if="edit">
+                        <input type="text" :value="itemCastedToShape.name" size="3" @keyup.enter="updateItemName">
+                    </td>
                 </tr>
                 <tr>
                     <td>X</td>
@@ -78,6 +81,12 @@
                 type: Object as PropType<Drawable | null | Array<Drawable>>
             }
         },
+        emits: ["update:item"],
+        data() {
+            return {
+                edit: false
+            }
+        },
         computed: {
             itemCastedToGroup(): Group | null {
                 if (this.item !== null && this.item !== undefined 
@@ -96,6 +105,14 @@
                     return null;
                 }
             }
+        },
+        methods: {
+            updateItemName(e: InputEvent) {
+                const target = e.target as HTMLInputElement;
+                const val = target.value;
+                this.edit = false;
+                this.$emit("update:item", val);
+            }
         }
     })
 </script>
@@ -106,6 +123,10 @@
 
     table {
         @include table-style;
+
+        th, td {
+            font-size: 1.6ch;
+        }
         // width: 100%;
         // margin: 0;
         // text-align: left;

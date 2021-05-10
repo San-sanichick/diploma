@@ -30,5 +30,9 @@
         ._vue-flash-msg-body {
             z-index: 10000000 !important;
         }
+
+        input {
+            font-family: Open Sans, Arial, sans-serif;
+        }
     }
 </style>

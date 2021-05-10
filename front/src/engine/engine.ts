@@ -70,6 +70,7 @@ export default class Engine {
     // I hope y'all like polymorphism, there's a lot of it here
     private currentLayer:         number;
     private layers:         Array<Layer>;
+    private copyBuffer:     Array<Drawable> = [];
     // private currentLayer:   number;
 
     private selectedShapes: Set<Drawable> = new Set<Drawable>();
@@ -108,19 +109,9 @@ export default class Engine {
         this.ctxUI         = this.canvasUI.getContext("2d");
         
 
-        if (this.ctx === null || this.ctxUI === null) throw new Error("An error has occured while gitting context from canvas");
-        
-        // if ( this.ctx.imageSmoothingEnabled && this.ctxUI.imageSmoothingEnabled) {
-        //     console.log("supported");
-        //     this.ctx.imageSmoothingEnabled = true;
-        //     this.ctx.imageSmoothingQuality = "high";
-        //     this.ctxUI.imageSmoothingEnabled = true;
-        //     this.ctxUI.imageSmoothingQuality = "low";
-        // }
-
+        if (this.ctx === null || this.ctxUI === null) throw new Error("An error has occured while getting context from canvas");
         
         this.layers = new Array<Layer>();
-        // console.log(object);
 
         this.layers.push({
             id: 0,
@@ -161,8 +152,46 @@ export default class Engine {
         this.cursor = new Vec2(this.canvas.width / 2, this.canvas.height / 2);
     }
 
+    /**
+     * Initialization method, sets up the initial state of the engine
+     * @returns {boolean} true if initialization is successful, false otherwise
+     */
+     public init(): boolean {
+        if (this.ctx === null) return false;
+
+        // hacks territory, but it works somehow magically, so I
+        // won't complain
+        document.body.addEventListener("copy", (e: ClipboardEvent) => {
+            e.preventDefault();
+            this.copyBuffer = [];
+            // hacks
+            this.copyBuffer = Serializer.deserialize(Serializer.serialize(this.selectedElements));
+            this.copyBuffer.forEach(el => el.name += "_copy");
+            this.clearSelection();
+            
+        });
+        document.body.addEventListener("cut", (e: ClipboardEvent) => {
+            e.preventDefault();
+            this.copyBuffer = [];
+            this.copyBuffer = this.selectedElements;
+            this.deleteSelectedShapes();
+        });
+        document.body.addEventListener("paste", (e: ClipboardEvent) => {
+            e.preventDefault();
+
+            this.layers[this.getLayerIndex].shapes.push(...this.copyBuffer);
+            this.addToSelection(...this.copyBuffer);
+            this.copyBuffer = [];
+        });
+
+        Shape.worldGrid = this.grid;
+        this.ctx.lineWidth = 1;
+        this.ctx.translate(0.5, 0.5);
+
+        return true;
+    }
+
     get shapeList(): Array<Drawable> {
-        // return this.layers[0].shapes;
         if (this.layers) {
             if (this.layers[this.getLayerIndex]) {
                 return this.layers[this.getLayerIndex].shapes;
@@ -190,7 +219,6 @@ export default class Engine {
             this.layers[i].layerColor = arr[i].layerColor;
             this.layers[i].name = arr[i].name;
         }
-        console.log("ahfgaeyug", this.layers);
     }
 
     public addLayer() {
@@ -212,6 +240,14 @@ export default class Engine {
         const l = this.layers[index];
         l.layerColor = value.layerColor;
         l.name = value.name;
+    }
+
+    private deleteSelectedShapes() {
+        this.layers[this.getLayerIndex].shapes = this.layers[this.getLayerIndex].shapes.filter(shape => {
+            return !this.selectedShapes.has(shape);
+        });
+
+        this.selectedShapes.clear();
     }
 
     get getLayerIndex(): number {
@@ -247,20 +283,6 @@ export default class Engine {
 
     private ScreenToWorld(screenCoord: Vec2): Vec2 {
         return screenCoord.divide(this.scale).add(this.offset);
-    }
-
-    /**
-     * Initialization method, sets up the initial state of the engine
-     * @returns {boolean} true if initialization is successful, false otherwise
-     */
-    public init(): boolean {
-        if (this.ctx === null) return false;
-
-        Shape.worldGrid = this.grid;
-        this.ctx.lineWidth = 1;
-        this.ctx.translate(0.5, 0.5);
-
-        return true;
     }
 
     public saveImage(): string | undefined {
@@ -333,23 +355,25 @@ export default class Engine {
 
     // this is quite silly, really
     private hotKeyStateSwitchHandler() {
-        switch(this.keyboard.getPressedButton) {
-            case "KeyA":
-                this.engineState = EngineState.SELECT;
-                break;
-            case "KeyV":
-                this.engineState = EngineState.MOVEPOINT;
-                break;
-            case "KeyM":
-                this.engineState = EngineState.TRANSLATE;
-                break;
-            case "KeyR":
-                this.engineState = EngineState.ROTATE;
-                break;
-            case "KeyS":
-                this.engineState = EngineState.SCALE;
-                break;
-            default: return;
+        if (!this.keyboard.isCtrlHeld) {
+            switch(this.keyboard.getPressedButton) {
+                case "KeyA":
+                    this.engineState = EngineState.SELECT;
+                    break;
+                case "KeyV":
+                    this.engineState = EngineState.MOVEPOINT;
+                    break;
+                case "KeyM":
+                    this.engineState = EngineState.TRANSLATE;
+                    break;
+                case "KeyR":
+                    this.engineState = EngineState.ROTATE;
+                    break;
+                case "KeyS":
+                    this.engineState = EngineState.SCALE;
+                    break;
+                default: return;
+            }
         }
 
     }
@@ -574,11 +598,7 @@ export default class Engine {
 
         if (this.selectedShapes.size != 0) {
             if (this.keyboard.getPressedButton === "Delete") {
-                this.layers[this.getLayerIndex].shapes = this.layers[this.getLayerIndex].shapes.filter(shape => {
-                    return !this.selectedShapes.has(shape);
-                });
-
-                this.selectedShapes.clear();
+                this.deleteSelectedShapes();
             }
         }
 
@@ -654,12 +674,25 @@ export default class Engine {
         }
     }
 
-    public addToSelection(item: Drawable) {
-        this.selectedShapes.add(item);
+    public addToSelection(...items: Drawable[]) {
+        // this.selectedShapes.add(item);
+        for (const item of items) {
+            item.setIsSelected = true;
+            this.selectedShapes.add(item);
+        }
     }
 
-    public removeFromSelection(item: Drawable) {
-        this.selectedShapes.delete(item);
+    public removeFromSelection(...items: Drawable[]) {
+        // this.selectedShapes.delete(item);
+        for (const item of items) {
+            item.setIsSelected = false;
+            this.selectedShapes.delete(item);
+        }
+    }
+
+    public clearSelection() {
+        this.selectedShapes.forEach(shape => shape.setIsSelected = false);
+        this.selectedShapes.clear();
     }
 
     /**
@@ -936,7 +969,7 @@ export default class Engine {
         const curV = this.WorldToScreen(this.cursor);
 
         this.ctxUI.save();
-            this.ctxUI.setLineDash([5, 15]);
+            this.ctxUI.setLineDash([8, 10]);
             this.ctxUI.strokeStyle = "rgba(255, 255, 255, 0.3)";
             this.ctxUI.beginPath();
             this.ctxUI.moveTo(curV.x, 0);

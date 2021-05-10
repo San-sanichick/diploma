@@ -98,7 +98,6 @@ export default abstract class Shape implements Drawable {
         })
 
         temp.color = obj.color;
-        console.log(temp);
         return temp;
     }
 
