@@ -20,7 +20,8 @@ export default class KeyboardController {
             browser hotkeys from triggering (why the FUCK does ctrl+G trigger A SEARCH BAR)
         */
         document.addEventListener("keydown", (e: KeyboardEvent) => {
-            // e.preventDefault();
+            e.preventDefault();
+            // console.log(e.code);
             // uhh, this is stupid
             if (e.code === "ControlLeft" || 
                 e.code === "AltLeft" ||

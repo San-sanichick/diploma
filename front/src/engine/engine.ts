@@ -57,6 +57,12 @@ interface Layer {
 
 /**
  * CAD engine class
+ * 
+ * This class is absolutely bloated with stuff, like,
+ * ~200 lines of code in update function and ~300 lines in render function
+ * are not okay.
+ * There's an absolute miriad of silly and often useless functons in here
+ * It is in fact a miracle that all of this works, and does so at decent fps
  * @class
  */
 export default class Engine {
@@ -158,31 +164,6 @@ export default class Engine {
      */
      public init(): boolean {
         if (this.ctx === null) return false;
-
-        // hacks territory, but it works somehow magically, so I
-        // won't complain
-        document.body.addEventListener("copy", (e: ClipboardEvent) => {
-            e.preventDefault();
-            this.copyBuffer = [];
-            // hacks
-            this.copyBuffer = Serializer.deserialize(Serializer.serialize(this.selectedElements));
-            this.copyBuffer.forEach(el => el.name += "_copy");
-            this.clearSelection();
-            
-        });
-        document.body.addEventListener("cut", (e: ClipboardEvent) => {
-            e.preventDefault();
-            this.copyBuffer = [];
-            this.copyBuffer = this.selectedElements;
-            this.deleteSelectedShapes();
-        });
-        document.body.addEventListener("paste", (e: ClipboardEvent) => {
-            e.preventDefault();
-
-            this.layers[this.getLayerIndex].shapes.push(...this.copyBuffer);
-            this.addToSelection(...this.copyBuffer);
-            this.copyBuffer = [];
-        });
 
         Shape.worldGrid = this.grid;
         this.ctx.lineWidth = 1;
@@ -339,22 +320,22 @@ export default class Engine {
      */
     public start(): void {
         const updateRoutine = () => {
-            // try {
-            //     this.update();
-            //     requestAnimationFrame(updateRoutine);
-            // } catch(e) {
-            //     console.error(e);
-            //     return;
-            // }
-            this.update();
-            requestAnimationFrame(updateRoutine);
+            try {
+                this.update();
+                requestAnimationFrame(updateRoutine);
+            } catch(e) {
+                console.error(e);
+                return;
+            }
+            // this.update();
+            // requestAnimationFrame(updateRoutine);
         }
 
         requestAnimationFrame(updateRoutine);
     }
 
     // this is quite silly, really
-    private hotKeyStateSwitchHandler() {
+    private hotKeyHandler() {
         if (!this.keyboard.isCtrlHeld) {
             switch(this.keyboard.getPressedButton) {
                 case "KeyA":
@@ -376,6 +357,54 @@ export default class Engine {
             }
         }
 
+        // hacks territory, but it works somehow magically, so I
+        // won't complain
+        if (this.keyboard.isCtrlHeld && !this.keyboard.isAltHeld) {
+            switch (this.keyboard.getPressedButton) {
+                case "KeyB":
+                    this.isSnap = !this.isSnap;
+                    break;
+                case "KeyC":{
+                    this.copyBuffer = [];
+                    // hacks
+                    this.copyBuffer = Serializer.deserialize(Serializer.serialize(this.selectedElements));
+                    this.copyBuffer.forEach(el => el.name += "_copy");
+                    this.clearSelection();
+                    break;
+                }
+                case "KeyX": {
+                    this.copyBuffer = [];
+                    this.copyBuffer = this.selectedElements;
+                    this.deleteSelectedShapes();
+                    break;
+                }
+                case "KeyV": {
+                    this.layers[this.getLayerIndex].shapes.push(...this.copyBuffer);
+                    this.addToSelection(...this.copyBuffer);
+                    this.copyBuffer = [];
+                    break;
+                }
+                case "Equal":
+                    this.scale = clamp(this.scale += 2, 3, 200);
+                    break;
+                case "Minus":
+                    this.scale = clamp(this.scale -= 2, 3, 200);
+                    break;
+                default:
+                    return;
+            }
+        }
+
+        if (this.keyboard.isCtrlHeld && this.keyboard.isAltHeld) {
+            // switch (this.keyboard.getPressedButton) {
+            //     case "KeyB":
+            //         this.isSnap = false;
+            //         break;
+            
+            //     default:
+            //         return;
+            // }
+        }
     }
 
     /**
@@ -410,7 +439,7 @@ export default class Engine {
         // this.cursor.floor();
         if (this.isSnap) this.cursor.floor();
 
-        this.hotKeyStateSwitchHandler();
+        this.hotKeyHandler();
 
         // TODO: Change cursor icon based on engine state
         out:
@@ -587,8 +616,8 @@ export default class Engine {
 
 
                     // const angle = angle1 - angle2;
-
                     shape.rotate(-this.cursor.subtract(this.cursorOldPos).x / 100, this.cursorPosPivot);
+                    // shape.rotate(angle, this.cursorPosPivot);
                 }
             } else {
                 this.cursorPosPivot = null;
@@ -866,7 +895,7 @@ export default class Engine {
             this.ctx.strokeStyle = "rgba(0, 150, 150, 1)";
             this.ctx.beginPath();
             this.ctx.rect(origin.x - 5, origin.y - 5, 10, 10);
-            // this.ctx.closePath();
+            this.ctx.closePath();
             this.ctx.stroke();
 
             this.ctx.strokeStyle = "rgba(255, 0, 0, 1)";
