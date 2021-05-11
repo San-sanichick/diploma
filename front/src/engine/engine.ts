@@ -113,7 +113,6 @@ export default class Engine {
         this.canvasUI      = viewport.querySelector(".canvas-ui") as HTMLCanvasElement;
         this.ctx           = this.canvas.getContext("2d", { alpha: false });
         this.ctxUI         = this.canvasUI.getContext("2d");
-        
 
         if (this.ctx === null || this.ctxUI === null) throw new Error("An error has occured while getting context from canvas");
         
@@ -126,7 +125,6 @@ export default class Engine {
             shapes: new Array<Drawable>()
         });
         this.currentLayer = 0;
-        // this.currentLayer = 0;
 
         this.mouse         = new MouseController(this.canvasUI);
         this.keyboard      = new KeyboardController();
@@ -162,7 +160,7 @@ export default class Engine {
      * Initialization method, sets up the initial state of the engine
      * @returns {boolean} true if initialization is successful, false otherwise
      */
-     public init(): boolean {
+    public init(): boolean {
         if (this.ctx === null) return false;
 
         Shape.worldGrid = this.grid;
@@ -170,6 +168,14 @@ export default class Engine {
         this.ctx.translate(0.5, 0.5);
 
         return true;
+    }
+
+    /**
+     * Removes document-wide event listeners, has to be called in 
+     * beforeUnmount lifecycle hook
+     */
+    public releaseEngine() {
+        this.keyboard.removeControler();
     }
 
     get shapeList(): Array<Drawable> {
@@ -204,7 +210,7 @@ export default class Engine {
 
     public addLayer() {
         this.layers.push({
-            id: this.layers.length + 1,
+            id: this.layers[this.layers.length - 1].id + 1,
             name: "Layer " + (this.layers[this.layers.length - 1].id + 1),
             layerColor: 7,
             shapes: []
@@ -336,6 +342,7 @@ export default class Engine {
 
     // this is quite silly, really
     private hotKeyHandler() {
+        // console.log(this.keyboard.getPressedButton);
         if (!this.keyboard.isCtrlHeld) {
             switch(this.keyboard.getPressedButton) {
                 case "KeyA":

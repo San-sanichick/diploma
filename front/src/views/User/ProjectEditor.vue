@@ -243,6 +243,9 @@
                 console.error(err);
             }
         },
+        beforeUnmount() {
+            this.engine.releaseEngine();
+        },
         watch: {
             shapeSelected: {
                 handler() {
