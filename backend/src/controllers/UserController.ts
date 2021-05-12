@@ -23,7 +23,6 @@ export default class UserController {
 
             const hashedPassword = bcrypt.hashSync(data.password, bcrypt.genSaltSync(10));
             
-            console.log(hashedPassword);
             const user = {
                 email   : data.email,
                 username: data.email,
@@ -33,7 +32,7 @@ export default class UserController {
             const p = path.join(__dirname, `../../UserProjects/${newUser._id}/`)
             fs.mkdir(p, (err)=> {
                 if (err) {
-                    console.log(err);
+                    console.error(err);
                 } else {
                     console.log(`Created new user folder ${newUser._id}`);
                 }

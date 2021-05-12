@@ -86,6 +86,7 @@ export default class Engine {
     public  isSnap                        = false;
     public engineState:     EngineState   = EngineState.SELECT;
     public curTypeToDraw:   Shapes        = Shapes.NONE;
+    private cursorIcon: any;
     private fps                           = 0;
     private fpsMeasurements: number[]     = [];
 
@@ -157,7 +158,8 @@ export default class Engine {
      */
     public init(): boolean {
         if (this.ctx === null) return false;
-
+        this.cursorIcon = new Image();
+        this.cursorIcon.src = require("../../src/assets/cursor.svg");
         Shape.worldGrid = this.grid;
         this.ctx.lineWidth = 1;
         this.ctx.translate(0.5, 0.5);
@@ -327,6 +329,9 @@ export default class Engine {
         const updateRoutine = () => {
             try {
                 this.update();
+                // :)
+                this.mouse.resetMouseController();
+                this.keyboard.resetKeyController();
                 requestAnimationFrame(updateRoutine);
             } catch(e) {
                 console.error(e);
@@ -657,6 +662,7 @@ export default class Engine {
         // const t2 = performance.now();
         // this.fpsMeasurements.push(t2);
         this.render();
+        this.renderUI();
         
         // uhh, better fps measurment, I guess?
         // const msPassed = this.fpsMeasurements[this.fpsMeasurements.length - 1] - this.fpsMeasurements[0];
@@ -671,11 +677,6 @@ export default class Engine {
         //                  { text: "Scale level", metric: this.scale },
         //                  { text: "Current layer", metric: this.currentLayer },
         //                  { text: "Shapes on layer", metric: this.layers[this.getLayerIndex].shapes.length });
-
-        
-        // :)
-        this.mouse.resetMouseController();
-        this.keyboard.resetKeyController();
     }
 
     public group() {
@@ -786,14 +787,13 @@ export default class Engine {
      * Important note: during render, the Y coordinate is flipped
      */
     private render(): void {
-        if (this.ctx === null || this.ctxUI === null) return;
+        if (this.ctx === null) return;
 
         // ! Modern problems require modern solutions. Although, frankly,
         // ! idfk how to do this better
         this.ctx.setTransform(1, 0, 0, -1, 0, this.canvas.height);
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctxUI.clearRect(0, 0, this.canvasUI.width, this.canvasUI.height);
         this.ctx.fillStyle = "#003236";
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
@@ -970,7 +970,7 @@ export default class Engine {
                 const ey = (this.cursor.y       - this.offset.y) * offset;
 
                 // this.ctx.lineWidth = 5;
-                this.ctxUI.beginPath();
+                this.ctx.beginPath();
                 this.ctx.strokeStyle = "#fff";
                 this.ctx.fillStyle = "rgba(186, 255, 205, 0.2)";
                 this.ctx.rect(sx, sy, ex - sx, ey - sy);
@@ -982,23 +982,12 @@ export default class Engine {
             }
         }
         this.ctx.restore();
+    }
 
-        // if (this.engineState === EngineState.ROTATE && this.cursorPosPivot !== null) {
-        //     this.ctxUI.save();
-        //         const sx = (this.cursorPosPivot.x - this.offset.x) * offset;
-        //         const sy = (this.cursorPosPivot.y - this.offset.y) * offset;
-        //         const ex = (this.cursor.x       - this.offset.x) * offset;
-        //         const ey = (this.cursor.y       - this.offset.y) * offset;
+    private renderUI() {
+        if (this.ctxUI === null) return;
+        this.ctxUI.clearRect(0, 0, this.canvasUI.width, this.canvasUI.height);
 
-        //         this.ctxUI.beginPath();
-        //         this.ctxUI.strokeStyle = "rgba(80, 20, 30, 1)";
-        //         this.ctxUI.moveTo(sx, sy);
-        //         this.ctxUI.lineTo(ex, ey);
-        //         this.ctxUI.closePath();
-        //         this.ctxUI.stroke();
-        //     this.ctxUI.restore();
-        // }
-        
         // draw cursor
         this.ctxUI.transform(1, 0, 0, -1, 0, this.canvasUI.height);
         const curV = this.WorldToScreen(this.cursor);
@@ -1020,10 +1009,13 @@ export default class Engine {
         this.ctxUI.restore();
 
         this.ctxUI.save();
-            this.ctxUI.strokeStyle = "rgba(255, 255, 255, 1)";
-            this.ctxUI.beginPath();
-            this.ctxUI.strokeRect(curV.x - 6, curV.y - 6, 12, 12);
-            this.ctxUI.closePath();
+            // this.ctxUI.clearRect(curV.x - 6, curV.y - 6, 12, 12)
+            // this.ctxUI.strokeStyle = "rgba(255, 255, 255, 1)";
+            // this.ctxUI.beginPath();
+            // this.ctxUI.strokeRect(curV.x - 6, curV.y - 6, 12, 12);
+            // this.ctxUI.closePath();
+            this.ctxUI.clearRect(curV.x - 25.5, curV.y - 25.5, 51, 51);
+            this.ctxUI.drawImage(this.cursorIcon, curV.x - 25.5, curV.y - 25.5);
             // this.ctxUI.stroke();
         this.ctxUI.restore();
 

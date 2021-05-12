@@ -7,8 +7,6 @@
             Divider
         },
         mounted() {
-            console.log(this.panes);
-
             for (const divider of this.dividers) {
                 divider.addEventListener("mousedown", (e: MouseEvent) => {
                     const x = e.clientX;

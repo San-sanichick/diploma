@@ -23,7 +23,6 @@ router.beforeEach(async (to, from, next) => {
     /**
      * setting page header
      */
-
     document.title = to.meta.title as string ?? DEFAULT_TITLE;
 
     // Checking if user is logged

@@ -9,7 +9,7 @@ const routes: Array<RouteRecordRaw> = [
                 path: "projects",
                 component: () => import('../views/User/ProjectList.vue'),
                 meta: {
-                    title: "Project list"
+                    title: "Список проектов"
                 }
             },
             {
@@ -17,7 +17,7 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import('../views/User/ProjectEditor.vue'),
                 // props: true
                 meta: {
-                    title: "Editor"
+                    title: "Редактор"
                 }
             }
         ],
@@ -30,7 +30,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Авторизация',
         component: () => import('../views/Login.vue'),
         meta: {
-            title: "Login"
+            title: "Авторизация"
         }
     },
     {
@@ -38,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Регистрация',
         component: () => import('../views/SignUp.vue'),
         meta: {
-            title: "Sign up"
+            title: "Регистрация"
         }
     },
     {

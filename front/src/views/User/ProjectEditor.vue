@@ -320,6 +320,11 @@
             },
             saveProjectToDXF() {
                 fileDownload(this.engine.saveToDXF(), "file.dxf");
+                this.$flashMessage.show({
+                    type: 'success',
+                    image: require("../../assets/flashMessage/success.svg"),
+                    text: "Успешно сохранено в файл"
+                });
             },
             saveAsImage(e: Event) {
                 const target = e.target as HTMLAnchorElement;
@@ -421,6 +426,10 @@
 
                 .editor-load {
                     background-image: url("../../assets/toolIcons/load.svg");
+                }
+
+                .editor-save-dxf {
+                    background-image: url("../../assets/toolIcons/download.svg");
                 }
 
                 .editor-back {

@@ -1,0 +1,18 @@
+<svg width="51" height="51" viewBox="0 0 51 51" fill="none" xmlns="http://www.w3.org/2000/svg">
+<line x1="27.5" x2="27.5" y2="20" stroke="white"/>
+<line x1="27.5" y1="31" x2="27.5" y2="51" stroke="white"/>
+<line x1="23.5" x2="23.5" y2="20" stroke="white"/>
+<line x1="51" y1="27.5" x2="31" y2="27.5" stroke="white"/>
+<line x1="20" y1="27.5" x2="-2.40413e-08" y2="27.5" stroke="white"/>
+<line x1="51" y1="23.5" x2="31" y2="23.5" stroke="white"/>
+<line x1="20" y1="23.5" x2="-2.40413e-08" y2="23.5" stroke="white"/>
+<line x1="23.5" y1="31" x2="23.5" y2="51" stroke="white"/>
+<line x1="19" y1="19.5" x2="23" y2="19.5" stroke="white"/>
+<line x1="20" y1="31.5" x2="23" y2="31.5" stroke="white"/>
+<line x1="28" y1="19.5" x2="32" y2="19.5" stroke="white"/>
+<line x1="28" y1="31.5" x2="32" y2="31.5" stroke="white"/>
+<line x1="19.5" y1="20" x2="19.5" y2="23" stroke="white"/>
+<line x1="19.5" y1="28" x2="19.5" y2="32" stroke="white"/>
+<line x1="31.5" y1="20" x2="31.5" y2="23" stroke="white"/>
+<line x1="31.5" y1="28" x2="31.5" y2="31" stroke="white"/>
+</svg>
