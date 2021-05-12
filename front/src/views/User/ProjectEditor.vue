@@ -28,7 +28,7 @@
                 <button title="Сохранить DXF" @click="saveProjectToDXF" class="editor-save-dxf"></button>
             </div>
             <div class="header-button-container">
-                <button title="Назад" class="editor-back" @click="goBack"></button>
+                <button title="Вернуться на страницу проектов" class="editor-back" @click="goBack"></button>
             </div>
         </div>
         <div class="editor">

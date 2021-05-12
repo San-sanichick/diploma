@@ -28,7 +28,7 @@ export default class Bezier extends Shape {
         ])
         // document your bloody functions, i have no idea what any of these
         // parameters are for
-        drw.addSpline(ctrlPoints, fitPoints, 3, 0, [1, 1], [2, 2]);
+        drw.addSpline(ctrlPoints, fitPoints, 3, 0, [1, 1, 1, 1], [2, 2]);
     }
 
     renderSelf(ctx: CanvasRenderingContext2D, color?: string) {
