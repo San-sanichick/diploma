@@ -1,9 +1,25 @@
 import Shape from "./shape";
 import Vec2 from "../utils/vector2d";
+import DXFWriter from "@tarikjabiri/dxf";
 
 export default class Ellipse extends Shape {
     constructor(name = "Ellipse") {
         super(name, 3, "ellipse.svg");
+    }
+
+    toDXF(drw: DXFWriter): void {
+        throw new Error("Method not implemented.");
+    //     const s = this.nodes[0].getPosition;
+    //     const 
+
+    //     drw.addEllipse(
+    //         x_center, 
+    //         y_center, 
+    //         x_major_axis, 
+    //         y_major_axis, 
+    //         ratio_minor_axis, 
+    //         start_parameter, 
+    //         end_parameter)
     }
 
     renderSelf(ctx: CanvasRenderingContext2D, color?: string) {

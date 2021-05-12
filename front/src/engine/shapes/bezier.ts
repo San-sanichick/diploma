@@ -1,9 +1,34 @@
 import Shape from "./shape";
 import Vec2 from "../utils/vector2d";
+import DXFWriter from "@tarikjabiri/dxf";
 
 export default class Bezier extends Shape {
     constructor(name = "Bezier") {
         super(name, 4, "bezier.svg");
+    }
+
+    toDXF(drw: DXFWriter): void {
+        const ctrlPoints = [];
+        for (let i = 1; i < this.nodes.length - 1; i++) {
+            ctrlPoints.push(
+                [
+                    this.nodes[i].getPosition.x,
+                    this.nodes[i].getPosition.y
+                ])
+        }
+        const fitPoints = [];
+
+        fitPoints.push([
+            this.nodes[0].getPosition.x,
+            this.nodes[0].getPosition.y
+        ]);
+        fitPoints.push([
+            this.nodes[this.nodes.length - 1].getPosition.x,
+            this.nodes[this.nodes.length - 1].getPosition.y
+        ])
+        // document your bloody functions, i have no idea what any of these
+        // parameters are for
+        drw.addSpline(ctrlPoints, fitPoints, 3, 0, [1, 1], [2, 2]);
     }
 
     renderSelf(ctx: CanvasRenderingContext2D, color?: string) {

@@ -1,10 +1,17 @@
 import Shape from "./shape";
 import Node from "./node";
 import Vec2 from "../utils/vector2d";
+import DXFWriter from "@tarikjabiri/dxf";
 
 export default class Rectangle extends Shape {
     constructor(name = "Rectangle") {
         super(name, 2, "rect.svg");
+    }
+
+    toDXF(drw: DXFWriter): void {
+        const s = this.nodes[0].getPosition;
+        const e = this.nodes[1].getPosition;
+        drw.addRectangle(s.x, s.y, e.x, e.y);
     }
 
     getNextNode(pos: Vec2): Node | null {

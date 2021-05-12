@@ -1,3 +1,4 @@
+import DXFWriter from "@tarikjabiri/dxf";
 import Vec2 from "../utils/vector2d";
 import Serializable from "./serializable";
 
@@ -23,4 +24,5 @@ export default interface Drawable extends Serializable{
     resize(sizeCoeff: Vec2, pos: Vec2): void;
     renderSelf(ctx: CanvasRenderingContext2D, color?: string): void;
     renderNodes(ctx: CanvasRenderingContext2D): void;
+    toDXF(drw: DXFWriter): void;
 }

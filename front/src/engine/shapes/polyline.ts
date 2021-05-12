@@ -1,11 +1,22 @@
 import Shape from "./shape";
 import Vec2 from "../utils/vector2d";
+// import Drawing, { Point2D } from "dxf-writer";
+import DXFWriter from "@tarikjabiri/dxf";
 
 export default class Polyline extends Shape {
     constructor(name = "Polyline") {
         // the polyline can have any number of nodes, and we can't define it,
         // we hhave to learn it at runtime
         super(name, Number.MAX_VALUE, "line.svg");
+    }
+
+    toDXF(drw: DXFWriter): void {
+        const points = [];
+        for (const n of this.nodes) {
+            points.push([n.getPosition.x, n.getPosition.y]);
+        }
+
+        drw.addPolyline(points, 0);
     }
 
     renderSelf(ctx: CanvasRenderingContext2D, color?: string): void {

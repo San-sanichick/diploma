@@ -19,41 +19,8 @@ export default class KeyboardController {
             To do key combinations it is required to call preventDefault(), to prevent
             browser hotkeys from triggering (why the FUCK does ctrl+G trigger A SEARCH BAR)
         */
-        // document.addEventListener("keydown", (e: KeyboardEvent) => {
-        //     e.preventDefault();
-        //     // console.log(e.code);
-        //     // uhh, this is stupid
-        //     if (e.code === "ControlLeft" || 
-        //         e.code === "AltLeft" ||
-        //         e.code === "ShiftLeft" ||
-        //         e.code === "ControlRight" ||
-        //         e.code === "AltRight" ||
-        //         e.code === "ShiftRight") return;
-
-        //     this.heldButton = e.code;
-        //     this.pressedButton = e.code;
-        //     this.isPressed = true;
-        //     this.isHeld = true;
-        //     this.shift = e.shiftKey;
-        //     this.ctrl = e.ctrlKey;
-        //     this.alt = e.altKey;
-
-        //     this.releasedButton = null;
-        // });
-
-        // document.addEventListener("keyup", (e: KeyboardEvent) => {
-        //     e.preventDefault();
-        //     this.releasedButton = e.code;
-        //     this.heldButton = null;
-        //     this.isHeld = false;
-        //     this.isReleased = true;
-        //     this.shift = false;
-        //     this.ctrl = false;
-        //     this.alt = false;
-        // })
 
         document.addEventListener("keydown", this.keyPressHandler);
-
         document.addEventListener("keyup", this.keyReleaseHandler)
     }
 

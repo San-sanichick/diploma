@@ -27,7 +27,7 @@
 <script lang="ts">
     import { defineComponent } from 'vue';
     import axios from "axios";
-    import { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
+    // import { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
 
     export default defineComponent({
         data() {
@@ -48,7 +48,8 @@
                             password: this.form.password
                         }
 
-                        const res = await axios.post(`/users/signUp`, data, { skipAuthRefresh: true } as AxiosAuthRefreshRequestConfig);
+                        const res = await axios.post(`/users/signUp`, data);
+                        if (res.status !== 200) throw new Error(res.data.msg);
                         console.log(res.data);
                         this.$router.push('/auth/login');
                     } else {

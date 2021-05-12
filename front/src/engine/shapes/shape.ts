@@ -4,6 +4,7 @@ import Matrix from "../utils/matrix";
 // import Serializable from "./serializable"
 import Drawable from "./drawable";
 import { clamp, fastRounding, mapRange } from "../utils/math";
+import DXFWriter from "@tarikjabiri/dxf";
 
 export interface ShapeObject {
     type: string;
@@ -193,6 +194,10 @@ export default abstract class Shape implements Drawable {
         this.maxNodes = newMaxNodes;
     }
 
+    get getNodes(): Node[] {
+        return this.nodes;
+    }
+
     /**
      * Translates the shape in space by a given distance
      * @param deltaDist distance
@@ -337,6 +342,8 @@ export default abstract class Shape implements Drawable {
      * @param ctx 2D canvas context
      */
     abstract renderSelf(ctx: CanvasRenderingContext2D, color?: string): void
+
+    abstract toDXF(drw: DXFWriter): void;
 
     /**
      * Renders nodes with a given color on given context

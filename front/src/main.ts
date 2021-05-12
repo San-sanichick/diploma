@@ -2,8 +2,7 @@ import { createApp } from 'vue';
 import { Router } from "vue-router";
 import { MutationTree, Store } from "vuex";
 import App from './App.vue';
-import axios from "axios";
-import createAuthRefreshInterceptor from 'axios-auth-refresh';
+import axios, { AxiosError, AxiosResponse } from "axios";
 import moment from "moment";
 import FlashMessage, { FlashMessagePlugin } from "@smartweb/vue-flash-message";
 import mitt, { Emitter } from "mitt";
@@ -13,6 +12,7 @@ import store from './store';
 
 import UserInterface from '@/types/User';
 import config from "./config/config";
+import Axios from 'axios';
 
 axios.defaults.baseURL = config.API_URI;
 
@@ -24,7 +24,7 @@ router.beforeEach(async (to, from, next) => {
      * setting page header
      */
 
-    document.title = to.meta.title ?? DEFAULT_TITLE;
+    document.title = to.meta.title as string ?? DEFAULT_TITLE;
 
     // Checking if user is logged
     if (to.matched.some(record => record.meta.requiresAuth)) {        
@@ -62,28 +62,26 @@ router.beforeEach(async (to, from, next) => {
     }
 });
 
-// TODO: REPLACE THIS WITH MANUAL CHECK WITHOUT A LIB, MAJOR SECURITY ISSUE
-// eslint-disable-next-line
-async function refreshAuthLogic(failedRequest: any) {
-    const refreshToken = localStorage.getItem("refreshToken");
-    if (refreshToken !== "undefined") {
-        const tokenRefreshResponse = await axios.post("/token/refresh", { refreshToken });
-        store.commit("setToken", { token: tokenRefreshResponse.data.token, refreshToken });
-        failedRequest.response.config.headers["Authorization"] = "Bearer " + tokenRefreshResponse.data.token;
-        return Promise.resolve();
-    } else {
-        store.dispatch("logOut");
-        router.push("/auth/login/");
-        return Promise.reject();
-    }
+
+// so that axios doesn't eat my 4XX errors
+axios.defaults.validateStatus = (status): boolean => {
+    return true;
 }
 
-createAuthRefreshInterceptor(axios, refreshAuthLogic);
-
-axios.interceptors.response.use(res => {
+axios.interceptors.response.use((res: AxiosResponse) => {
         return res;
     },
-    err => {
+    async (err: AxiosError) => {
+
+        const originalReq = err.config;
+        const refreshToken = localStorage.getItem("refreshToken");
+        if (refreshToken !== "undefined" && err.response?.status === 401) {
+            // originalReq.retr
+            const newToken = await axios.post("/token/refresh", { refreshToken });
+            originalReq.headers["Authorization"] = `Bearer ${newToken}`;
+            return Axios.request(originalReq);
+        }
+
         if (err && err.response && err.response.status === 401) {
             router.push("/auth/login/");
             return Promise.reject(err);

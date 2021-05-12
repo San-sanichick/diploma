@@ -16,6 +16,8 @@ import MouseController, { MouseButtons } from "./utils/mouseController";
 import KeyboardController                from "./utils/keyboardController";
 import { clamp, fastRounding }           from "./utils/math";
 import colors                            from "./config/colors";
+import Layer                             from "./types/Layer";
+import DXFSerializer from "./utils/DXFSerializer";
 
 /**
  * Possible engine states
@@ -46,13 +48,6 @@ enum Shapes {
     ARC,
     POLYLINE,
     POLYGON
-}
-
-interface Layer {
-    id: number;
-    name: string;
-    layerColor: number;
-    shapes: Array<Drawable>;
 }
 
 /**
@@ -279,6 +274,10 @@ export default class Engine {
         } catch(err) {
             console.error(err);
         }
+    }
+
+    public saveToDXF(): string {
+        return DXFSerializer.serialize(this.layers);
     }
 
     public save() {
@@ -655,23 +654,23 @@ export default class Engine {
         const updateTime = performance.now() - t1;
         
         // rendering
-        const t2 = performance.now();
-        this.fpsMeasurements.push(t2);
+        // const t2 = performance.now();
+        // this.fpsMeasurements.push(t2);
         this.render();
         
         // uhh, better fps measurment, I guess?
-        const msPassed = this.fpsMeasurements[this.fpsMeasurements.length - 1] - this.fpsMeasurements[0];
-        if (msPassed >= 1000) {
-            this.fps = 1000 / (performance.now() - t2);
-            this.fpsMeasurements = [];
-        }
+        // const msPassed = this.fpsMeasurements[this.fpsMeasurements.length - 1] - this.fpsMeasurements[0];
+        // if (msPassed >= 1000) {
+        //     this.fps = 1000 / (performance.now() - t2);
+        //     this.fpsMeasurements = [];
+        // }
 
-        this.renderDebug({ text: "FPS", metric: fastRounding(this.fps) },
-                         { text: "Render time", metric: `${(performance.now() - t2).toFixed(3)}ms` },
-                         { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },
-                         { text: "Scale level", metric: this.scale },
-                         { text: "Current layer", metric: this.currentLayer },
-                         { text: "Shapes on layer", metric: this.layers[this.getLayerIndex].shapes.length });
+        // this.renderDebug({ text: "FPS", metric: fastRounding(this.fps) },
+        //                  { text: "Render time", metric: `${(performance.now() - t2).toFixed(3)}ms` },
+        //                  { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },
+        //                  { text: "Scale level", metric: this.scale },
+        //                  { text: "Current layer", metric: this.currentLayer },
+        //                  { text: "Shapes on layer", metric: this.layers[this.getLayerIndex].shapes.length });
 
         
         // :)

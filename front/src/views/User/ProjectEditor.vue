@@ -25,6 +25,7 @@
             <div class="header-button-container">
                 <button title="Сохранить на сервере" @click="saveProject" class="editor-save"></button>
                 <button title="Загрузить с сервера"  @click="loadProject" class="editor-load"></button>
+                <button title="Сохранить DXF" @click="saveProjectToDXF" class="editor-save-dxf"></button>
             </div>
             <div class="header-button-container">
                 <button title="Назад" class="editor-back" @click="goBack"></button>
@@ -99,6 +100,7 @@
 
     import Engine, { EngineState, Shapes } from "@/engine/engine";
     import axios from 'axios';
+    import fileDownload from "js-file-download";
     import Drawable from '@/engine/shapes/drawable';
     import Shape from '@/engine/shapes/shape';
     import Group from '@/engine/shapes/group';
@@ -315,6 +317,9 @@
                         text: err
                     });
                 }
+            },
+            saveProjectToDXF() {
+                fileDownload(this.engine.saveToDXF(), "file.dxf");
             },
             saveAsImage(e: Event) {
                 const target = e.target as HTMLAnchorElement;

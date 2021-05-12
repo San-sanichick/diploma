@@ -1,7 +1,7 @@
 import { createStore } from 'vuex';
 import axios from "axios";
 import UserInterface from '@/types/User';
-import { AxiosAuthRefreshRequestConfig } from "axios-auth-refresh";
+// import { AxiosAuthRefreshRequestConfig } from "axios-auth-refresh";
 
 export default createStore({
     state: {
@@ -69,8 +69,9 @@ export default createStore({
         async logIn(context, payload) {
             try {
                 // const dataToSend = JSON.stringify(payload);
-                const res = await axios.post(`/users/login`, payload, { skipAuthRefresh: true } as AxiosAuthRefreshRequestConfig);
-                console.log(res);
+                const res = await axios.post(`/users/login`, payload);
+                // console.log(res);
+                if (res.status !== 200) throw new Error(res.data.msg);
                 const user = res.data.data.user;
                 if (user) {
                     context.commit("setUser", res.data.data);

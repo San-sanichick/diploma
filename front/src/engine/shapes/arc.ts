@@ -1,9 +1,14 @@
 import Shape from "./shape";
 import Vec2 from "../utils/vector2d";
+import DXFWriter from "@tarikjabiri/dxf";
 
 export default class Arc extends Shape {
     constructor(name = "Arc") {
         super(name, 3, "arc.svg");
+    }
+
+    toDXF(drw: DXFWriter): void {
+        throw new Error("Method not implemented.");
     }
 
     renderSelf(ctx: CanvasRenderingContext2D, color?: string) {

@@ -1,3 +1,4 @@
+import DXFWriter from "@tarikjabiri/dxf";
 import { fastRounding } from "../utils/math";
 import Vec2 from "../utils/vector2d";
 import Drawable from "./drawable";
@@ -24,6 +25,14 @@ export default class Group implements Drawable {
             object.setIsSelected = false;
             this.objects.push(object);
         }
+    }
+    vertices?: number | undefined;
+
+    toDXF(drw: DXFWriter): void {
+        // throw new Error("Method not implemented.");
+        drw.addLayer(this.name, DXFWriter.colors.White, "CONTINUOS");
+        drw.setCurrentLayer(this.name);
+        this.objects.forEach(obj => obj.toDXF(drw));
     }
     
     get centerOfShape(): Vec2 {

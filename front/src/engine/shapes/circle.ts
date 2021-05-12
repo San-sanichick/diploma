@@ -1,9 +1,18 @@
 import Shape from "./shape";
 import Vec2 from "../utils/vector2d";
+import DXFWriter from "@tarikjabiri/dxf";
 
 export default class Circle extends Shape {
     constructor(name = "Circle") {
         super(name, 2, "circle.svg");
+    }
+
+    toDXF(drw: DXFWriter): void {
+        const s = this.nodes[0].getPosition;
+        const e = this.nodes[1].getPosition;
+        const r = e.subtract(s).mag();
+
+        drw.addCircle(s.x, s.y, r);
     }
 
     get centerOfShape(): Vec2 {

@@ -1,9 +1,16 @@
 import Shape from "./shape";
 import Vec2 from "../utils/vector2d";
+import DXFWriter from "@tarikjabiri/dxf";
 
 export default class Line extends Shape {
     constructor(name = "Line") {
         super(name, 2, "line.svg");
+    }
+
+    toDXF(drw: DXFWriter) {
+        const s = this.nodes[0].getPosition;
+        const e = this.nodes[1].getPosition;
+        drw.addLine(s.x, s.y, e.x, e.y);
     }
 
     renderSelf(ctx: CanvasRenderingContext2D, color?: string): void {

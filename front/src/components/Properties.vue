@@ -97,7 +97,6 @@
                 }
             },
             itemCastedToShape(): Shape | null {
-                console.log(Array.isArray(this.item));
                 if (this.item !== null && this.item !== undefined 
                     && !Array.isArray(this.item) && this.item?.type !== "Group") {
                     return this.item as Shape;

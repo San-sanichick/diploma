@@ -21,7 +21,7 @@ const mkdir     = promisify(fs.mkdir);
 
 export default class ProjectController {
     public async createProject(req: Request, res: Response) {
-        const token = getToken(req.headers);;
+        const token = getToken(req.headers);
         if (token) {
             const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
 
@@ -50,12 +50,12 @@ export default class ProjectController {
                     const imagePath = path.join(__dirname, `../../public/${updUser._id}/${newProject._id}/`);
                     try {
                         await mkdir(projectPath, {recursive: true});
-                        console.log("kek");
                         await mkdir(imagePath, {recursive: true});
                         
                         console.log(`Created new project folder ${newProject._id}`);
                     } catch (err) {
-                        console.error(err);
+                        // console.error(err);
+                        throw err;
                     }
 
                     const newProjectFile: IProject = {
@@ -65,7 +65,6 @@ export default class ProjectController {
                     }
 
                     fs.writeFileSync(`${projectPath}/save.json`, JSON.stringify(newProjectFile));
-
                     res.status(200).json({msg: `Проект "${newProject.name}" был успешно создан!`, data: newProject});
                 }
             } catch (err) {
@@ -193,6 +192,7 @@ export default class ProjectController {
     }
 
     public async getAllProjects(req: Request, res: Response) {
+        // console.log(req.headers);
         try {
             const token = getToken(req.headers);
             if (token) {

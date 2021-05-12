@@ -1,6 +1,7 @@
 import Shape from "./shape";
 import Vec2 from "../utils/vector2d";
 import Node from "./node";
+import DXFWriter from "@tarikjabiri/dxf";
 
 export default class Polygon extends Shape {
     public vertices: number;
@@ -8,6 +9,10 @@ export default class Polygon extends Shape {
     constructor(name = "Polygon", verticies: number) {
         super(name, 2, "polygon.svg");
         this.vertices = verticies;
+    }
+
+    toDXF(drw: DXFWriter): void {
+        throw new Error("Method not implemented.");
     }
 
     getNextNode(pos: Vec2): Node | null {

@@ -77,9 +77,9 @@
             async fetchProjects(): Promise<void> {
                 try {
                     const res = await axios.get(`/projects/get_all`);
+                    if (res.status !== 200) throw new Error(res.data.msg);
                     this.list = res.data.data;
                 } catch (err) {
-                    console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
                         image: require("../../assets/flashMessage/fail.svg"),
@@ -95,14 +95,14 @@
                     }
 
                     const res = await axios.post("/projects/create", data);
+                    
+                    if (res.status !== 200) throw new Error(res.data.msg);
                     this.$flashMessage.show({
                         type: 'success',
                         image: require("../../assets/flashMessage/success.svg"),
                         text: res.data.msg
                     });
-                    this.list.push(res.data.data);
                 } catch (err) {
-                    console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
                         image: require("../../assets/flashMessage/fail.svg"),
@@ -115,6 +115,7 @@
             async setUpProject(project: never) {
                 try {
                     const res = await axios.patch("/projects/update", project);
+                    if (res.status !== 200) throw new Error(res.data.msg);
                     const updated = res.data.data;
 
                     const old = this.list.find(pr => pr._id === updated._id) as Project;
@@ -126,7 +127,6 @@
                         text: res.data.msg
                     });
                 } catch (err) {
-                    console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
                         image: require("../../assets/flashMessage/fail.svg"),
@@ -159,7 +159,7 @@
                 console.log(id);
                 try {
                     const res = await axios.delete(`/projects/delete/${id}`);
-                    // console.log(res.data.msg);
+                    if (res.status !== 200) throw new Error(res.data.msg);
 
                     this.list = res.data.data;
 
@@ -169,7 +169,6 @@
                         text: res.data.msg
                     });
                 } catch (err) {
-                    console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
                         image: require("../../assets/flashMessage/fail.svg"),

@@ -103,10 +103,10 @@ export default class UserController {
             res.status(200).json({msg: "List of users", data: users});
         } catch (err) {
             console.error(err);
-            res.status(400).json({msg: `User wasn't created`});
+            // I guess this should never happen?
+            res.status(404).json({msg: `No users`});
         }
     }
-
 
     public async loginUser(req: Request, res: Response): Promise<void> {
         console.log(req.body);
@@ -159,7 +159,7 @@ export default class UserController {
             }
         } catch (err) {
             console.error(err);
-            res.status(400).json({msg: err});
+            res.status(404).json({msg: err});
         }
     }
 }

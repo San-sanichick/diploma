@@ -38,7 +38,7 @@
         methods: {
             submitHandler() {
                 this.$emit("setup-project", {
-                    id: this.project._id, 
+                    id: "0", 
                     name: this.form.name,
                     access: this.form.access
                     });
