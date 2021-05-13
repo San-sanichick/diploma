@@ -97,6 +97,7 @@
                     const res = await axios.post("/projects/create", data);
                     
                     if (res.status !== 200) throw new Error(res.data.msg);
+                    this.list.push(res.data.data);
                     this.$flashMessage.show({
                         type: 'success',
                         image: require("../../assets/flashMessage/success.svg"),

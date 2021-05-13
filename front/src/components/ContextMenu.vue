@@ -3,7 +3,7 @@
         <ul>
             <li v-for="(value, index) of options" 
                 :key="index" 
-                @click="value.handler(); closeMenu()"
+                @click="invokeHandler(value)"
                 :ref="'ctx_' + index"
                 > {{value.text}} </li>
         </ul>
@@ -39,6 +39,10 @@
             });
         },
         methods: {
+            invokeHandler(val: { text: string; type: string; handler: Function }) {
+                val.handler(); 
+                this.closeMenu();
+            },
             openMenu(e: MouseEvent, options: Array<{ text: string; type: string; handler: Function }>): void {
                 e.preventDefault();
                 e.stopPropagation();
@@ -49,15 +53,6 @@
                 this.yPos = e.clientY;
                 this.showMenu = !this.showMenu;
             },
-            // populate() {
-            //     if (this.options !== null) {
-            //         this.options.forEach((item, index) => {
-            //             if (item.type !== "divider") {
-
-            //             }
-            //         })
-            //     }
-            // },
             closeMenu(): void {
                 this.options = null;
                 this.showMenu = !this.showMenu;

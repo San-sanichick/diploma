@@ -23,8 +23,8 @@
             </div>
             <div></div>
             <div class="header-button-container">
-                <button title="Сохранить на сервере" @click="saveProject" class="editor-save"></button>
-                <button title="Загрузить с сервера"  @click="loadProject" class="editor-load"></button>
+                <button title="Сохранить на сервере (Ctrl+S)" @click="saveProject" class="editor-save"></button>
+                <button title="Загрузить с сервера (Ctrl+O)"  @click="loadProject" class="editor-load"></button>
                 <button title="Сохранить DXF" @click="saveProjectToDXF" class="editor-save-dxf"></button>
             </div>
             <div class="header-button-container">
@@ -74,7 +74,7 @@
             </SplitView>
         </div>
         <div class="page-footer-editor">
-            <div class="mouse-coordinates">X: {{ mousePosition.x }}, Y: {{ mousePosition.y }}</div>
+            <div title="Координаты курсора" class="mouse-coordinates">X: {{ mousePosition.x }}, Y: {{ mousePosition.y }}</div>
             <div></div>
             <div class="snap-controls">
                 <input type="checkbox" name="snap" id="snap" v-model="isSnap">
