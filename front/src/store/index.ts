@@ -1,8 +1,8 @@
 import { createStore } from 'vuex';
 import axios from "axios";
 import UserInterface from '@/types/User';
-// import { AxiosAuthRefreshRequestConfig } from "axios-auth-refresh";
 
+// 👀
 export default createStore({
     state: {
         user: null as UserInterface | null,

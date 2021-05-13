@@ -19,6 +19,7 @@ axios.defaults.baseURL = config.API_URI;
 const DEFAULT_TITLE = "This page has no header";
 
 // Programmed routing
+// It's not stupid, you're stupid 👀
 router.beforeEach(async (to, from, next) => {
     /**
      * setting page header
@@ -27,7 +28,7 @@ router.beforeEach(async (to, from, next) => {
 
     // Checking if user is logged
     if (to.matched.some(record => record.meta.requiresAuth)) {        
-        if (await store.getters.isLogged) {
+        if (store.getters.isLogged) {
             next();
             return;
         }
@@ -35,11 +36,11 @@ router.beforeEach(async (to, from, next) => {
         next('/auth/login');
 
     } else if (to.path === '/auth/login' || to.path === '/auth/signup') { // if user is logged then he can't go to signup/login pages
-        if (! await store.getters.isLogged) {
+        if (!store.getters.isLogged) {
             next();
             return;
         } else if (from.path === to.path) {
-            const userId = await store.getters.getUser.id;
+            const userId = store.getters.getUser._id;
             next(`/${userId}/projects`);
         }
         next(from.path);
@@ -52,10 +53,13 @@ router.beforeEach(async (to, from, next) => {
         return;
 
     } else if (to.path === '/') {   
-        const userId = store.getters.getUser.id;  // redirect to default page if logged in
-        next(`/${userId}/projects`);
+        const userId = store.getters.getUser._id;  // redirect to default page if logged in
+        next(`/users/${userId}/projects`);
         return;
 
+    } else if (to.path.includes("undefined")) {
+        next("/404");
+        return;
     } else {    // in all other cases let user go where he wants
         next();
     }
