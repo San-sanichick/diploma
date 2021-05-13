@@ -18,6 +18,8 @@ import { clamp, fastRounding }           from "./utils/math";
 import colors                            from "./config/colors";
 import Layer                             from "./types/Layer";
 import DXFSerializer from "./utils/DXFSerializer";
+import Arc from "./shapes/arc";
+import { Emitter } from "mitt";
 
 /**
  * Possible engine states
@@ -87,6 +89,7 @@ export default class Engine {
     public engineState:     EngineState   = EngineState.SELECT;
     public curTypeToDraw:   Shapes        = Shapes.NONE;
     private cursorIcon: any;
+    private emitter: Emitter | undefined;
     private fps                           = 0;
     private fpsMeasurements: number[]     = [];
 
@@ -103,12 +106,13 @@ export default class Engine {
      * @param width optional width of the viewport
      * @param height optonal height of the viewport
      */
-    constructor(viewport: HTMLDivElement, width?: number, height?: number) {
+    constructor(viewport: HTMLDivElement, emitter?: Emitter, width?: number, height?: number) {
         this.viewport      = viewport;
         this.canvas        = viewport.querySelector(".canvas") as HTMLCanvasElement;
         this.canvasUI      = viewport.querySelector(".canvas-ui") as HTMLCanvasElement;
         this.ctx           = this.canvas.getContext("2d", { alpha: false });
         this.ctxUI         = this.canvasUI.getContext("2d");
+        this.emitter = emitter;
 
         if (this.ctx === null || this.ctxUI === null) throw new Error("An error has occured while getting context from canvas");
         
@@ -395,6 +399,14 @@ export default class Engine {
                     this.copyBuffer = [];
                     break;
                 }
+                case "KeyS": {
+                    this.emitter?.emit("save");
+                    break;
+                }
+                case "KeyO": {
+                    this.emitter?.emit("load");
+                    break;
+                }
                 case "Equal":
                     this.scale = clamp(this.scale += 2, 3, 200);
                     break;
@@ -472,6 +484,9 @@ export default class Engine {
                     case Shapes.BEZIER:
                         this.tempShape = new Bezier();
                         break;
+                    case Shapes.ARC:
+                        this.tempShape = new Arc();
+                        break;
                     case Shapes.POLYGON: {
                         // not the most elegant solution
                         const verticies = prompt("Введите число вершин", "4");
@@ -517,29 +532,30 @@ export default class Engine {
                     this.tempShape.color = "#fff";
 
                     this.tempShape.setNodeColor(NodeColors.INACTIVE);
+                    this.layers[this.getLayerIndex].shapes.push(this.tempShape);
+                    // switch(this.curTypeToDraw) {
+                    //     case Shapes.LINE:
+                    //         this.layers[this.getLayerIndex].shapes.push(this.tempShape)
+                    //         break;
+                    //     case Shapes.RECT:
+                    //         this.layers[this.getLayerIndex].shapes.push(this.tempShape)
+                    //         break;
+                    //     case Shapes.CIRCLE:
+                    //         this.layers[this.getLayerIndex].shapes.push(this.tempShape)
+                    //         break;
+                    //     case Shapes.ELLIPSE:
+                    //         this.layers[this.getLayerIndex].shapes.push(this.tempShape)
+                    //         break;
+                    //     case Shapes.BEZIER:
+                    //         this.layers[this.getLayerIndex].shapes.push(this.tempShape)
+                    //         break;
+                    //     case Shapes.POLYGON:
+                    //         this.layers[this.getLayerIndex].shapes.push(this.tempShape)
+                    //         break;
 
-                    switch(this.curTypeToDraw) {
-                        case Shapes.LINE:
-                            this.layers[this.getLayerIndex].shapes.push(this.tempShape)
-                            break;
-                        case Shapes.RECT:
-                            this.layers[this.getLayerIndex].shapes.push(this.tempShape)
-                            break;
-                        case Shapes.CIRCLE:
-                            this.layers[this.getLayerIndex].shapes.push(this.tempShape)
-                            break;
-                        case Shapes.ELLIPSE:
-                            this.layers[this.getLayerIndex].shapes.push(this.tempShape)
-                            break;
-                        case Shapes.BEZIER:
-                            this.layers[this.getLayerIndex].shapes.push(this.tempShape)
-                            break;
-                        case Shapes.POLYGON:
-                            this.layers[this.getLayerIndex].shapes.push(this.tempShape)
-                            break;
-                        default:
-                            break;
-                    }
+                    //     default:
+                    //         break;
+                    // }
                     
                     this.tempShape = null;
                 }
@@ -946,13 +962,6 @@ export default class Engine {
         // this.ctx.restore();
 
         this.ctx.save();
-            // can't use forEach, TS is screaming abount ctx being possibly null
-            // what a bloody idiot
-            // for (const shape of this.currentLayer) {
-            //     shape.renderSelf(this.ctx);
-            //     shape.renderNodes(this.ctx);
-            // }
-
             for (const layer of this.layers) {
                 for (const shape of layer.shapes) {
                     shape.renderSelf(this.ctx, colors.get(layer.layerColor));

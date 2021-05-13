@@ -235,7 +235,7 @@
         },
         mounted() {
             try {
-                this.engine = new Engine(this.$refs.viewport as HTMLDivElement);
+                this.engine = new Engine(this.$refs.viewport as HTMLDivElement, this.$emitter);
                 if (this.engine.init()) {
                     this.engine.start();
                     this.loadProject();
@@ -244,6 +244,10 @@
             } catch (err) {
                 console.error(err);
             }
+
+            this.$emitter.on("save", this.saveProject);
+            this.$emitter.on("load", this.loadProject);
+            // document.body.addEventListener("")
         },
         beforeUnmount() {
             this.engine.releaseEngine();
@@ -274,14 +278,13 @@
         },
         methods: {
             goBack() {
-                this.$router.push(`/${this.$store.getters.getUser._id}/projects`);
+                this.$router.push(`/users/${this.$store.getters.getUser._id}/projects`);
             },
             async saveProject() {
                 try {
                     const data = this.engine.save();
                     const id = this.$route.params.id;
                     const res = await axios.patch(`projects/save`, { id, data });
-                    console.log(res);
 
                     this.$flashMessage.show({
                         type: 'success',

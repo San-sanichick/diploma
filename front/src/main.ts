@@ -62,11 +62,12 @@ router.beforeEach(async (to, from, next) => {
 });
 
 
-// so that axios doesn't eat my 4XX errors
+// so that axios doesn't eat my 4XX and 5XX errors
 axios.defaults.validateStatus = (status): boolean => {
     return true;
 }
 
+// uhh, maybe this works
 axios.interceptors.response.use((res: AxiosResponse) => {
         return res;
     },

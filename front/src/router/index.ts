@@ -2,7 +2,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 const routes: Array<RouteRecordRaw> = [
     {
-        path: "/:userId",
+        path: "/users/:userId",
         component: () => import("../views/User.vue"),
         children: [
             {
