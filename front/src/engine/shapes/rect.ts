@@ -1,7 +1,8 @@
-import Shape from "./shape";
+import Shape, { ShapeColor } from "./shape";
 import Node from "./node";
 import Vec2 from "../utils/vector2d";
 import DXFWriter from "@tarikjabiri/dxf";
+import { invertHex } from "../utils/util";
 
 export default class Rectangle extends Shape {
     constructor(name = "Rectangle") {
@@ -30,7 +31,16 @@ export default class Rectangle extends Shape {
         if (this.nodes.length <= 1) return;
 
         ctx.fillStyle = "";
-        ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
+        ctx.strokeStyle = color ? color : this.color;
+        if (this.isSelected) {
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = ShapeColor.ACTIVE;
+            ctx.lineWidth = 3;
+            // ctx.strokeStyle = invertHex(this.color);
+            // if (color) {
+            //     ctx.strokeStyle = invertHex(color);
+            // }
+        }
 
         if (this.nodes.length === 2) {
             const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);

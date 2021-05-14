@@ -1,7 +1,8 @@
-import Shape from "./shape";
+import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
 import Node from "./node";
 import DXFWriter from "@tarikjabiri/dxf";
+import { invertHex } from "../utils/util";
 
 export default class Polygon extends Shape {
     public vertices: number;
@@ -47,7 +48,7 @@ export default class Polygon extends Shape {
     }
 
     renderSelf(ctx: CanvasRenderingContext2D, color?: string): void {
-        ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
+        ctx.strokeStyle = color ? color : this.color;
 
         if (this.nodes.length > 1 && this.nodes.length < 3) {
             const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
@@ -92,9 +93,19 @@ export default class Polygon extends Shape {
         } else if (this.nodes.length === this.vertices) {
             const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
 
+            ctx.setLineDash([]);
+            if (this.isSelected) {
+                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = ShapeColor.ACTIVE;
+                ctx.lineWidth = 3;
+                // ctx.strokeStyle = invertHex(this.color);
+                // if (color) {
+                //     ctx.strokeStyle = invertHex(color);
+                // }
+            }
+
             ctx.save();
                 ctx.fillStyle = "";
-                ctx.setLineDash([]);
                 ctx.beginPath();
                 ctx.moveTo(sv.x, sv.y);
                 for (let i = 1; i < this.nodes.length; i++) {

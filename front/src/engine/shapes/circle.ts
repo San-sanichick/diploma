@@ -1,6 +1,7 @@
-import Shape from "./shape";
+import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
 import DXFWriter from "@tarikjabiri/dxf";
+import { invertHex } from "../utils/util";
 
 export default class Circle extends Shape {
     constructor(name = "Circle") {
@@ -28,7 +29,16 @@ export default class Circle extends Shape {
         const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
         const ev: Vec2 = this.WorldToScreen(this.nodes[1].getPosition);
         
-        ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
+        ctx.strokeStyle = color ? color : this.color;
+        if (this.isSelected) {
+            ctx.setLineDash([5, 5]);
+            ctx.strokeStyle = ShapeColor.ACTIVE;
+            ctx.lineWidth = 3;
+            // ctx.strokeStyle = invertHex(this.color);
+            // if (color) {
+            //     ctx.strokeStyle = invertHex(color);
+            // }
+        }
         
         ctx.save();
             ctx.setLineDash([5, 15]);
@@ -37,11 +47,11 @@ export default class Circle extends Shape {
             ctx.lineTo(ev.x, ev.y);
             ctx.closePath();
             ctx.stroke();
+            ctx.setLineDash([]);
         ctx.restore();
 
         ctx.save();
             ctx.fillStyle = "";
-            ctx.setLineDash([]);
             ctx.beginPath();
             ctx.arc(sv.x, sv.y, radius * Shape.worldScale * Shape.worldGrid, 0, 2 * Math.PI, false);
             ctx.closePath();

@@ -1,7 +1,8 @@
-import Shape from "./shape";
+import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
 import Node from "./node";
 import DXFWriter from "@tarikjabiri/dxf";
+import { invertHex } from "../utils/util";
 
 export default class Ellipse extends Shape {
     constructor(name = "Ellipse") {
@@ -57,7 +58,16 @@ export default class Ellipse extends Shape {
             const rad1 = this.nodes[1].getPosition.subtract(this.nodes[0].getPosition).mag();
             const rad2 = svev.mag();
 
-            ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
+            ctx.strokeStyle = color ? color : this.color;
+            if (this.isSelected) {
+                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = ShapeColor.ACTIVE;
+                ctx.lineWidth = 3;
+                // ctx.strokeStyle = invertHex(this.color);
+                // if (color) {
+                //     ctx.strokeStyle = invertHex(color);
+                // }
+            }
 
             ctx.save();
                 ctx.fillStyle = "";

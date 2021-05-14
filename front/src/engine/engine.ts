@@ -682,17 +682,14 @@ export default class Engine {
         
         // uhh, better fps measurment, I guess?
         // const msPassed = this.fpsMeasurements[this.fpsMeasurements.length - 1] - this.fpsMeasurements[0];
-        // if (msPassed >= 1000) {
+        // if (msPassed >= 500) {
         //     this.fps = 1000 / (performance.now() - t2);
         //     this.fpsMeasurements = [];
         // }
 
         // this.renderDebug({ text: "FPS", metric: fastRounding(this.fps) },
         //                  { text: "Render time", metric: `${(performance.now() - t2).toFixed(3)}ms` },
-        //                  { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },
-        //                  { text: "Scale level", metric: this.scale },
-        //                  { text: "Current layer", metric: this.currentLayer },
-        //                  { text: "Shapes on layer", metric: this.layers[this.getLayerIndex].shapes.length });
+        //                  { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },);
     }
 
     public group() {
@@ -954,21 +951,23 @@ export default class Engine {
 
         this.ctx.lineWidth = 1;
 
-        // this.ctx.save();
-        if (this.tempShape !== null) {
-            this.tempShape.renderSelf(this.ctx);
-            this.tempShape.renderNodes(this.ctx);
-        }
-        // this.ctx.restore();
-
         this.ctx.save();
-            for (const layer of this.layers) {
-                for (const shape of layer.shapes) {
-                    shape.renderSelf(this.ctx, colors.get(layer.layerColor));
-                    shape.renderNodes(this.ctx);
-                }
+            if (this.tempShape !== null) {
+                this.tempShape.renderSelf(this.ctx);
+                this.tempShape.renderNodes(this.ctx);
             }
         this.ctx.restore();
+
+        
+        for (const layer of this.layers) {
+            for (const shape of layer.shapes) {
+                this.ctx.save();
+                    shape.renderSelf(this.ctx, colors.get(layer.layerColor));
+                    shape.renderNodes(this.ctx);
+                this.ctx.restore();
+            }
+        }
+        
 
         this.ctx.save();
         if (this.engineState === EngineState.SELECT) {

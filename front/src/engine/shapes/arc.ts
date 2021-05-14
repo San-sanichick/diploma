@@ -1,6 +1,7 @@
-import Shape from "./shape";
+import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
 import DXFWriter from "@tarikjabiri/dxf";
+import { invertHex } from "../utils/util";
 
 export default class Arc extends Shape {
     constructor(name = "Arc") {
@@ -81,7 +82,7 @@ export default class Arc extends Shape {
             const _angle = angle1 - angle3;
 
 
-            ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
+            
 
             // ctx.save();
             //     ctx.setLineDash([5, 15]);
@@ -92,9 +93,19 @@ export default class Arc extends Shape {
             //     ctx.stroke();
             // ctx.restore();
 
+            ctx.strokeStyle = color ? color : this.color;
+            if (this.isSelected) {
+                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = ShapeColor.ACTIVE;
+                ctx.lineWidth = 3;
+                // ctx.strokeStyle = invertHex(this.color);
+                // if (color) {
+                //     ctx.strokeStyle = invertHex(color);
+                // }
+            }
+
             ctx.save();
                 ctx.fillStyle = "";
-                ctx.setLineDash([]);
                 // ctx.beginPath();
                 ctx.moveTo(ev1.x, ev1.y);
                 ctx.arc(sv.x, sv.y, radius * Shape.worldScale * Shape.worldGrid, angle, angle - _angle, false);

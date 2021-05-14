@@ -1,6 +1,7 @@
-import Shape from "./shape";
+import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
 import DXFWriter from "@tarikjabiri/dxf";
+import { invertHex } from "../utils/util";
 
 export default class Line extends Shape {
     constructor(name = "Line") {
@@ -30,7 +31,16 @@ export default class Line extends Shape {
             // console.log(this.color);
             ctx.save();
                 ctx.fillStyle = "";
-                ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
+                ctx.strokeStyle = color ? color : this.color;
+                if (this.isSelected) {
+                    ctx.setLineDash([5, 5]);
+                    ctx.strokeStyle = ShapeColor.ACTIVE;
+                    ctx.lineWidth = 3;
+                    // ctx.strokeStyle = invertHex(this.color);
+                    // if (color) {
+                    //     ctx.strokeStyle = invertHex(color);
+                    // }
+                }
                 ctx.beginPath();
                 ctx.moveTo(sv.x, sv.y);
                 ctx.lineTo(ev.x, ev.y);

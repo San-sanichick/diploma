@@ -1,6 +1,7 @@
-import Shape from "./shape";
+import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
 import DXFWriter from "@tarikjabiri/dxf";
+import { invertHex } from "../utils/util";
 
 export default class Bezier extends Shape {
     constructor(name = "Bezier") {
@@ -70,7 +71,16 @@ export default class Bezier extends Shape {
             const mv2: Vec2 = this.WorldToScreen(this.nodes[2].getPosition);
             const ev: Vec2  = this.WorldToScreen(this.nodes[3].getPosition);
 
-            ctx.strokeStyle = this.isSelected ? "red" : color ? color : this.color;
+            ctx.strokeStyle = color ? color : this.color;
+            if (this.isSelected) {
+                ctx.setLineDash([5, 5]);
+                ctx.strokeStyle = ShapeColor.ACTIVE;
+                ctx.lineWidth = 3;
+                // ctx.strokeStyle = invertHex(this.color);
+                // if (color) {
+                //     ctx.strokeStyle = invertHex(color);
+                // }
+            }
 
             ctx.save();
                 // ctx.strokeStyle = this.color;

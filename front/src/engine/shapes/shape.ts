@@ -17,6 +17,11 @@ export interface ShapeObject {
     nodes: Array<any>;
 }
 
+export enum ShapeColor {
+    ACTIVE = "#9000ff",
+
+}
+
 /**
  * Abstract shape class, use as basis for every other shape
  */
