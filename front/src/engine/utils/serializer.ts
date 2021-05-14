@@ -19,9 +19,9 @@ import Polyline from "../shapes/polyline";
 export default class Serializer {
 
     /**
-     * Serializes a serializable object into a regular object with no type.
-     * @param { Serializable } object Serializable object
-     * @returns { any } serialized object
+     * Serializes a serializable array of objects into a regular array of objects with no type.
+     * @param { Serializable } object array of Serializable objects
+     * @returns { any } serialized array
      */
     // eslint-disable-next-line
     public static serialize(array: Serializable[]): any[] {
@@ -49,7 +49,7 @@ export default class Serializer {
     /**
      * 
      * @param { ShapeObject } obj object for deserialization
-     * @returns { Shape | null }  a Shape instance, if deserialization is successful, null otherwise
+     * @returns { Array<Drawable> | null }  an array of Drawable if deserialization is successful, null otherwise
      */
     public static deserialize(array: any[]): Array<Drawable> {
         const arr = new Array<Drawable>();

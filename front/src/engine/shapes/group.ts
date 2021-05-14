@@ -3,6 +3,15 @@ import { fastRounding } from "../utils/math";
 import Vec2 from "../utils/vector2d";
 import Drawable from "./drawable";
 
+/**
+ * Group class, represents a collection of shapes.
+ * 
+ * So, fun story, out of all CADs that I researched, only AutoCAD seemingly has the
+ * ability to GROUP entities. Every other one just says to use BLOCKs.
+ * Sooo, uhh, yea, that's an oversight by me, but blocks are considerably more complicated
+ * feature to implement, especially given the current state of this codebase, so screw that,
+ * we have our own proprietery entity boiz
+ */
 export default class Group implements Drawable {
     public  name: string;
     public  icon: string;

@@ -1,3 +1,19 @@
+/**
+ * This is a map of colors. 
+ * 
+ * Fun fact: AutoCAD and the likes store colors of layers as indecies.
+ * For example: red is index 1; white is index 7.
+ * 
+ * And in DXF, it is indeed stored as an index.
+ * Now, when you create a layer in AutoCAD, and try to assign it a color,
+ * it will show you a window with probably like ~255 indexed colors
+ * 
+ * BUT, you can also, somehow, you can actually have your own custom color, picked
+ * on the color picker thingamajig. How in the living HELL do you store THAT in DXF,
+ * I have NO CLUE.
+ * 
+ * TL;DR: 9 colors, that's it, have a nice day
+ */
 const colors = new Map<number, string>();
 
 colors.set(1, "rgba(255, 0, 0, 1)");

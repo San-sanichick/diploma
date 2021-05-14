@@ -28,10 +28,14 @@ export enum ShapeColor {
 export default abstract class Shape implements Drawable {
     public    type: string | undefined;
     /**
-     * Max nodes specifies how many node does the user have to place, to draw the shape,
-     * but not the overall maximum of nodes the shape can have.
+     * Max nodes specifies how many nodes does the user have to place to draw the shape,
+     * but not the overall maximum of nodes the shape can have. Very confusing, I know,
+     * guess what, its an afterthought, once again.
      * 
-     * For example, a Rectangle has 4 nodes. And a Polygon can have any number of nodes 
+     * For example, a Rectangle has 4 nodes. And a Polygon can have any number of nodes
+     * 
+     * Another fun example is Polyline, its value of maxNodes is Number.MAX_VALUE. This value gets
+     * updated at runtime, when the user ends drawing the Polylne. 
      * @private
      */
     private   maxNodes: number;
@@ -58,7 +62,7 @@ export default abstract class Shape implements Drawable {
         this.name = name;
         this.nodes = new Array<Node>();
         this.color = "#888";
-        this.icon = icon
+        this.icon = icon;
         this.isSelected = false;
         this.type = this.constructor.name;
         this.topLeftCorner = new Vec2(0, 0);
