@@ -91,6 +91,18 @@
     @import "../assets/scss/config.scss";
 
     .project-table {
+
+        .table-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            height: 60px;
+            position: relative;
+            align-content: center;
+            -moz-user-select: -moz-none;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
         .project-table-header {
             position: sticky;
             
@@ -98,28 +110,35 @@
 
             .table-header {
                 background-color: white;
-                
-                &:hover {
-                    background-color: white;
-                }
             }
         }
-        .table-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            height: 60px;
-            align-content: center;
-            -moz-user-select: -moz-none;
-            -webkit-user-select: none;
-            user-select: none;
+        
+        .project-table-body {
+            .table-row {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                height: 60px;
+                position: relative;
+                align-content: center;
+                -moz-user-select: -moz-none;
+                -webkit-user-select: none;
+                user-select: none;
 
-            &:hover {
-                background-color: #ccc;
-            }
+                &:hover::after {
+                    // background-color: $primaryTransparent;
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    left: 0;
+                    border: 1px dashed $primary;
+                }
 
-            &:focus {
-                background-color: rgba($color: $lightPrimary, $alpha: 0.2);
-                outline: none;
+                &:focus {
+                    background-color: $primaryTransparent;
+                    outline: none;
+                }
             }
         }
     }

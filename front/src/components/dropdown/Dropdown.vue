@@ -113,9 +113,7 @@
                 width: 0;
                 height: 0;
                 cursor: pointer;
-            }
-
-            
+            }            
         }
 
         .focused {

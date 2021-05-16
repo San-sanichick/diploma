@@ -95,7 +95,7 @@
             </div>
             <div class="slider">
                 <!-- don't ask me where these numbers come from, it's magic -->
-                <span>Масштаб: {{ Math.round((scale / 10) * 100) }}%</span>
+                <span>Масштаб: {{ Math.round((scale / 30) * 100) }}%</span>
                 <input class="editor-scale" type="range" name="editor-scale" v-model="scale" min="3" max="200">
             </div>
         </div>
@@ -263,7 +263,7 @@
             this.$emitter.on("save", this.saveProject);
             this.$emitter.on("load", this.loadProject);
 
-            this.$emitter.on("statechange", (e: any) => {
+            this.$emitter.on("statechange", (e: unknown) => {
                 const state = e as EngineState;
                 let option = this.toolSelectOptions.find(opt => opt.action === state);
                 this.toolSelected = option ?? this.toolSelectOptions[0];
@@ -378,6 +378,7 @@
                 }
             },
             handleFocused(id: number) {
+                // eslint-disable-next-line @typescript-eslint/no-unused-vars
                 this.focused = this.focused.map(f => f = false);
                 this.focused.splice(id, 1, true);
             },
@@ -389,6 +390,7 @@
             removeLayer(id: number) {
                 this.engine.removeLayer(id);
             },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             updateLayers(layer: any) {
                 const found = this.layers.find(l => l.id === layer.id);
                 if (found) {
@@ -396,9 +398,9 @@
                     this.engine.updateLayer(index, layer);
                 }
             },
-            updateSelected(item: Drawable) {
+            // updateSelected(item: Drawable) {
                 // this.engine.selectedElements.find(s => s.)
-            },
+            // },
             // These two are absolutely stupid,
             // but it has to be done, since Vue does not support casting in templates.
             // Well, yet, at the very least

@@ -40,6 +40,7 @@
             update(id: number) {
                 this.$emit('update:layer-selected', id);
             },
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             updateLayer(layer: any) {
                 this.$emit("update:layer", layer);
             }
