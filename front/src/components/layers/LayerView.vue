@@ -10,7 +10,7 @@
                 @remove="remove"
                 @update="update" />
         </ul>
-
+        <div class="spacer"></div>
         <div class="project-layers-buttons">
             <button @click="$emit('add')">+</button>
         </div>
@@ -52,20 +52,22 @@
     @import "../../assets/scss/buttonMixins.scss";
 
     .layer-list-wrapper {
-        height: 86%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        // height: 100%;
+        display: grid;
+        grid-template-rows: max-content auto max-content;
 
         .layer-list {
-            // flex: 1;
             height: 100%;
             list-style: none;
             padding: 0;
             margin: 0;
             cursor: pointer;
             user-select: none;
-            overflow-y: auto;
+            // overflow-y: auto;
+        }
+
+        .spacer {
+            height: 100%;
         }
 
         .project-layers-buttons {

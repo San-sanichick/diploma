@@ -1,4 +1,4 @@
-function RGBToHEX(rgba: string): string {
+export function RGBToHEX(rgba: string): string {
     const colors = rgba.replace(/^rgba?\(|\s+|\)$/g, '').split(',');
 
     const hex = `#${((1 << 24) + (parseInt(colors[0]) << 16) + (parseInt(colors[1]) << 8) + parseInt(colors[2])).toString(16).slice(1)}`;

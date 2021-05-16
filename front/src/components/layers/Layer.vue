@@ -112,6 +112,7 @@
 
         .layer-name-wrapper {
             width: 50%;
+            white-space: nowrap;
             
             input {
                 display: inline;

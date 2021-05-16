@@ -21,6 +21,17 @@ function clamp(val: number, min: number, max: number): number {
 }
 
 /**
+ * Linear interpolation
+ * @param start starting value
+ * @param end ending value
+ * @param t value from 0 to 1, percentage
+ * @returns value
+ */
+function lerp(start: number, end: number, t: number): number {
+    return start + t * (end - start);
+}
+
+/**
  * Rounds a given value. The performance gain is probably
  * most surely negligible, but hey, it looks cool 
  * @param val Number to be rounded

@@ -10,14 +10,21 @@
             for (const divider of this.dividers) {
                 divider.addEventListener("mousedown", (e: MouseEvent) => {
                     const x = e.clientX;
-                    const prevPane = divider.previousElementSibling;
-                    const nextPane = divider.nextElementSibling;
+                    const prevPane = divider.previousElementSibling as HTMLDivElement;
+                    const nextPane = divider.nextElementSibling as HTMLDivElement;
 
-                    divider.addEventListener("mousemove", (e: MouseEvent) => {
-                        const dx = e.clientX - x;
+                    // const moveHandler = (e: MouseEvent) => {
+                    //     const dx = e.clientX - x;
 
+                    //     prevPane.style.width = parseInt(getComputedStyle(prevPane).width) - dx + "px";
+                    //     // nextPane.style.left = 
+                    // }
 
-                    })
+                    // divider.addEventListener("mousemove", moveHandler);
+
+                    // divider.addEventListener("mouseup", (e: MouseEvent) => {
+                    //     divider.removeEventListener("mousedown", move)
+                    // })
                 })
             }
         },

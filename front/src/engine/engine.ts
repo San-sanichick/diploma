@@ -248,7 +248,7 @@ export default class Engine {
 
     set setCurLayer(val: number) {
         this.currentLayer = val;
-        this.selectedShapes.clear();
+        this.clearSelection();
     }
 
     get selectedElements() {
@@ -428,6 +428,8 @@ export default class Engine {
             //         return;
             // }
         }
+
+        this.emitter?.emit("statechange", this.engineState);
     }
 
     /**
@@ -436,6 +438,7 @@ export default class Engine {
     // TODO: Split updating into subroutines, so that this function is not so bloody huge as well
     private update(): void {
         const t1 = performance.now();
+        if (this.ctx === null || this.ctxUI === null) return;
 
         // updating
         if (this.mouse.getPressedButton === MouseButtons.MIDDLE) {
@@ -590,8 +593,7 @@ export default class Engine {
                 for (const shape of this.layers[this.getLayerIndex].shapes) {
                     shape.setIsSelected = false;
                     if (shape.isInRectangle(this.cursorOldPos, this.cursor)) {
-                        shape.setIsSelected = true;
-                        this.selectedShapes.add(shape);
+                        this.addToSelection(shape);
                     }
                 }
             }
@@ -643,7 +645,7 @@ export default class Engine {
 
 
                     // const angle = angle1 - angle2;
-                    shape.rotate(-this.cursor.subtract(this.cursorOldPos).x / 100, this.cursorPosPivot);
+                    shape.rotate(-this.cursor.subtract(this.cursorOldPos).x / 50, this.cursorPosPivot);
                     // shape.rotate(angle, this.cursorPosPivot);
                 }
             } else {
@@ -700,7 +702,7 @@ export default class Engine {
                 return !this.selectedShapes.has(shape);
             });
 
-            this.selectedShapes.clear();
+            this.clearSelection();
             this.engineState = EngineState.SELECT;
         }
     }
@@ -712,11 +714,12 @@ export default class Engine {
             if(obj instanceof Group) {
                 const group = obj as Group;
                 for (const shape of group.getObjects) {
-                    shape.setIsSelected = false;
+                    // shape.setIsSelected = false;
                     this.layers[this.getLayerIndex].shapes.push(shape);
                 }
 
-                this.selectedShapes.clear();
+                // this.selectedShapes.clear();
+                this.clearSelection();
                 this.layers[this.getLayerIndex].shapes.splice(this.layers[this.getLayerIndex].shapes.indexOf(group), 1);
                 this.engineState = EngineState.SELECT;
             }

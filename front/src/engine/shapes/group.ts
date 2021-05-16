@@ -35,6 +35,7 @@ export default class Group implements Drawable {
             this.objects.push(object);
         }
     }
+    
     vertices?: number | undefined;
 
     toDXF(drw: DXFWriter): void {
@@ -75,6 +76,7 @@ export default class Group implements Drawable {
         }
         return true;
     }
+    
     translate(deltaDist: Vec2): void {
         this.objects.forEach(shape => shape.translate(deltaDist));
     }

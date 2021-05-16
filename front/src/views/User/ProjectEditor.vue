@@ -15,7 +15,7 @@
                     :focused="focused[1]"
                     :options="shapeSelectOptions"
                     @dropdown-focused="handleFocused"
-                    v-model:selected="shapeSelected" />
+                    v-model:selected="shapeSelectedTool" />
             </div>
             <div class="header-button-container">
                 <button title="Группировать (Ctrl+G)" @click="engine.group()" class="editor-group"></button>
@@ -32,8 +32,12 @@
             </div>
         </div>
         <div class="editor">
-            <SplitView>
-                <Pane>
+            <splitpanes
+                :push-other-panes="false">
+                <pane 
+                    min-size="2"
+                    size="15"
+                    >
                     <div class="project-tree panel">
                         <div class="panel-header">
                             Дерево проекта
@@ -44,8 +48,8 @@
                                 @selected="selectElementHandler" />
                         </ul>
                     </div>
-                </Pane>
-                <Pane style="flex: 20 1 auto">
+                </pane>
+                <pane size="70">
                     <div class="viewport" 
                         ref="viewport" 
                         tabindex="1">
@@ -53,25 +57,34 @@
                         class="canvas-ui" ref="canvas-ui"/>
                         <canvas class="canvas" ref="canvas"/>
                     </div>
-                </Pane>
-                <Pane>
-                    <div class="properties panel">
-                        <div class="panel-header">
-                            Свойства
-                        </div>
-                        <Properties :item="selectedShape" />
-                    </div>
-                    <div class="project-layers panel">
-                        <div class="panel-header">Слои</div>
-                        <LayerView 
-                            :layers="layers" 
-                            @update:layer="updateLayers"
-                            v-model:layer-selected="currentLayer"
-                            @add="addLayer"
-                            @remove="removeLayer" />
-                    </div>
-                </Pane>
-            </SplitView>
+                </pane>
+                <pane 
+                    min-size="2"
+                    size="15"
+                    >
+                    <splitpanes horizontal>
+                        <pane min-size="20">
+                            <div class="properties panel">
+                                <div class="panel-header">
+                                    Свойства
+                                </div>
+                                <Properties :item="selectedShape" />
+                            </div>
+                        </pane>
+                        <pane min-size="20">
+                            <div class="project-layers panel">
+                                <div class="panel-header">Слои</div>
+                                <LayerView 
+                                    :layers="layers" 
+                                    @update:layer="updateLayers"
+                                    v-model:layer-selected="currentLayer"
+                                    @add="addLayer"
+                                    @remove="removeLayer" />
+                            </div>
+                        </pane>
+                    </splitpanes>
+                </pane>
+            </splitpanes>
         </div>
         <div class="page-footer-editor">
             <div title="Координаты курсора" class="mouse-coordinates">X: {{ mousePosition.x }}, Y: {{ mousePosition.y }}</div>
@@ -91,10 +104,11 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
+    import { Splitpanes, Pane } from "splitpanes";
+    import 'splitpanes/dist/splitpanes.css'
+
     import TreeItem from "@/components/TreeItem.vue";
     import Dropdown from "@/components/dropdown/Dropdown.vue";
-    import SplitView from "@/components/panes/SplitView.vue";
-    import Pane from "@/components/panes/Pane.vue";
     import Properties from "@/components/Properties.vue";
     import LayerView from "@/components/layers/LayerView.vue";
 
@@ -107,12 +121,14 @@
 
     export default defineComponent({
         components: {
-            SplitView,
+            // SplitView,
+            // Pane,
+            Splitpanes, 
             Pane,
             TreeItem,
             Properties,
             LayerView,
-            Dropdown
+            Dropdown,
         },
         data() {
             return {
@@ -135,7 +151,8 @@
                     { id: 6, name: "Полилиния",     img: "/shapeIcons/polyline.svg",  action: Shapes.POLYLINE,    hotkey: "" },
                     { id: 7, name: "Многоугольник", img: "/shapeIcons/polygon.svg",   action: Shapes.POLYGON,     hotkey: "" },
                 ],
-                shapeSelected: { id: 0, name: "Линия", img: "/shapeIcons/line.svg", action: Shapes.LINE, hotkey: "" },
+                shapeSelectedTool: { id: 0, name: "Линия", img: "/shapeIcons/line.svg", action: Shapes.LINE, hotkey: "" },
+                toolSelected: { id: 0, name: "Выделение",       img: "/toolIcons/select.svg",     action: EngineState.SELECT,    hotkey: "A" },
                 toolId: 0,
                 focused: [ true, false ]
             }
@@ -160,7 +177,6 @@
                     return this.engine.getCurLayer;
                 },
                 set(val: number) {
-                    console.log("HAHAH" + val);
                     this.engine.setCurLayer = val;
                 }
             },
@@ -177,23 +193,22 @@
                 return null;
             },
             // first time I used this, this is very noice
-            toolSelected: {
-                get(): { id: number; name: string; img: string; action: EngineState; hotkey: string } {
-                    let option = this.toolSelectOptions.find(opt => opt.action === this.engine.engineState);
+            // toolSelected: {
+            //     get(): { id: number; name: string; img: string; action: EngineState; hotkey: string } {
+            //         let option = this.toolSelectOptions.find(opt => opt.action === this.engine.engineState);
 
-                    // hacky solutions to modern problems
-                    if (this.engine.engineState === EngineState.DRAW) {
-                        option = this.toolSelectOptions.find(opt => opt.id === this.toolId);
-                        return option ?? this.toolSelectOptions[0];
-                    } 
-                    // console.log(this.toolSelected);
-                    return option ?? this.toolSelectOptions[0];
-                },
-                set(option: { id: number; name: string; img: string; action: EngineState; hotkey: string }) {
-                    // if (this.engine.engineState === EngineState.DRAW) return;
-                    this.engine.engineState = option.action;
-                }
-            },
+            //         // hacky solutions to modern problems
+            //         if (this.engine.engineState === EngineState.DRAW) {
+            //             option = this.toolSelectOptions.find(opt => opt.id === this.toolId);
+            //             return option ?? this.toolSelectOptions[0];
+            //         } 
+            //         // console.log(this.toolSelected);
+            //         return option ?? this.toolSelectOptions[0];
+            //     },
+            //     set(option: { id: number; name: string; img: string; action: EngineState; hotkey: string }) {
+            //         this.engine.engineState = option.action;
+            //     }
+            // },
             mousePosition(): { x: string; y: string } {
                 if (this.engine.mouseCoordinates) {
                     return {
@@ -247,16 +262,31 @@
 
             this.$emitter.on("save", this.saveProject);
             this.$emitter.on("load", this.loadProject);
+
+            this.$emitter.on("statechange", (e: any) => {
+                const state = e as EngineState;
+                let option = this.toolSelectOptions.find(opt => opt.action === state);
+                this.toolSelected = option ?? this.toolSelectOptions[0];
+
+                if (this.engine.engineState === EngineState.DRAW) {
+                    option = this.toolSelectOptions.find(opt => opt.id === this.toolId);
+                    this.toolSelected = option ?? this.toolSelectOptions[0];
+                    return;
+                } 
+
+                // this.focused[0] = true;
+                this.handleFocused(0);
+            })
             // document.body.addEventListener("")
         },
         beforeUnmount() {
             this.engine.releaseEngine();
         },
         watch: {
-            shapeSelected: {
+            shapeSelectedTool: {
                 handler() {
                     this.engine.engineState = EngineState.DRAW;
-                    this.engine.curTypeToDraw = this.shapeSelected.action;
+                    this.engine.curTypeToDraw = this.shapeSelectedTool.action;
                 }
             },
             toolSelected: {
@@ -271,7 +301,7 @@
                         this.engine.engineState = this.toolSelected.action;
                     } else if (newVal[1]) {
                         this.engine.engineState = EngineState.DRAW;
-                        this.engine.curTypeToDraw = this.shapeSelected.action;
+                        this.engine.curTypeToDraw = this.shapeSelectedTool.action;
                     }
                 }
             }
@@ -348,9 +378,7 @@
                 }
             },
             handleFocused(id: number) {
-                console.log(id);
                 this.focused = this.focused.map(f => f = false);
-                // this.focused[id] = true;
                 this.focused.splice(id, 1, true);
             },
             addLayer() {
@@ -449,8 +477,10 @@
             height: 100%;
 
             .panel {
-                min-width: 200px;
-                // height: 100%;
+                min-width: 20px;
+                display: grid;
+                grid-template-rows: max-content auto;
+                height: 100%;
 
                 .panel-header {
                     background-color: $primary;
@@ -481,7 +511,7 @@
             }
 
             .project-layers {
-                height: 40%;
+                height: 100%;
             }
 
             .viewport {
@@ -558,5 +588,34 @@
                 }
             }
         }
+    }
+
+
+    .splitpanes__splitter {
+        background-color: $darkSecondaryGreen;
+        position: relative;
+    }
+    .splitpanes__splitter:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 0;
+        transition: opacity 0.4s;
+        // background-color: 
+        background-color: $primaryTransparent;
+        opacity: 0;
+        z-index: 10000;
+    }
+    .splitpanes__splitter:hover:before {opacity: 1;}
+    .splitpanes--vertical > .splitpanes__splitter:before {
+        left: -5px;
+        right: -5px;
+        height: 100%;
+    }
+
+    .splitpanes--horizontal > .splitpanes__splitter:before {
+        top: -5px;
+        bottom: -5px;
+        width: 100%;
     }
 </style>
