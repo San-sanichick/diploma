@@ -88,6 +88,7 @@ export default class Engine {
     public  isSnap                        = false;
     public engineState:     EngineState   = EngineState.SELECT;
     public curTypeToDraw:   Shapes        = Shapes.NONE;
+    // eslint-disable-next-line
     private cursorIcon: any;
     private emitter: Emitter | undefined;
     private fps                           = 0;
@@ -224,6 +225,7 @@ export default class Engine {
         this.selectedShapes.clear();
     }
 
+    // eslint-disable-next-line
     public updateLayer(index: number, value: any) {
         const l = this.layers[index];
         l.layerColor = value.layerColor;
@@ -237,9 +239,19 @@ export default class Engine {
 
         this.selectedShapes.clear();
     }
-
+    
+    /**
+     * Returns the index of the current layer, 0 if the layer somehow doesn't exist,
+     * which should never happen
+     * @returns the index of the current layer, 0 if the layer doesn't exist
+     */
     get getLayerIndex(): number {
-        return this.layers.indexOf(this.layers.find(l => l.id === this.currentLayer)!);
+        const found = this.layers.find(l => l.id === this.currentLayer);
+        if (found) { 
+            return this.layers.indexOf(found);
+        } else {
+            return 0;
+        }
     }
 
     get getCurLayer(): number {
@@ -287,13 +299,13 @@ export default class Engine {
     }
 
     public save() {
-
         const layers = [];
         for (const layer of this.layers) {
             layers.push({
                 id: layer.id,
                 layerColor: layer.layerColor,
                 name: layer.name,
+                // eslint-disable-next-line
                 shapes: Serializer.serialize(layer.shapes)
             })
         }
@@ -306,9 +318,10 @@ export default class Engine {
         }
     }
 
+    // eslint-disable-next-line
     public load(data: { offset: {x: number; y: number}; scale: number; layers: any[] }) {
-        // this.currentLayer = [];
-        this.selectedShapes.clear();
+        // this.selectedShapes.clear();
+        this.clearSelection();
         if (data.layers.length !== 0) {
             this.layers = [];
 
@@ -334,15 +347,14 @@ export default class Engine {
             try {
                 this.update();
                 // :)
+                // run these kinda incapsulated from the update loop
                 this.mouse.resetMouseController();
-                this.keyboard.resetKeyController();
+                this.keyboard.resetKeyboardController();
                 requestAnimationFrame(updateRoutine);
             } catch(e) {
                 console.error(e);
                 return;
             }
-            // this.update();
-            // requestAnimationFrame(updateRoutine);
         }
 
         requestAnimationFrame(updateRoutine);
@@ -437,7 +449,7 @@ export default class Engine {
      */
     // TODO: Split updating into subroutines, so that this function is not so bloody huge as well
     private update(): void {
-        const t1 = performance.now();
+        // const t1 = performance.now();
         if (this.ctx === null || this.ctxUI === null) return;
 
         // updating
@@ -458,14 +470,14 @@ export default class Engine {
             this.scale = clamp(this.scale, 3, 200);
         }
         
+        this.hotKeyHandler();
+
         const mouseAfterZoom = this.ScreenToWorld(Vec2.copyFrom(this.mouse.getCurrentPosition()));
         this.offset = this.offset.add(mouseBeforeZoom.subtract(mouseAfterZoom));
         
         this.cursor = mouseAfterZoom.add(new Vec2(0, 0).multiply(this.grid));
         // this.cursor.floor();
         if (this.isSnap) this.cursor.floor();
-
-        this.hotKeyHandler();
 
         // TODO: Change cursor icon based on engine state
         out:
@@ -520,7 +532,6 @@ export default class Engine {
                     this.tempShape.setMaxNodeNumber = this.tempShape.numberOfNodes;
                     this.tempShape.setNodeColor(NodeColors.INACTIVE);
                     this.tempShape.color = "#fff";
-                    // this.layers[this.currentLayer].shapes.push(this.tempShape)
                     this.layers[this.getLayerIndex].shapes.push(this.tempShape)
                     this.tempShape = null;
                     this.selectedNode = null;
@@ -536,29 +547,6 @@ export default class Engine {
 
                     this.tempShape.setNodeColor(NodeColors.INACTIVE);
                     this.layers[this.getLayerIndex].shapes.push(this.tempShape);
-                    // switch(this.curTypeToDraw) {
-                    //     case Shapes.LINE:
-                    //         this.layers[this.getLayerIndex].shapes.push(this.tempShape)
-                    //         break;
-                    //     case Shapes.RECT:
-                    //         this.layers[this.getLayerIndex].shapes.push(this.tempShape)
-                    //         break;
-                    //     case Shapes.CIRCLE:
-                    //         this.layers[this.getLayerIndex].shapes.push(this.tempShape)
-                    //         break;
-                    //     case Shapes.ELLIPSE:
-                    //         this.layers[this.getLayerIndex].shapes.push(this.tempShape)
-                    //         break;
-                    //     case Shapes.BEZIER:
-                    //         this.layers[this.getLayerIndex].shapes.push(this.tempShape)
-                    //         break;
-                    //     case Shapes.POLYGON:
-                    //         this.layers[this.getLayerIndex].shapes.push(this.tempShape)
-                    //         break;
-
-                    //     default:
-                    //         break;
-                    // }
                     
                     this.tempShape = null;
                 }
@@ -674,7 +662,7 @@ export default class Engine {
             this.ungroup();
         }
 
-        const updateTime = performance.now() - t1;
+        // const updateTime = performance.now() - t1;
         
         // rendering
         // const t2 = performance.now();

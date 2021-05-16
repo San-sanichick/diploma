@@ -100,7 +100,7 @@ export default class KeyboardController {
         return this.alt;
     }
 
-    public resetKeyController() {
+    public resetKeyboardController() {
         this.pressedButton = null;
         this.releasedButton = null;
     }

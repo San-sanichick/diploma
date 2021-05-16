@@ -60,6 +60,7 @@
             },
         },
         methods: {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             onClickHandler(option: { id: number; name: string; img: string; action: any; hotkey: string }) {
                 // this.selected = option;
                 this.isOpen = !this.isOpen;

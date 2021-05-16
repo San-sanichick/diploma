@@ -89,13 +89,13 @@
         <div class="page-footer-editor">
             <div title="Координаты курсора" class="mouse-coordinates">X: {{ mousePosition.x }}, Y: {{ mousePosition.y }}</div>
             <div></div>
-            <div class="snap-controls">
+            <div class="snap-controls" title="Привязка к сетке (Ctrl+B)">
                 <input type="checkbox" name="snap" id="snap" v-model="isSnap">
                 <label for="snap">Привязка к сетке</label>
             </div>
             <div class="slider">
                 <!-- don't ask me where these numbers come from, it's magic -->
-                <span>Масштаб: {{ Math.round((scale / 30) * 100) }}%</span>
+                <span title="Масштаб (Ctrl+=, Ctrl+-)">Масштаб: {{ Math.round((scale / 30) * 100) }}%</span>
                 <input class="editor-scale" type="range" name="editor-scale" v-model="scale" min="3" max="200">
             </div>
         </div>
