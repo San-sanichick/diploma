@@ -10,7 +10,7 @@ import mitt, { Emitter } from "mitt";
 import router from './router';
 import store from './store';
 
-import UserInterface from '@/types/User';
+import UserInterface from './types/User';
 import config from "./config/config";
 import Axios from 'axios';
 

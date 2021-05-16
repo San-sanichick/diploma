@@ -14,7 +14,7 @@
                 @click="select"
                 >
                 <div v-if="item.icon" class="item-image"
-                    :style="{ backgroundImage: 'url(' + require('@/assets/shapeIcons/' + item.icon) + ')' }"></div>
+                    :style="{ backgroundImage: 'url(/src/assets/shapeIcons/' + item.icon + ')' }"></div>
                 <span class="item-text">
                     {{ item.name }}
                 </span>

@@ -6,7 +6,7 @@
 
 <script lang="ts">
     import { defineComponent } from 'vue';
-    import ContextMenu from "@/components/ContextMenu.vue";
+    import ContextMenu from "./components/ContextMenu.vue";
 
     export default defineComponent({
         components: {
@@ -23,6 +23,7 @@
 
 <style lang="scss">
     body {
+        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&display=swap');
         height: 100vh;
         margin: 0;
     }

@@ -164,7 +164,7 @@ export default class Engine {
     public init(): boolean {
         if (this.ctx === null) return false;
         this.cursorIcon = new Image();
-        this.cursorIcon.src = require("../../src/assets/cursor.svg");
+        this.cursorIcon.src = "/src/assets/cursor.svg";
         Shape.worldGrid = this.grid;
         this.ctx.lineWidth = 1;
         this.ctx.translate(0.5, 0.5);

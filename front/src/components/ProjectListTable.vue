@@ -28,7 +28,7 @@
 
 <script lang="ts">
     import { defineComponent, PropType } from 'vue';
-    import Project from '@/types/Project';
+    import Project from '../types/Project';
 
     export default defineComponent({
         emits: ["project-clicked", "open-project", "setup-project", "delete-project"],

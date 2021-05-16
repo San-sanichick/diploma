@@ -59,7 +59,7 @@
                     console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
-                        image: require("../assets/flashMessage/success.svg"),
+                        image: "/src/assets/flashMessage/success.svg",
                         text: err
                     });
                 }

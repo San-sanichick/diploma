@@ -20,7 +20,7 @@
 
 <script lang="ts">
     import { defineComponent, PropType } from 'vue';
-    import Project from '@/types/Project';
+    import Project from '../types/Project';
 
     export default defineComponent({
         emits: ["project-clicked", "open-project", "setup-project", "delete-project"],
@@ -110,6 +110,10 @@
                     display: grid;
                     grid-template-columns: max-content;
                     margin: 0 10px;
+
+                    h3 {
+                        font-weight: 600;
+                    }
 
                     p {
                         color: #ccc;

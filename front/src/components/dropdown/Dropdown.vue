@@ -9,7 +9,7 @@
             <div
                 class="dropdown-trigger"
                 :title="selected.name"
-                :style="{ backgroundImage: 'url(' + require('@/assets' + selected.img) + ')' }">
+                :style="{ backgroundImage: 'url(/src/assets' + selected.img + ')' }">
             </div>
             <div class="dropdown-trigger-triangle"
                 @click="triggered"></div>
@@ -23,7 +23,7 @@
                     <div class="selected-option">
                         <div :class="{ 'checkmark': (selected.id === option.id && focused) }"></div>
                     </div>
-                    <div :style="{ backgroundImage: 'url(' + require('@/assets' + option.img) + ')' }"></div>
+                    <div :style="{ backgroundImage: 'url(/src/assets' + option.img + ')' }"></div>
                     <span>{{ option.name }}</span>
                     <span class="dropdown-option-hotkey" v-if="option.hotkey !== ''"> {{ option.hotkey }} </span>
                 </li>
@@ -37,6 +37,7 @@
     import { directive } from "vue3-click-away";
 
     export default defineComponent({
+        name: "dropdown",
         directives: {
             ClickAway: directive
         },

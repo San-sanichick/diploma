@@ -82,7 +82,7 @@
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: require("../../assets/flashMessage/fail.svg"),
+                        image: "/src/assets/flashMessage/fail.svg",
                         text: err
                     });
                 }
@@ -100,13 +100,13 @@
                     this.list.push(res.data.data);
                     this.$flashMessage.show({
                         type: 'success',
-                        image: require("../../assets/flashMessage/success.svg"),
+                        image: "/src/assets/flashMessage/success.svg",
                         text: res.data.msg
                     });
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: require("../../assets/flashMessage/fail.svg"),
+                        image: "/src/assets/flashMessage/fail.svg",
                         text: err
                     });
                 }
@@ -124,13 +124,13 @@
 
                     this.$flashMessage.show({
                         type: 'success',
-                        image: require("../../assets/flashMessage/success.svg"),
+                        image: "../../assets/flashMessage/success.svg",
                         text: res.data.msg
                     });
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: require("../../assets/flashMessage/fail.svg"),
+                        image: "/src/assets/flashMessage/fail.svg",
                         text: err
                     });
                 }
@@ -166,13 +166,13 @@
 
                     this.$flashMessage.show({
                         type: 'success',
-                        image: require("../../assets/flashMessage/success.svg"),
+                        image: "/src/assets/flashMessage/success.svg",
                         text: res.data.msg
                     });
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: require("../../assets/flashMessage/fail.svg"),
+                        image: "/src/assets/flashMessage/fail.svg",
                         text: err
                     });
                 }
@@ -211,6 +211,7 @@
             h3 {
                 font-size: 24pt;
                 margin: 10px 0;
+                font-weight: 600;
             }
 
             .page-header-buttons {

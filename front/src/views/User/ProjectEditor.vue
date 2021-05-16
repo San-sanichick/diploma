@@ -40,7 +40,7 @@
                     >
                     <div class="project-tree panel">
                         <div class="panel-header">
-                            Дерево проекта
+                            <h3>Дерево проекта</h3>
                         </div>
                         <ul>
                             <TreeItem 
@@ -66,14 +66,16 @@
                         <pane min-size="20">
                             <div class="properties panel">
                                 <div class="panel-header">
-                                    Свойства
+                                    <h3>Свойства</h3>
                                 </div>
                                 <Properties :item="selectedShape" />
                             </div>
                         </pane>
                         <pane min-size="20">
                             <div class="project-layers panel">
-                                <div class="panel-header">Слои</div>
+                                <div class="panel-header">
+                                    <h3>Слои</h3>
+                                </div>
                                 <LayerView 
                                     :layers="layers" 
                                     @update:layer="updateLayers"
@@ -318,13 +320,13 @@
 
                     this.$flashMessage.show({
                         type: 'success',
-                        image: require("../../assets/flashMessage/success.svg"),
+                        image: "/src/assets/flashMessage/success.svg",
                         text: res.data.msg
                     });
                 } catch(err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: require("../../assets/flashMessage/fail.svg"),
+                        image: "/src/assets/flashMessage/fail.svg",
                         text: err
                     });
                 }
@@ -339,14 +341,14 @@
 
                     this.$flashMessage.show({
                         type: 'success',
-                        image: require("../../assets/flashMessage/success.svg"),
+                        image: "/src/assets/flashMessage/success.svg",
                         text: res.data.msg
                     });
                 } catch (err) {
                     console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
-                        image: require("../../assets/flashMessage/fail.svg"),
+                        image: "/src/assets/flashMessage/fail.svg",
                         text: err
                     });
                 }
@@ -355,7 +357,7 @@
                 fileDownload(this.engine.saveToDXF(), "file.dxf");
                 this.$flashMessage.show({
                     type: 'success',
-                    image: require("../../assets/flashMessage/success.svg"),
+                    image:"/src/assets/flashMessage/success.svg",
                     text: "Успешно сохранено в файл"
                 });
             },
@@ -490,6 +492,13 @@
                     text-align: left;
                     padding: 12px 15px;
                     user-select: none;
+
+                    h3 {
+                        font-size: 1em;
+                        margin: 0;
+                        font-weight: 600;
+                        white-space: nowrap;
+                    }
                 }
             }
 

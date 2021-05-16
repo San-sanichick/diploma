@@ -1,41 +1,19 @@
 {
-    "compilerOptions": {
-        "experimentalDecorators": true,
-        "target": "esnext",
-        "module": "esnext",
-        "strict": true,
-        "jsx": "preserve",
-        "importHelpers": true,
-        "moduleResolution": "node",
-        "skipLibCheck": true,
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true,
-        "sourceMap": true,
-        "baseUrl": ".",
-        "types": [
-            "webpack-env",
-            "resize-observer-browser"
-        ],
-            "paths": {
-            "@/*": [
-                "src/*"
-            ]
-        },
-        "lib": [
-            "esnext",
-            "dom",
-            "dom.iterable",
-            "scripthost"
-        ]
-    },
-    "include": [
-        "src/**/*.ts",
-        "src/**/*.tsx",
-        "src/**/*.vue",
-        "tests/**/*.ts",
-        "tests/**/*.tsx"
-    ],
-    "exclude": [
-        "node_modules"
-    ]
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "strict": true,
+    "jsx": "preserve",
+    "sourceMap": true,
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "lib": ["esnext", "dom"],
+    "types": ["vite/client", "node"],
+    "baseUrl": ".",
+    "paths": {
+        "@/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.d.ts", "src/**/*.tsx", "src/**/*.vue"]
 }

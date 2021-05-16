@@ -72,9 +72,9 @@
 
 <script lang="ts">
     import { defineComponent, PropType } from 'vue'
-    import Drawable from '@/engine/shapes/drawable'
-    import Group from '@/engine/shapes/group';
-    import Shape from '@/engine/shapes/shape';
+    import Drawable from '../engine/shapes/drawable'
+    import Group from '../engine/shapes/group';
+    import Shape from '../engine/shapes/shape';
     export default defineComponent({
         props: {
             item: {
