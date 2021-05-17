@@ -258,27 +258,32 @@
                     this.loadProject();
                 }
 
+                this.$emitter.on("save", this.saveProject);
+                this.$emitter.on("load", this.loadProject);
+
+                this.$emitter.on("statechange", (e: unknown) => {
+                    const state = e as EngineState;
+                    let option = this.toolSelectOptions.find(opt => opt.action === state);
+                    this.toolSelected = option ?? this.toolSelectOptions[0];
+
+                    if (this.engine.engineState === EngineState.DRAW) {
+                        option = this.toolSelectOptions.find(opt => opt.id === this.toolId);
+                        this.toolSelected = option ?? this.toolSelectOptions[0];
+                        return;
+                    } 
+
+                    // this.focused[0] = true;
+                    this.handleFocused(0);
+                })
             } catch (err) {
-                console.error(err);
+                this.$flashMessage.show({
+                    type: 'error',
+                    image: "/src/assets/flashMessage/fail.svg",
+                    text: err
+                });
             }
 
-            this.$emitter.on("save", this.saveProject);
-            this.$emitter.on("load", this.loadProject);
-
-            this.$emitter.on("statechange", (e: unknown) => {
-                const state = e as EngineState;
-                let option = this.toolSelectOptions.find(opt => opt.action === state);
-                this.toolSelected = option ?? this.toolSelectOptions[0];
-
-                if (this.engine.engineState === EngineState.DRAW) {
-                    option = this.toolSelectOptions.find(opt => opt.id === this.toolId);
-                    this.toolSelected = option ?? this.toolSelectOptions[0];
-                    return;
-                } 
-
-                // this.focused[0] = true;
-                this.handleFocused(0);
-            })
+            
             // document.body.addEventListener("")
         },
         beforeUnmount() {
@@ -336,6 +341,7 @@
 
                 try {
                     const res = await axios.get(`projects/get/${id}`);
+                    if (res.status !== 200) throw new Error(res.data.msg);
                     const data = res.data;
                     this.engine.load(data.data);
 
@@ -345,7 +351,7 @@
                         text: res.data.msg
                     });
                 } catch (err) {
-                    console.error(err);
+                    this.$router.push("/");
                     this.$flashMessage.show({
                         type: 'error',
                         image: "/src/assets/flashMessage/fail.svg",

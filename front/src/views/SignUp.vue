@@ -59,7 +59,7 @@
                     console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "/src/assets/flashMessage/success.svg",
+                        image: "/src/assets/flashMessage/fail.svg",
                         text: err
                     });
                 }
@@ -87,6 +87,7 @@
             h1 {
                 font-size: 36pt;
                 margin: 0;
+                font-weight: 600;
             }
 
             .form-row {

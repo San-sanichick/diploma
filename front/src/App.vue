@@ -22,14 +22,14 @@
 </script>
 
 <style lang="scss">
+    @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&display=swap');
     body {
-        @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&display=swap');
         height: 100vh;
         margin: 0;
     }
 
     #app {
-        font-family: Open Sans, Arial, sans-serif;
+        font-family: "Open Sans", Arial, sans-serif;
         text-align: center;
         color: black;
         height: 100%;

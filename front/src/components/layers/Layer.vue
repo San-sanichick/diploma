@@ -23,7 +23,7 @@
                 :value="layer.name" 
                 @keyup.enter="updateLayerName">
         </div>
-        <button :disabled="disable" @click.stop="$emit('remove', layer.id)">-</button>
+        <button :disabled="disable" @click.stop="$emit('remove', layer.id)">–</button>
         <ColorPicker
             v-model:show="show"
             :color="layer.layerColor" 
@@ -132,6 +132,7 @@
         button {
             width: 25px;
             height: 25px;
+            color: white;
             @include button-destyle;
 
             &:hover {

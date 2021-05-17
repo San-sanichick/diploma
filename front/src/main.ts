@@ -1,6 +1,6 @@
 import { createApp } from 'vue';
 import { Router } from "vue-router";
-import { MutationTree, Store } from "vuex";
+import { Store } from "vuex";
 import App from './App.vue';
 import axios, { AxiosError, AxiosResponse } from "axios";
 import moment from "moment";
@@ -25,6 +25,7 @@ router.beforeEach(async (to, from, next) => {
      * setting page header
      */
     document.title = to.meta.title as string ?? DEFAULT_TITLE;
+    // document
 
     // Checking if user is logged
     if (to.matched.some(record => record.meta.requiresAuth)) {        
@@ -53,10 +54,14 @@ router.beforeEach(async (to, from, next) => {
         return;
 
     } else if (to.path === '/') {   
-        const userId = store.getters.getUser._id;  // redirect to default page if logged in
-        next(`/users/${userId}/projects`);
-        return;
-
+        if (store.getters.isLogged) {
+            const userId = store.getters.getUser._id;  // redirect to default page if logged in
+            next(`/users/${userId}/projects`);
+            return;
+        } else {
+            next('/auth/login');
+            return;
+        }
     } else if (to.path.includes("undefined")) {
         next("/404");
         return;
@@ -123,7 +128,7 @@ app.directive("focus", {
     mounted(el: HTMLInputElement) {
         el.focus();
     }
-})
+});
 
 app.use(store).use(router).use(FlashMessage, {
     name: 'flashMessage',

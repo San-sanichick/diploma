@@ -67,7 +67,7 @@
                 this.isOpen = !this.isOpen;
                 this.$emit("update:selected", option);
             },
-            onClickAway() {
+            onClickAway(e: MouseEvent) {
                 this.isOpen = false;
             },
             triggered() {

@@ -79,6 +79,7 @@
             h1 {
                 font-size: 36pt;
                 margin: 0;
+                font-weight: 600;
             }
 
             .form-row {

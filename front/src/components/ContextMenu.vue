@@ -51,9 +51,9 @@
 
                 this.xPos = e.clientX,
                 this.yPos = e.clientY;
-                this.showMenu = !this.showMenu;
+                this.showMenu = true;
             },
-            closeMenu(): void {
+            closeMenu(e?: MouseEvent): void {
                 this.options = null;
                 this.showMenu = !this.showMenu;
             }

@@ -13,10 +13,11 @@ export default class Ellipse extends Shape {
     toDXF(drw: DXFWriter): void {
         // throw new Error("Method not implemented.");
         const s = this.nodes[0].getPosition;
-        const ma = this.nodes[1].getPosition;
-        const rmia = s.subtract(this.nodes[2].getPosition).mag();
+        const majAxis = this.nodes[1].getPosition;
+        const minAxis = this.nodes[2].getPosition;
+        const rmia = minAxis.subtract(s).mag() / majAxis.subtract(s).mag();
 
-        drw.addEllipse(s.x, s.y, ma.x, ma.y, rmia, 0, 2 * Math.PI);
+        drw.addEllipse(s.x, s.y, majAxis.x, majAxis.y, rmia, 0, 2 * Math.PI);
     }
 
     renderSelf(ctx: CanvasRenderingContext2D, color?: string) {
@@ -50,7 +51,7 @@ export default class Ellipse extends Shape {
         } else if (this.nodes.length === 3) {
             const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
             // const mv: Vec2 = this.WorldToScreen(this.nodes[1].getPosition);
-            // const ev: Vec2 = this.WorldToScreen(this.nodes[2].getPosition);
+            const ev: Vec2 = this.WorldToScreen(this.nodes[2].getPosition);
 
             // const mvsv = new Vec2(1, this.nodes[0].getPosition.y).subtract(this.nodes[0].getPosition);
             const svev = this.nodes[2].getPosition.subtract(this.nodes[0].getPosition);
@@ -58,23 +59,39 @@ export default class Ellipse extends Shape {
             const rad1 = this.nodes[1].getPosition.subtract(this.nodes[0].getPosition).mag();
             const rad2 = svev.mag();
 
-            ctx.strokeStyle = color ? color : this.color;
-            if (this.isSelected) {
-                ctx.setLineDash([5, 5]);
-                ctx.strokeStyle = ShapeColor.ACTIVE;
-                ctx.lineWidth = 3;
-                // ctx.strokeStyle = invertHex(this.color);
-                // if (color) {
-                //     ctx.strokeStyle = invertHex(color);
-                // }
-            }
+
+            const a = sv.subtract(ev);
+            const b = new Vec2(sv.x + 1, sv.y).subtract(sv);
+
+            const angle1 = Math.atan2(a.y, a.x);
+            const angle2 = Math.atan2(b.y, b.x);
+
+            const angle = angle1 - angle2;
 
             ctx.save();
                 ctx.fillStyle = "";
-                // ctx.strokeStyle = this.color;
-                ctx.setLineDash([]);
+                
+                ctx.strokeStyle = color ? color : this.color;
+                if (this.isSelected) {
+                    ctx.setLineDash([5, 5]);
+                    ctx.strokeStyle = ShapeColor.ACTIVE;
+                    ctx.lineWidth = 3;
+                    // ctx.strokeStyle = invertHex(this.color);
+                    // if (color) {
+                    //     ctx.strokeStyle = invertHex(color);
+                    // }
+                }
+
                 ctx.beginPath();
-                ctx.ellipse(sv.x, sv.y, rad2 * Shape.worldScale * Shape.worldGrid, rad1 * Shape.worldScale * Shape.worldGrid, 0, 0, 2 * Math.PI, false);
+                ctx.ellipse(
+                        sv.x, 
+                        sv.y, 
+                        rad2 * Shape.worldScale * Shape.worldGrid, 
+                        rad1 * Shape.worldScale * Shape.worldGrid, 
+                        angle, 
+                        0, 
+                        2 * Math.PI, 
+                        false);
                 ctx.closePath();
                 ctx.stroke();
             ctx.restore();

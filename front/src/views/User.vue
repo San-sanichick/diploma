@@ -41,6 +41,12 @@
                 return this.$store.getters.getUser;
             }
         },
+        created() {
+            const id = this.$route.params.id;
+            if (id !== this.$store.getters.getUser._id) {
+                this.$router.push("/");
+            }
+        },
         methods: {
             openPopUp() {
                 this.showPopUp = !this.showPopUp;

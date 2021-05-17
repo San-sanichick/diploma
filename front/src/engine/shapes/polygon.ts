@@ -13,7 +13,14 @@ export default class Polygon extends Shape {
     }
 
     toDXF(drw: DXFWriter): void {
-        throw new Error("Method not implemented.");
+        const points = [];
+        for (const n of this.nodes) {
+            points.push([n.getPosition.x, n.getPosition.y]);
+        }
+
+        points.push(points[0]);
+
+        drw.addPolyline(points, 0);
     }
 
     getNextNode(pos: Vec2): Node | null {
