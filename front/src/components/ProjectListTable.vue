@@ -105,15 +105,16 @@
 
         .project-table-header {
             position: sticky;
-            
-            top: 70px;
-
+            top: 65px;
+            background-color: white;
+            z-index: 2000;
             .table-header {
-                background-color: white;
+                border-bottom: 1px solid $darkSecondaryGreen;
             }
         }
         
         .project-table-body {
+            z-index: 1000;
             .table-row {
                 display: grid;
                 grid-template-columns: repeat(3, 1fr);

@@ -7,7 +7,7 @@
             type="search" 
             name="search-bar" 
             v-model="searchQueryLocal"
-            placeholder="Поиск..."
+            placeholder="Поиск... (Ctrl+K)"
             >
     </div>
 </template>
@@ -23,11 +23,15 @@ import { defineComponent } from 'vue'
             }
         },
         emits: ["update:searchQuery"],
-        // mounted() {
-        //     document.addEventListener("keydown", (e: KeyboardEvent) => {
-        //         (this.$refs["search-bar-input"] as HTMLInputElement).focus();
-        //     })
-        // },
+        mounted() {
+            document.addEventListener("keydown", (e: KeyboardEvent) => {
+                // e.preventDefault();
+                if (e.ctrlKey && e.code === "KeyK") {
+                    e.preventDefault();
+                    (this.$refs["search-bar-input"] as HTMLInputElement).focus();
+                }
+            })
+        },
         computed: {
             searchQueryLocal: {
                 get(): string {

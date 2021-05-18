@@ -535,7 +535,7 @@
                 position: relative;
                 height: 100%;
                 width: 100%;
-                // min-width: 800px;
+                // width: 1500px;
 
                 canvas {
                     cursor: none;

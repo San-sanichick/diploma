@@ -213,7 +213,11 @@
         padding: 65px 7% 5% 7%;
 
         .page-header {
-            margin: 20px 0;
+            padding: 20px 0;
+            // top: 65px;
+            z-index: 2500;
+            background-color: white;
+            // position: sticky;
             display: grid;
             grid-template-columns: max-content auto max-content max-content;
             column-gap: 10px;
