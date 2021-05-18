@@ -9,7 +9,8 @@ const routes: Array<RouteRecordRaw> = [
                 path: "projects",
                 component: () => import('../views/User/ProjectList.vue'),
                 meta: {
-                    title: "Список проектов"
+                    title: "Список проектов",
+                    requiresAuth: true
                 }
             },
             {
@@ -17,7 +18,8 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import('../views/User/ProjectEditor.vue'),
                 // props: true
                 meta: {
-                    title: "Редактор"
+                    title: "Редактор",
+                    requiresAuth: true
                 }
             }
         ],

@@ -42,7 +42,7 @@
             }
         },
         created() {
-            const id = this.$route.params.id;
+            const id = this.$route.params.userId;
             if (id !== this.$store.getters.getUser._id) {
                 this.$router.push("/");
             }

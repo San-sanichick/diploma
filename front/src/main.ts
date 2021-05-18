@@ -25,7 +25,6 @@ router.beforeEach(async (to, from, next) => {
      * setting page header
      */
     document.title = to.meta.title as string ?? DEFAULT_TITLE;
-    // document
 
     // Checking if user is logged
     if (to.matched.some(record => record.meta.requiresAuth)) {        
@@ -85,9 +84,9 @@ axios.interceptors.response.use((res: AxiosResponse) => {
         const originalReq = err.config;
         const refreshToken = localStorage.getItem("refreshToken");
         if (refreshToken !== "undefined" && err.response?.status === 401) {
-            // originalReq.retr
             const newToken = await axios.post("/token/refresh", { refreshToken });
             originalReq.headers["Authorization"] = `Bearer ${newToken}`;
+            console.log("refreshed", newToken);
             return Axios.request(originalReq);
         }
 

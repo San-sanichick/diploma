@@ -5,6 +5,9 @@
                 Проекты
             </h3>
             <div></div>
+            <div>
+                <SearchBar v-model:search-query="searchQuery" />
+            </div>
             <div class="page-header-buttons">
                 <button class="create-project" @click="openPopUp(); currentPopUp='createProject'"></button>
                 <button class="table-mode" :class="{'table-mode-active': displayMode == 'ProjectListTable'}" @click="displayMode = 'ProjectListTable'"></button>
@@ -16,7 +19,7 @@
             <component 
                 v-if="list.length !== 0"
                 :is="displayMode" 
-                :projects="list" 
+                :projects="listFiltered" 
                 @project-clicked="openProject" 
                 @open-project="openProject"
                 @setup-project="currentPopUp='setUpProject'; openPopUp($event)"
@@ -42,23 +45,26 @@
     import { defineComponent } from 'vue';
     import axios               from "axios";
 
-    import Project             from "../../types/Project";
-    import ProjectListGrid     from "../../components/ProjectListGrid.vue";
-    import ProjectListTable    from "../../components/ProjectListTable.vue";
+    import Project             from "@/types/Project";
+    import ProjectListGrid     from "@/components/ProjectListGrid.vue";
+    import ProjectListTable    from "@/components/ProjectListTable.vue";
+    import SearchBar           from "@/components/SearchBar.vue";
 
-    import createProject from "../../components/popups/createProject.vue";
-    import setUpProject  from "../../components/popups/setUpProject.vue";
+    import createProject from "@/components/popups/createProject.vue";
+    import setUpProject  from "@/components/popups/setUpProject.vue";
 
     export default defineComponent({
         components: {
             ProjectListGrid,
             ProjectListTable,
+            SearchBar,
             createProject,
             setUpProject
         },
         data() {
             return {
                 list           : [] as Project[],
+                searchQuery    : "",
                 showPopUp      : false,
                 currentPopUp   : "createProject",
                 displayMode    : "ProjectListGrid",
@@ -66,8 +72,12 @@
             }
         },
         computed: {
-            user() {
-                return this.$store.getters.getUser;
+            listFiltered(): Project[] {
+                if (this.searchQuery !== "") {
+                    return this.list.filter(el => el.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
+                } else {
+                    return this.list;
+                }
             }
         },
         created() {
@@ -205,7 +215,8 @@
         .page-header {
             margin: 20px 0;
             display: grid;
-            grid-template-columns: max-content auto max-content;
+            grid-template-columns: max-content auto max-content max-content;
+            column-gap: 10px;
             align-items: center;
 
             h3 {
