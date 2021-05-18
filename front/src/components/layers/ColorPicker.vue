@@ -1,5 +1,10 @@
 <template>
-    <div v-click-away="clickAway" v-if="show" class="color-picker">
+    <div 
+        v-click-away="clickAway" 
+        v-if="show" 
+        class="color-picker"
+        :style="{ left: `${coord.x}px`, top: `${coord.y}px` }"
+        >
         <div class="color-picker-header">
             <h5>Цвета</h5>
         </div>
@@ -24,7 +29,7 @@
         directives: {
             ClickAway: directive
         },
-        props: ["color", "show"],
+        props: ["color", "coord", "show"],
         emits: ["update:color", "update:show"],
         data() {
             return {
@@ -35,7 +40,7 @@
             colorClicked: function(color: number) {
                 console.log(color);
                 this.$emit("update:color", color);
-                // this.$emit("update:show", false);
+                this.$emit("update:show", false);
             },
             clickAway(e: MouseEvent) {
                 const target = e.target as HTMLDivElement;
@@ -51,7 +56,7 @@
     @import "../../assets/scss/config.scss";
 
     .color-picker {
-        position: absolute;
+        position: fixed;
         top: 35px;
         // margin-top: 200px;
         // width: 200px;
@@ -61,7 +66,7 @@
         color: white;
         text-align: left;
         border-radius: 5px;
-        z-index: 2000;
+        z-index: 200000;
 
         h5 {
             margin: 0px 5px;
@@ -71,17 +76,27 @@
         
 
         .color-picker-color-container {
+           
             padding: 10px;
             display: grid;
             grid-template-columns: repeat(9, max-content);
-            column-gap: 5px;
-            // height: 100%;
+            column-gap: 4px;
 
             .color-option {
-                width: 10px;
-                height: 10px;
+                position: relative;
+                width: 15px;
+                height: 15px;
+                cursor: pointer;
 
-                border: 1px solid black;
+                &:hover::after {
+                    content: "";
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    bottom: 0;
+                    left: 0;
+                    border: 1px solid $lightSecondaryGreen;
+                }
             }
         }
 

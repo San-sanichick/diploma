@@ -47,9 +47,12 @@ export default class Serializer {
     }
 
     /**
+     * Absolute unit of a method, you have not ever seen a method more stupid than this
      * 
+     * This may return an empty array (theoretically, dunno, haven't tested it), 
+     * if you pass it garbage data
      * @param { ShapeObject } obj object for deserialization
-     * @returns { Array<Drawable> | null }  an array of Drawable if deserialization is successful, null otherwise
+     * @returns { Array<Drawable> } an array of Drawable if deserialization is successful
      */
     public static deserialize(array: any[]): Array<Drawable> {
         const arr = new Array<Drawable>();

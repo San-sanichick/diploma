@@ -55,7 +55,8 @@
     .layer-list-wrapper {
         // height: 100%;
         display: grid;
-        grid-template-rows: max-content auto max-content;
+        grid-template-rows: auto auto max-content;
+        overflow: hidden;
 
         .layer-list {
             height: 100%;
@@ -64,7 +65,8 @@
             margin: 0;
             cursor: pointer;
             user-select: none;
-            // overflow-y: auto;
+            z-index: 50;
+            overflow-y: auto;
         }
 
         .spacer {
@@ -75,6 +77,7 @@
             // flex: 1;
             background-color: $middlePrimary;
             padding: 5px;
+            z-index: 100;
 
             button {
                 float: right;

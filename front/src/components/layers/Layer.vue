@@ -24,10 +24,13 @@
                 @keyup.enter="updateLayerName">
         </div>
         <button :disabled="disable" @click.stop="$emit('remove', layer.id)">–</button>
-        <ColorPicker
-            v-model:show="show"
-            :color="layer.layerColor" 
-            @update:color="updateLayer"/>
+        <teleport to="#app">
+            <ColorPicker
+                v-model:show="show"
+                :color="layer.layerColor" 
+                :coord="coord"
+                @update:color="updateLayer"/>
+        </teleport>
     </li>
 </template>
 
@@ -50,12 +53,19 @@
             return {
                 colors,
                 show: false,
-                edit: false
+                edit: false,
+                coord: {
+                    x: 0,
+                    y: 0,
+                }
             }
         },
         methods: {
-            toggleMenu() {
+            toggleMenu(e: MouseEvent) {
                 this.show = !this.show;
+                // [this.coord.x, this.coord.y] = [e.clientX, e.clientY];
+                this.coord.x = e.pageX;
+                this.coord.y = e.pageY;
             },
             updateLayer(color: number) {
                 this.$emit("update:layer", { 

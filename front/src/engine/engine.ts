@@ -151,6 +151,7 @@ export default class Engine {
                 // force redraw, beacuse otherwise there is flickering
                 // see https://stackoverflow.com/questions/3543358/resizing-a-html-canvas-blanks-its-contents
                 this.render();
+                this.renderUI();
             }).observe(this.viewport);
         }
 
@@ -162,12 +163,12 @@ export default class Engine {
      * @returns {boolean} true if initialization is successful, false otherwise
      */
     public init(): boolean {
-        if (this.ctx === null) return false;
+        if (this.ctx === null || this.ctxUI === null) return false;
         this.cursorIcon = new Image();
         this.cursorIcon.src = "/src/assets/cursor.svg";
         Shape.worldGrid = this.grid;
         this.ctx.lineWidth = 1;
-        this.ctx.translate(0.5, 0.5);
+        // this.ctx.translate(0.5, 0.5);
 
         return true;
     }
@@ -347,7 +348,7 @@ export default class Engine {
             try {
                 this.update();
                 // :)
-                // run these kinda incapsulated from the update loop
+                // run these kinda incapsulated from the update function
                 this.mouse.resetMouseController();
                 this.keyboard.resetKeyboardController();
                 requestAnimationFrame(updateRoutine);
@@ -447,7 +448,7 @@ export default class Engine {
     /**
      * Update method, has to be run through requestAnimationFrame
      */
-    // TODO: Split updating into subroutines, so that this function is not so bloody huge as well
+    // TODO: Split updating into subroutines, so that this function is not so bloody huge as hell
     private update(): void {
         // const t1 = performance.now();
         if (this.ctx === null || this.ctxUI === null) return;
@@ -542,7 +543,6 @@ export default class Engine {
         if (this.mouse.getReleasedButton === MouseButtons.LEFT) {
             if (this.tempShape !== null) {
                 if (this.selectedNode === null) {
-                    console.log("HAHAHAHAHHAHHA", this.layers);
                     this.tempShape.color = "#fff";
 
                     this.tempShape.setNodeColor(NodeColors.INACTIVE);
@@ -992,17 +992,17 @@ export default class Engine {
         const curV = this.WorldToScreen(this.cursor);
 
         this.ctxUI.save();
-            this.ctxUI.setLineDash([8, 10]);
+            this.ctxUI.setLineDash([10, 5]);
             this.ctxUI.strokeStyle = "rgba(255, 255, 255, 0.3)";
             this.ctxUI.beginPath();
             this.ctxUI.moveTo(curV.x, 0);
-            this.ctxUI.lineTo(curV.x, this.canvas.height);
+            this.ctxUI.lineTo(curV.x, 2000);
             this.ctxUI.closePath();
             this.ctxUI.stroke();
 
             this.ctxUI.beginPath();
             this.ctxUI.moveTo(0, curV.y);
-            this.ctxUI.lineTo(this.canvas.width, curV.y);
+            this.ctxUI.lineTo(2000, curV.y);
             this.ctxUI.closePath();
             this.ctxUI.stroke();
         this.ctxUI.restore();
@@ -1018,7 +1018,72 @@ export default class Engine {
             // this.ctxUI.stroke();
         this.ctxUI.restore();
 
+        const worldTopLeft: Vec2      = this.ScreenToWorld(new Vec2(0, 0));
+        const worldBottomRight: Vec2  = this.ScreenToWorld(new Vec2(this.canvasUI.width, this.canvasUI.height));
+
+        worldTopLeft.floor();
+        worldBottomRight.ceil();
+
+        const offset = this.grid * this.scale;
+        const sx     = (worldTopLeft.x - this.offset.x) * offset;
+        const sy     = (worldTopLeft.y - this.offset.y) * offset;
+
+        const width  = worldBottomRight.x - worldTopLeft.x;
+        const height = worldBottomRight.y - worldTopLeft.y;
+
+        let worldX = worldTopLeft.x,
+            worldY = worldTopLeft.y;
+
+
+        this.ctxUI.save();
+            this.ctxUI.fillStyle = "#005A61";
+            this.ctxUI.fillRect(0, this.canvasUI.height, this.canvasUI.width, -15);
+            this.ctxUI.fillRect(0, 0, 15, this.canvasUI.height);
+
+            const gridOffset = 0.5;
+            // horizontal lines
+            this.ctxUI.strokeStyle = "#61C0C8";
+            for (let i = 0; i < width; i++) {
+                const x = fastRounding(sx + offset * i);
+                if (worldX % 5 == 0) this.ctxUI.lineWidth = 2;
+                this.ctxUI.beginPath();
+                this.ctxUI.moveTo(x + gridOffset, this.canvasUI.height + gridOffset);
+                if (worldX % 5 == 0) {
+                    this.ctxUI.lineTo(x + gridOffset, this.canvasUI.height - 9 + gridOffset);
+                } else {
+                    this.ctxUI.lineTo(x + gridOffset, this.canvasUI.height - 7 + gridOffset);
+                }
+                this.ctxUI.closePath();
+                this.ctxUI.stroke();
+                this.ctxUI.lineWidth = 1;
+
+                worldX++;
+            }
+
+            // vertical lines
+            for (let j = 0; j < height; j++) {
+                const y = fastRounding(sy + offset * j);
+                if (worldY % 5 == 0) this.ctxUI.lineWidth = 2;
+                this.ctxUI.beginPath();
+                this.ctxUI.moveTo(     gridOffset, y + gridOffset);
+                if (worldY % 5 == 0) {
+                    this.ctxUI.lineTo(9 + gridOffset, y + gridOffset);
+                } else {
+                    this.ctxUI.lineTo(7 + gridOffset, y + gridOffset);
+                }
+                this.ctxUI.closePath();
+                this.ctxUI.stroke();
+                this.ctxUI.lineWidth = 1;
+
+                worldY++;
+            }
+
+            this.ctxUI.fillStyle = "#005A61";
+            this.ctxUI.fillRect(0, this.canvasUI.height, 15, -15);
+        this.ctxUI.restore();
+
         this.ctxUI.transform(1, 0, 0, -1, 0, this.canvasUI.height);
+        
     }
 
     private renderDebug(...performance: { text: string; metric: number | string }[]) {

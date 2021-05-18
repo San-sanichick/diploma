@@ -617,13 +617,15 @@
         position: absolute;
         left: 0;
         top: 0;
-        transition: opacity 0.4s;
-        // background-color: 
+        transition: opacity 0.4s; 
         background-color: $primaryTransparent;
         opacity: 0;
         z-index: 10000;
     }
-    .splitpanes__splitter:hover:before {opacity: 1;}
+    .splitpanes__splitter:hover:before {
+        opacity: 1;
+    }
+
     .splitpanes--vertical > .splitpanes__splitter:before {
         left: -5px;
         right: -5px;
