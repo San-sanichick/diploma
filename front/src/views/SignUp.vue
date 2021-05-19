@@ -25,7 +25,7 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue';
+    import { defineComponent } from "vue";
     import axios from "axios";
     // import { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
 

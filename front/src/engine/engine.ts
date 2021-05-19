@@ -735,6 +735,26 @@ export default class Engine {
         this.selectedShapes.clear();
     }
 
+    private gridThickness(): number {
+        let gridWidth = 1;
+
+        if (this.scale >= 1 && this.scale <= 4) gridWidth = 125;
+        if (this.scale > 4 && this.scale <= 8) gridWidth = 25;
+        if (this.scale > 8 && this.scale <= 12) gridWidth = 5;
+
+        return gridWidth
+    }
+
+    private gridNumberThickness(): number {
+        let gridWidth = 1;
+
+        if (this.scale >= 1 && this.scale <= 5) gridWidth = 25;
+        if (this.scale > 5 && this.scale <= 20) gridWidth = 5;
+        if (this.scale > 20) gridWidth = 1;
+
+        return gridWidth
+    }
+
     /**
      * Render method, inteded for file save. Renders the scene on an offscreen canvas
      * of fixed size (but not actual offscreenCanvas, as that feature is not implemented in
@@ -861,38 +881,36 @@ export default class Engine {
 
         const gridOffset = 0.5;
 
-        // let gridWidth = 1;
-
-        // if (this.scale >= 1 && this.scale <= 10)  gridWidth = 2;
-        // if (this.scale > 10 && this.scale <= 20) gridWidth = 4;
-        // if (this.scale > 20 && this.scale <= 40) gridWidth = 3;
-        // if (this.scale > 40 && this.scale <= 80) gridWidth = 2;
-        // if (this.scale > 80 && this.scale <= 160) gridWidth = 1;
+        let gridWidth = this.gridThickness();
 
         // horizontal lines
         for (let i = 0; i < width; i++) {
-            const x = fastRounding(sx + offset * i);
-            if (worldX % 5 == 0) this.ctx.lineWidth = 2;
-            this.ctx.beginPath();
-            this.ctx.moveTo(x + gridOffset, gridOffset);
-            this.ctx.lineTo(x + gridOffset, this.canvas.height + gridOffset);
-            this.ctx.closePath();
-            this.ctx.stroke();
-            this.ctx.lineWidth = 1;
+            if (worldX % gridWidth === 0) {
+                const x = fastRounding(sx + offset * i);
+                if (worldX % (gridWidth * 5) == 0) this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.moveTo(x + gridOffset, gridOffset);
+                this.ctx.lineTo(x + gridOffset, this.canvas.height + gridOffset);
+                this.ctx.closePath();
+                this.ctx.stroke();
+                this.ctx.lineWidth = 1;
+            }
 
             worldX++;
         }
 
         // vertical lines
         for (let j = 0; j < height; j++) {
-            const y = fastRounding(sy + offset * j);
-            if (worldY % 5 == 0) this.ctx.lineWidth = 2;
-            this.ctx.beginPath();
-            this.ctx.moveTo(                    gridOffset, y + gridOffset);
-            this.ctx.lineTo(this.canvas.width + gridOffset, y + gridOffset);
-            this.ctx.closePath();
-            this.ctx.stroke();
-            this.ctx.lineWidth = 1;
+            if (worldY % gridWidth === 0) {
+                const y = fastRounding(sy + offset * j);
+                if (worldY % (gridWidth * 5) == 0) this.ctx.lineWidth = 2;
+                this.ctx.beginPath();
+                this.ctx.moveTo(                    gridOffset, y + gridOffset);
+                this.ctx.lineTo(this.canvas.width + gridOffset, y + gridOffset);
+                this.ctx.closePath();
+                this.ctx.stroke();
+                this.ctx.lineWidth = 1;
+            }
 
             worldY++;
         }
@@ -1008,14 +1026,8 @@ export default class Engine {
         this.ctxUI.restore();
 
         this.ctxUI.save();
-            // this.ctxUI.clearRect(curV.x - 6, curV.y - 6, 12, 12)
-            // this.ctxUI.strokeStyle = "rgba(255, 255, 255, 1)";
-            // this.ctxUI.beginPath();
-            // this.ctxUI.strokeRect(curV.x - 6, curV.y - 6, 12, 12);
-            // this.ctxUI.closePath();
             this.ctxUI.clearRect(curV.x - 25.5, curV.y - 25.5, 51, 51);
             this.ctxUI.drawImage(this.cursorIcon, curV.x - 25.5, curV.y - 25.5);
-            // this.ctxUI.stroke();
         this.ctxUI.restore();
 
         const worldTopLeft: Vec2      = this.ScreenToWorld(new Vec2(0, 0));
@@ -1037,10 +1049,14 @@ export default class Engine {
 
         this.ctxUI.save();
             this.ctxUI.fillStyle = "#005A61";
-            this.ctxUI.fillRect(0, this.canvasUI.height, this.canvasUI.width, -15);
-            this.ctxUI.fillRect(0, 0, 15, this.canvasUI.height);
+            this.ctxUI.fillRect(0, this.canvasUI.height, this.canvasUI.width, -20);
+            this.ctxUI.fillRect(0, 0, 20, this.canvasUI.height);
 
             const gridOffset = 0.5;
+
+            let gridWidth = this.gridNumberThickness();
+            this.ctxUI.font = "10px Open Sans";
+
             // horizontal lines
             this.ctxUI.strokeStyle = "#61C0C8";
             for (let i = 0; i < width; i++) {
@@ -1049,13 +1065,23 @@ export default class Engine {
                 this.ctxUI.beginPath();
                 this.ctxUI.moveTo(x + gridOffset, this.canvasUI.height + gridOffset);
                 if (worldX % 5 == 0) {
-                    this.ctxUI.lineTo(x + gridOffset, this.canvasUI.height - 9 + gridOffset);
+                    this.ctxUI.lineTo(x + gridOffset, this.canvasUI.height - 6 + gridOffset);
                 } else {
-                    this.ctxUI.lineTo(x + gridOffset, this.canvasUI.height - 7 + gridOffset);
+                    this.ctxUI.lineTo(x + gridOffset, this.canvasUI.height - 4 + gridOffset);
                 }
                 this.ctxUI.closePath();
                 this.ctxUI.stroke();
                 this.ctxUI.lineWidth = 1;
+
+                if (worldX % gridWidth === 0) {
+                    this.ctxUI.fillStyle = "white";
+                    this.ctxUI.translate(x + gridOffset, this.canvasUI.height + gridOffset);
+                    this.ctxUI.scale(1, -1);
+                    this.ctxUI.textAlign = "center";
+                    this.ctxUI.fillText(worldX.toString(), 0, 16);
+                    this.ctxUI.scale(1, -1);
+                    this.ctxUI.translate(-(x + gridOffset), -(this.canvasUI.height + gridOffset));
+                }
 
                 worldX++;
             }
@@ -1065,21 +1091,33 @@ export default class Engine {
                 const y = fastRounding(sy + offset * j);
                 if (worldY % 5 == 0) this.ctxUI.lineWidth = 2;
                 this.ctxUI.beginPath();
-                this.ctxUI.moveTo(     gridOffset, y + gridOffset);
+                this.ctxUI.moveTo(gridOffset, y + gridOffset);
                 if (worldY % 5 == 0) {
-                    this.ctxUI.lineTo(9 + gridOffset, y + gridOffset);
+                    this.ctxUI.lineTo(6 + gridOffset, y + gridOffset);
                 } else {
-                    this.ctxUI.lineTo(7 + gridOffset, y + gridOffset);
+                    this.ctxUI.lineTo(4 + gridOffset, y + gridOffset);
                 }
                 this.ctxUI.closePath();
                 this.ctxUI.stroke();
                 this.ctxUI.lineWidth = 1;
 
+                if (worldY % gridWidth === 0) {
+                    this.ctxUI.fillStyle = "white";
+                    this.ctxUI.translate(gridOffset, y);
+                    this.ctxUI.scale(1, -1);
+                    this.ctxUI.rotate(-Math.PI / 2);
+                    this.ctxUI.textAlign = "center";
+                    this.ctxUI.fillText(worldY.toString(), 0, 16);
+                    this.ctxUI.rotate(Math.PI / 2);
+                    this.ctxUI.scale(1, -1);
+                    this.ctxUI.translate(-gridOffset, -y);
+                }
+
                 worldY++;
             }
 
             this.ctxUI.fillStyle = "#005A61";
-            this.ctxUI.fillRect(0, this.canvasUI.height, 15, -15);
+            this.ctxUI.fillRect(0, this.canvasUI.height, 20, -20);
         this.ctxUI.restore();
 
         this.ctxUI.transform(1, 0, 0, -1, 0, this.canvasUI.height);

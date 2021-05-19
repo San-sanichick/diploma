@@ -18,9 +18,9 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue';
+    import { defineComponent } from "vue";
     import Layer from "./Layer.vue";
-    import colors from "../../engine/config/colors";
+    import colors from "@/engine/config/colors";
 
     export default defineComponent({
         components: {

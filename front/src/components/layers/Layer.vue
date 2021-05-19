@@ -35,9 +35,9 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue';
+    import { defineComponent } from "vue";
     import ColorPicker from "./ColorPicker.vue";
-    import colors from "../../engine/config/colors";
+    import colors from "@/engine/config/colors";
     import { directive } from "vue3-click-away";
 
     export default defineComponent({

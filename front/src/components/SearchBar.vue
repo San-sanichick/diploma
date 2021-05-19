@@ -1,9 +1,15 @@
 <template>
-    <div class="search-bar-wrapper" tabindex="0" ref="search-bar-wrapper">
+    <div class="search-bar-wrapper" 
+        tabindex="0" 
+        ref="search-bar-wrapper"
+        @focus="focusInput"
+        :class="{ 'focused': focused }"
+        >
         <div class="search-icon"></div>
         <input
             ref="search-bar-input"
-            @focus="" 
+            @focus="focusBar" 
+            @blur="focused = false"
             type="search" 
             name="search-bar" 
             v-model="searchQueryLocal"
@@ -13,13 +19,18 @@
 </template>
 
 <script lang="ts">
-    import { wrap } from 'module';
-import { defineComponent } from 'vue'
+    import { defineComponent } from "vue";
+
     export default defineComponent({
         props: {
             searchQuery: {
                 type: String,
                 required: true
+            }
+        },
+        data() {
+            return {
+                focused: false
             }
         },
         emits: ["update:searchQuery"],
@@ -28,6 +39,7 @@ import { defineComponent } from 'vue'
                 // e.preventDefault();
                 if (e.ctrlKey && e.code === "KeyK") {
                     e.preventDefault();
+                    this.focused = true;
                     (this.$refs["search-bar-input"] as HTMLInputElement).focus();
                 }
             })
@@ -44,8 +56,11 @@ import { defineComponent } from 'vue'
         },
         methods: {
             focusBar() {
-                const wrapper = this.$refs["search-bar-wrapper"] as HTMLDivElement;
-                wrapper.focus();
+                this.focused = true;
+            },
+            focusInput() {
+                this.focused = true;
+                (this.$refs["search-bar-input"] as HTMLInputElement).focus();
             }
         }
     })
@@ -55,27 +70,25 @@ import { defineComponent } from 'vue'
     @import "../assets/scss/config.scss";
 
     .search-bar-wrapper {
-        width: 15em;
+        width: 20vw;
         display: inline-flex;
         flex: 1 1 300px;
         align-items: center;
         align-self: center;
         position: relative;
+        outline: none;
         border: 2px solid $primary;
         border-radius: 8px;
         overflow: hidden;
         padding: 8px 10px;
 
-        &:focus {
-            border-color: $darkPrimary;
-        }
-
         .search-icon {
             width: 20px;
             height: 20px;
+            margin-right: 8px;
             background-image: url("../assets/searchIcon.svg");
             background-repeat: no-repeat;
-            background-size: contain;
+            background-size: cover;
         }
 
         input {
@@ -88,5 +101,9 @@ import { defineComponent } from 'vue'
                 -webkit-appearance: none;
             }
         }
+    }
+
+    .focused {
+        border-color: $darkPrimary;
     }
 </style>

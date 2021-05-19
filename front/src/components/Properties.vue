@@ -71,7 +71,7 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent, PropType } from 'vue'
+    import { defineComponent, PropType } from "vue"
     import Drawable from '../engine/shapes/drawable'
     import Group from '../engine/shapes/group';
     import Shape from '../engine/shapes/shape';
@@ -126,33 +126,5 @@
         th, td {
             font-size: 1.6ch;
         }
-        // width: 100%;
-        // margin: 0;
-        // text-align: left;
-        // border-collapse: collapse;
-        // thead {
-        //     user-select: none;
-
-        //     tr {
-        //         border-bottom: 1px solid $darkPrimary;
-        //     }
-        // }
-
-        // tr {
-        //     padding: 5px;
-
-        //     td:first-of-type {
-        //         user-select: none;
-        //     }
-
-        //     td, th {
-        //         padding: 5px 10px;
-        //         width: 50%;
-                
-        //         &:first-of-type {
-        //             border-right: 1px solid $darkPrimary;
-        //         }
-        //     }
-        // }
     }
 </style>

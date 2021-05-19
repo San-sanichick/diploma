@@ -21,8 +21,8 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue';
-    import colors from "../../engine/config/colors";
+    import { defineComponent } from "vue";
+    import colors from "@/engine/config/colors";
     import { directive } from "vue3-click-away";
 
     export default defineComponent({
@@ -38,7 +38,6 @@
         },
         methods: {
             colorClicked: function(color: number) {
-                console.log(color);
                 this.$emit("update:color", color);
                 this.$emit("update:show", false);
             },

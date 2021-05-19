@@ -4,7 +4,7 @@
         <form @submit.prevent="submitHandler">
             <div class="form-row">
                 <label for="user-name">Имя</label>
-                <input type="text" name="user-name" id="user-name" v-model="form.username">
+                <input ref="text-input" type="text" name="user-name" id="user-name" v-model="form.username">
             </div>
             <div class="form-row">
                 <label for="user-email">e-mail</label>
@@ -16,7 +16,7 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue';
+    import { defineComponent } from "vue";
     import axios from "axios";
 
     export default defineComponent({
@@ -32,6 +32,7 @@
         mounted() {
             this.form.username = this.user.username;
             this.form.email    = this.user.email;
+            (this.$refs["text-input"] as HTMLInputElement).focus();
         },
         methods: {
             async submitHandler() {
@@ -65,73 +66,9 @@
 
 <style lang="scss" scoped>
     @import "../../assets/scss/config.scss";
+    @import "../../assets/scss/popupMixins.scss";
 
     .user-settings-wrapper {
-        align-self: center;
-        background-color: white;
-        padding: 0px 20px 40px 20px;
-        border-radius: 8px;
-        width: 50%;
-
-        h3 {
-            font-size: 24pt;
-        }
-
-        form {
-            display: flex;
-            flex-flow: column;
-
-            .form-row {
-                width: 100%;
-                margin-bottom: 10px;
-                display: flex;
-                flex-flow: column;
-
-                label {
-                    text-align: start;
-                    font-size: 14pt;
-                }
-
-                input {
-                    border: 2px solid $darkPrimary;
-                    font-size: 12pt;
-                    border-radius: 8px;
-                    padding: 2px 10px;
-                    height: 30px;
-                }
-            }
-
-            label {
-                text-align: start;
-            }
-
-            input {
-                margin-top: 5px;
-                border: 2px solid $darkPrimary;
-                border-radius: 8px;
-                height: 30px;
-            }
-
-            .submit-button {
-                height: 40px;
-                width: 300px;
-                margin-top: 15px;
-                align-self: center;
-
-                font-family: Open Sans, Arial, sans-serif;
-                font-size: 16pt;
-                background-color: $darkPrimary;
-                outline: none;
-                color: white;
-                border: 2px solid $darkPrimary;
-                border-radius: 8px;
-                appearance: none;
-
-                &:hover,
-                &:focus {
-                    background: $primary;
-                }
-            }
-        }
+        @include popup-style;
     }
 </style>

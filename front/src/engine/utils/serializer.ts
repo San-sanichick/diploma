@@ -25,16 +25,6 @@ export default class Serializer {
      */
     // eslint-disable-next-line
     public static serialize(array: Serializable[]): any[] {
-        // object.type = object.constructor.name;
-
-        // if (object instanceof Group) {
-        //     (object as Group).getObjects.forEach(shape => {
-        //         shape.type = shape.constructor.name;
-        //     });
-        // }
-
-        // return JSON.parse(JSON.stringify(object));
-
         for (const obj of array) {
             obj.type = obj.constructor.name;
 

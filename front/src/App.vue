@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue';
+    import { defineComponent } from "vue";
     import ContextMenu from "./components/ContextMenu.vue";
 
     export default defineComponent({

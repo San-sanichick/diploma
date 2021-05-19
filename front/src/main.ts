@@ -1,4 +1,4 @@
-import { createApp } from 'vue';
+import { createApp } from "vue";
 import { Router } from "vue-router";
 import { Store } from "vuex";
 import App from './App.vue';
@@ -19,7 +19,7 @@ axios.defaults.baseURL = config.API_URI;
 const DEFAULT_TITLE = "This page has no header";
 
 // Programmed routing
-// It's not stupid, you're stupid 👀
+// This is not stupid, you're stupid 👀
 router.beforeEach(async (to, from, next) => {
     /**
      * setting page header

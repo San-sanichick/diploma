@@ -13,7 +13,7 @@ export default class KeyboardController {
     constructor() {
         /*
             The keyboard listeners get added to the entire document, and not
-            the canvas, because with canvas it doesn't bloody work,
+            the canvas, because with canvas they don't bloody work,
             it's as simple as that
 
             To do key combinations it is required to call preventDefault(), to prevent
@@ -31,7 +31,7 @@ export default class KeyboardController {
 
     private keyPressHandler = (e: KeyboardEvent) => {
         // F12 is here so that I don't go insane
-        if (e.code === "F12" || e.code === "F5") return true;
+        if (e.code === "F12" || e.code === "F5" || e.code === "F11") return true;
         e.preventDefault();
 
         // uhh, this is stupid

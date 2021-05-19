@@ -1,5 +1,5 @@
 <template>
-    <div class="header">
+    <div class="header" v-if="currentUser !== null">
         <div class="logo"></div>
         <div class="user">
             <div class="user-button" @click="openPopUp">
@@ -22,9 +22,10 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from 'vue';
+    import { defineComponent } from "vue";
     import UserAvatar from "../components/user/userAvatar.vue";
     import UserSettings from "../components/popups/userSettings.vue";
+    import UserInterface from "../types/User";
 
     export default defineComponent({
         components: {
@@ -37,7 +38,7 @@
             }
         },
         computed: {
-            currentUser() {
+            currentUser(): UserInterface | null {
                 return this.$store.getters.getUser;
             }
         },
