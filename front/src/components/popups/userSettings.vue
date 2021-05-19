@@ -38,7 +38,7 @@
             async submitHandler() {
                 if (this.form.username !== this.user.username || this.form.email !== this.user.email) {
                     try {
-                        const res = await axios.patch("/users/update", this.form);
+                        const res = await this.$axios.patch("/users/update", this.form);
                         this.$store.dispatch("updateUser", res.data.data);
 
                         this.$flashMessage.show({

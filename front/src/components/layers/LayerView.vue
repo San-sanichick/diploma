@@ -82,7 +82,7 @@
             button {
                 float: right;
                 @include button-destyle;
-                color: white;
+                color: $whiteText;
                 width: 30px;
                 height: 30px;
 

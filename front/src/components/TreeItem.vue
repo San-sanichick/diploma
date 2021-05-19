@@ -122,7 +122,7 @@
 
         .selected {
             background-color: $primaryTransparent;
-            color: white;
+            color: $whiteText;
 
             .item-image {
                 filter: brightness(100) saturate(100%);

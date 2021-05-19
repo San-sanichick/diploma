@@ -62,7 +62,7 @@
         padding: 8px 0;
         margin: 0;
         background-color: $middlePrimary;
-        color: white;
+        color: $whiteText;
         text-align: left;
         border-radius: 5px;
         z-index: 200000;

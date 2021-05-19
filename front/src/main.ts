@@ -114,6 +114,7 @@ declare module "@vue/runtime-core" {
         $store: Store<State>;
         $filters: typeof filters;
         $emitter: Emitter;
+        $axios: typeof axios;
     }
 }
 
@@ -122,6 +123,7 @@ const app = createApp(App);
 // ! IMPORTANT SHIT
 app.config.globalProperties.$filters = filters;
 app.config.globalProperties.$emitter = mitt();
+app.config.globalProperties.$axios = axios;
 
 app.directive("focus", {
     mounted(el: HTMLInputElement) {

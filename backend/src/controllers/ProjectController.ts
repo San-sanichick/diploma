@@ -13,6 +13,7 @@ import * as fs from "fs";
 import path from "path";
 import del from "del";
 import { promisify } from "util";
+import { isDocumentArray } from "@typegoose/typegoose";
 
 
 const writeFile = promisify(fs.writeFile);
@@ -95,11 +96,17 @@ export default class ProjectController {
                         const imgData = decodeBase64Image(img);
                         // const buf = Buffer.from(data, "base64");
                         try {
+
+                            if (!fs.existsSync(imagePath)) {
+                                await mkdir(imagePath, {recursive: true});
+                            }
+                                
+
                             await writeFile(projectPath + "save.json", JSON.stringify(req.body.data));
-                            await writeFile(imagePath + "thumb.png", imgData.data);
+                            await writeFile(imagePath + "thumb.jpg", imgData.data);
 
                             project.dateOfLastChange = new Date();
-                            project.thumbnail = `${user._id}/${project._id}/thumb.png`;
+                            project.thumbnail = `${user._id}/${project._id}/thumb.jpg`;
                             project.save();
 
                             res.status(200).json({
@@ -147,6 +154,40 @@ export default class ProjectController {
             }
         } else {
             res.status(401).json({msg: "Access denied"});
+        }
+    }
+    
+    public async getProjectsByName(req: Request, res: Response) {
+        const token = getToken(req.headers);
+
+        if (token) {
+            const decoded = verify(token, config.ACCESS_TOKEN_SECRET) as any;
+
+            try {
+                const user = await UserModel.findById(decoded.id);
+
+                if (user) {
+                    const populated = await user.populate("projects").execPopulate();
+                    const projects = populated.projects;
+                    const query = req.params.query as string;
+
+                    console.log(query);
+
+                    if (projects) {
+                        if (isDocumentArray(projects)) {
+                            const projectsFiltered = projects.filter(pr => pr.name?.toLowerCase().includes(query.toLowerCase()));
+
+                            res.status(200).json({
+                                msg: "Результат поиска",
+                                data: projectsFiltered
+                            });
+                        }
+                    }
+                }
+            } catch (err) {
+                console.error(err);
+                res.status(400).json({msg: `Произошла ошибка: ${err}`});
+            }
         }
     }
 
@@ -241,7 +282,7 @@ export default class ProjectController {
                         try {
                             // we need to remove the project folder when we're done
                             const dir = await del( [ `UserProjects/${user._id}/${project._id}` ] );
-                            const imgDir = await del( [ `public/${user._id}/${project._id}`] );
+                            const imgDir = await del( [ `public/${user._id}/${project._id}` ] );
                             // console.log(dir);
 
                             res.status(200).json({msg: `Проект ${project!.name} был успешно удалён`, data: populated.projects});

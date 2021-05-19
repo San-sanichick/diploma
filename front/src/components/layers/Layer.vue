@@ -127,7 +127,7 @@
             input {
                 display: inline;
                 // width: 40%;
-                color: white;
+                color: $whiteText;
                 
                 margin: 0;
                 padding: 2px 5px;
@@ -142,7 +142,7 @@
         button {
             width: 25px;
             height: 25px;
-            color: white;
+            color: $whiteText;
             @include button-destyle;
 
             &:hover {
@@ -151,13 +151,13 @@
         }
 
         &:hover {
-            color: white;
+            color: $whiteText;
             background-color: $primaryTransparent;
         }
     }
 
     .selected {
-        color: white;
+        color: $whiteText;
         background-color: $lightPrimary;
     }
 </style>

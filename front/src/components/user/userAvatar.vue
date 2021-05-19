@@ -35,7 +35,7 @@
         align-items: center;
         span {
             margin: 0 auto;
-            color: white;
+            color: $whiteText;
             font-size: 24pt;
         }
     }

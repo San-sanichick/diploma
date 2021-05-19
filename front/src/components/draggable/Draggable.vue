@@ -78,7 +78,7 @@
         font-family: Open Sans, Arial, sans-serif;
         position: fixed;
         z-index: 9;
-        background-color: white;
+        background-color: $background;
         border: 1px solid #ccc;
         border-radius: 8px;
         overflow: hidden;
@@ -100,13 +100,9 @@
         grid-template-columns: auto max-content;
 
         background-color: $darkPrimary;
-        color: white;
+        color: $whiteText;
         border-radius: 8px;
         z-index: 10;
-        // width: 200px;
         padding: 10px;
-
-        // button {
-        // }
     }
 </style>

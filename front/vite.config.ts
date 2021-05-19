@@ -7,6 +7,14 @@ export default defineConfig({
     plugins: [vue()],
     server: {
         port: 8080,
+        proxy: {
+            "/static": {
+                target: "http://localhost:5000",
+                changeOrigin: true,
+                secure: false,
+                rewrite: (path) => path.replace(/^\/static/, '')
+            }
+        }
     },
     resolve: {
         alias: {

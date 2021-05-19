@@ -115,7 +115,6 @@
     import LayerView from "@/components/layers/LayerView.vue";
 
     import Engine, { EngineState, Shapes } from "@/engine/engine";
-    import axios from 'axios';
     import fileDownload from "js-file-download";
     import Drawable from '@/engine/shapes/drawable';
     import Shape from '@/engine/shapes/shape';
@@ -321,7 +320,7 @@
                 try {
                     const data = this.engine.save();
                     const id = this.$route.params.id;
-                    const res = await axios.patch(`projects/save`, { id, data });
+                    const res = await this.$axios.patch(`projects/save`, { id, data });
 
                     this.$flashMessage.show({
                         type: 'success',
@@ -340,7 +339,7 @@
                 const id = this.$route.params.id;
 
                 try {
-                    const res = await axios.get(`projects/get/${id}`);
+                    const res = await this.$axios.get(`projects/get/${id}`);
                     if (res.status !== 200) throw new Error(res.data.msg);
                     const data = res.data;
                     this.engine.load(data.data);
@@ -494,7 +493,7 @@
 
                 .panel-header {
                     background-color: $primary;
-                    color: white;
+                    color: $whiteText;
                     text-align: left;
                     padding: 12px 15px;
                     user-select: none;
@@ -566,7 +565,7 @@
         .page-footer-editor {
             width: calc(100% - 30px);
             background-color: $lightSecondaryGreen;
-            color: white;
+            color: $whiteText;
             font-size: 1.5ch;
             padding: 3px 15px;
             display: grid;

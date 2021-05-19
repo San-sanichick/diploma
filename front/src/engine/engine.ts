@@ -314,7 +314,7 @@ export default class Engine {
         return {
             offset: this.offset,
             scale: this.scale,
-            image: this.renderToImage(800, 400).toDataURL(),
+            image: this.renderToImage(800, 400).toDataURL("image/jpeg", 0.4),
             layers
         }
     }
@@ -738,8 +738,8 @@ export default class Engine {
     private gridThickness(): number {
         let gridWidth = 1;
 
-        if (this.scale >= 1 && this.scale <= 4) gridWidth = 125;
-        if (this.scale > 4 && this.scale <= 8) gridWidth = 25;
+        // if (this.scale >= 1 && this.scale <= 4) gridWidth = 125;
+        if (this.scale > 1 && this.scale <= 8) gridWidth = 25;
         if (this.scale > 8 && this.scale <= 12) gridWidth = 5;
 
         return gridWidth

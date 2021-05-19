@@ -1,7 +1,10 @@
 <template>
     <div class="project-grid">
         <div class="project" v-for="project in projects" :key="project._id" tabindex="0">
-            <div
+            <GridProject
+                :project="project"
+                @project-clicked="emitProject" />
+            <!-- <div
                 @dblclick="$emit('project-clicked', project._id)">
                 <div 
                     v-if="project.thumbnail !== ''" 
@@ -13,7 +16,7 @@
                     <h3> {{project.name}} </h3>
                     <p>Изменено: {{$filters.dateFilter(project.dateOfLastChange)}} </p>
                 </div>
-            </div>
+            </div> -->
         </div>
     </div>
 </template>
@@ -21,8 +24,12 @@
 <script lang="ts">
     import { defineComponent, PropType } from "vue";
     import Project from '../types/Project';
+    import GridProject from "./ProjectListGrid/GridProject.vue";
 
     export default defineComponent({
+        components: {
+            GridProject,
+        },
         emits: ["project-clicked", "open-project", "setup-project", "delete-project"],
         props: {
             projects: {
@@ -75,6 +82,9 @@
                     }
                 }
             },
+            emitProject(id: Project) {
+                this.$emit("open-project", id);
+            }
         }
     })
 </script>
@@ -90,35 +100,35 @@
         .project {
             border: 2px solid $primary;
             border-radius: 8px;
-                color: black;
-                text-decoration: none;
+            color: $text;
+            text-decoration: none;
 
-                .project-image {
-                    height: 200px;
-                    background-repeat: no-repeat;
-                    background-size: cover;
-                    // background-color: #ccc;
-                    background-color: #003236;
-                    border-radius: 8px 8px 0 0;
+            .project-image {
+                height: 200px;
+                background-repeat: no-repeat;
+                background-size: cover;
+                background-color: #003236;
+                border-radius: 8px 8px 0 0;
+            }
+
+            .project-info {
+                -moz-user-select: -moz-none;
+                -webkit-user-select: none;
+                user-select: none;
+                text-align: left;
+                display: grid;
+                grid-template-columns: max-content;
+                margin: 0 10px;
+
+                h3 {
+                    font-weight: 600;
                 }
 
-                .project-info {
-                    -moz-user-select: -moz-none;
-                    -webkit-user-select: none;
-                    user-select: none;
-                    text-align: left;
-                    display: grid;
-                    grid-template-columns: max-content;
-                    margin: 0 10px;
-
-                    h3 {
-                        font-weight: 600;
-                    }
-
-                    p {
-                        color: #ccc;
-                    }
+                p {
+                    color: #ccc;
                 }
+            }
+
             &:hover,
             &:focus {                
                 border: 2px solid $darkPrimary;

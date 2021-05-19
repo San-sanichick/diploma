@@ -6,7 +6,7 @@
             </h3>
             <div></div>
             <div>
-                <SearchBar v-model:search-query="searchQuery" />
+                <SearchBar v-model:search-query="searchQuery" @search="searchProjects" />
             </div>
             <div class="page-header-buttons">
                 <button class="create-project" @click="openPopUp(); currentPopUp='createProject'"></button>
@@ -19,8 +19,7 @@
             <component 
                 v-if="list.length !== 0"
                 :is="displayMode" 
-                :projects="listFiltered" 
-                @project-clicked="openProject" 
+                :projects="list" 
                 @open-project="openProject"
                 @setup-project="currentPopUp='setUpProject'; openPopUp($event)"
                 @delete-project="deleteProject"
@@ -43,7 +42,6 @@
 
 <script lang="ts">
     import { defineComponent } from "vue";
-    import axios               from "axios";
 
     import Project             from "@/types/Project";
     import ProjectListGrid     from "@/components/ProjectListGrid.vue";
@@ -71,24 +69,42 @@
                 selectedProject: 0
             }
         },
-        computed: {
-            listFiltered(): Project[] {
-                if (this.searchQuery !== "") {
-                    return this.list.filter(el => el.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
-                } else {
-                    return this.list;
-                }
-            }
-        },
+        // computed: {
+        //     listFiltered(): Project[] {
+        //         if (this.searchQuery !== "") {
+        //             return this.list.filter(el => el.name.toLowerCase().includes(this.searchQuery.toLowerCase()));
+        //         } else {
+        //             return this.list;
+        //         }
+        //     }
+        // },
         created() {
             this.fetchProjects();
         },
         methods: {
             async fetchProjects(): Promise<void> {
                 try {
-                    const res = await axios.get(`/projects/get_all`);
+                    const res = await this.$axios.get(`/projects/get_all`);
                     if (res.status !== 200) throw new Error(res.data.msg);
                     this.list = res.data.data;
+                } catch (err) {
+                    this.$flashMessage.show({
+                        type: 'error',
+                        image: "/src/assets/flashMessage/fail.svg",
+                        text: err
+                    });
+                }
+            },
+            async searchProjects() {
+                try {
+                    if (this.searchQuery.length !== 0) {
+                        const res = await this.$axios.get(`/projects/get_by_name/${this.searchQuery}`);
+                        if (res.status !== 200) throw new Error(res.data.msg);
+
+                        this.list = res.data.data;
+                    } else {
+                        await this.fetchProjects();
+                    }
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
@@ -104,7 +120,7 @@
                         publicAccess: project.access
                     }
 
-                    const res = await axios.post("/projects/create", data);
+                    const res = await this.$axios.post("/projects/create", data);
                     
                     if (res.status !== 200) throw new Error(res.data.msg);
                     this.list.push(res.data.data);
@@ -125,7 +141,7 @@
             },
             async setUpProject(project: never) {
                 try {
-                    const res = await axios.patch("/projects/update", project);
+                    const res = await this.$axios.patch("/projects/update", project);
                     if (res.status !== 200) throw new Error(res.data.msg);
                     const updated = res.data.data;
 
@@ -162,6 +178,7 @@
                 }
             },
             async openProject(id: string) {
+                console.log(id);
                 this.$router.push({
                     path: `projects/${id}`
                 });
@@ -169,7 +186,7 @@
             async deleteProject(id: number) {
                 console.log(id);
                 try {
-                    const res = await axios.delete(`/projects/delete/${id}`);
+                    const res = await this.$axios.delete(`/projects/delete/${id}`);
                     if (res.status !== 200) throw new Error(res.data.msg);
 
                     this.list = res.data.data;
@@ -216,7 +233,7 @@
             padding: 20px 0;
             // top: 65px;
             z-index: 2500;
-            background-color: white;
+            background-color: $background;
             // position: sticky;
             display: grid;
             grid-template-columns: max-content auto max-content max-content;
@@ -248,7 +265,7 @@
                     background-size: contain;
                     background-repeat: no-repeat;
                     outline: none;
-                    color: white;
+                    color: $whiteText;
                     appearance: none;
 
                     &:hover{

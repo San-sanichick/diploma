@@ -48,7 +48,7 @@
                             password: this.form.password
                         }
 
-                        const res = await axios.post(`/users/signUp`, data);
+                        const res = await this.$axios.post(`/users/signUp`, data);
                         if (res.status !== 200) throw new Error(res.data.msg);
                         console.log(res.data);
                         this.$router.push('/auth/login');
@@ -110,8 +110,8 @@
             hr {
                 width: 100%;
                 border: none;
-                color: black;
-                background-color: black;
+                color: $hr;
+                background-color: $hr;
                 height: 1px;
             }
 
@@ -125,7 +125,7 @@
                     height: 38px;
                     background-color: $darkPrimary;
                     outline: none;
-                    color: white;
+                    color: $whiteText;
                     border: 2px solid $darkPrimary;
                     border-radius: 8px;
                     appearance: none;

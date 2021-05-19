@@ -10,6 +10,7 @@
             ref="search-bar-input"
             @focus="focusBar" 
             @blur="focused = false"
+            @keyup.enter="$emit('search')"
             type="search" 
             name="search-bar" 
             v-model="searchQueryLocal"
@@ -33,7 +34,7 @@
                 focused: false
             }
         },
-        emits: ["update:searchQuery"],
+        emits: ["update:searchQuery", "search"],
         mounted() {
             document.addEventListener("keydown", (e: KeyboardEvent) => {
                 // e.preventDefault();

@@ -147,8 +147,8 @@
             hr {
                 width: 100%;
                 border: none;
-                color: black;
-                background-color: black;
+                color: $hr;
+                background-color: $hr;
                 height: 1px;
             }
 
@@ -162,7 +162,7 @@
                     height: 38px;
                     background-color: $darkPrimary;
                     outline: none;
-                    color: white;
+                    color: $whiteText;
                     border: 2px solid $darkPrimary;
                     border-radius: 8px;
                     appearance: none;

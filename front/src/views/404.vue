@@ -45,7 +45,7 @@
                 height: 38px;
                 background-color: $darkPrimary;
                 outline: none;
-                color: white;
+                color: $whiteText;
                 border: 2px solid $darkPrimary;
                 border-radius: 8px;
                 appearance: none;

@@ -106,7 +106,7 @@
         .project-table-header {
             position: sticky;
             top: 65px;
-            background-color: white;
+            background-color: $background;
             z-index: 2000;
             .table-header {
                 border-bottom: 1px solid $darkSecondaryGreen;

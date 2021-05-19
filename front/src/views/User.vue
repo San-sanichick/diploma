@@ -77,7 +77,7 @@
         align-items: center;
         padding: 0px 30px;
         background-color: $darkPrimary;
-        color: white;
+        color: $whiteText;
         z-index: 1000;
 
         .logo {
@@ -112,7 +112,7 @@
             }
             a {
                 text-decoration: none;
-                color: white;
+                color: $whiteText;
 
                 .user-logout {
                     background-image: url("../assets/logOut.svg");

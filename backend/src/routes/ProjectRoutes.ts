@@ -14,11 +14,12 @@ export class ProjectRoutes {
     }
 
     private routes() {
-        this.router.post(  "/create",     passport.authenticate("jwt", {session: false}), this.projectController.createProject);
-        this.router.get(   "/get_all",    passport.authenticate("jwt", {session: false}), this.projectController.getAllProjects);
-        this.router.get(   "/get/:id",    passport.authenticate("jwt", {session: false}), this.projectController.getProjectByID);
-        this.router.patch( "/update",     passport.authenticate("jwt", {session: false}), this.projectController.updateProjectConfig);
-        this.router.patch( "/save",       passport.authenticate("jwt", {session: false}), this.projectController.updateProject);
-        this.router.delete("/delete/:id", passport.authenticate("jwt", {session: false}), this.projectController.deleteProject);
+        this.router.post(  "/create",             passport.authenticate("jwt", {session: false}), this.projectController.createProject);
+        this.router.get(   "/get_all",            passport.authenticate("jwt", {session: false}), this.projectController.getAllProjects);
+        this.router.get(   "/get/:id",            passport.authenticate("jwt", {session: false}), this.projectController.getProjectByID);
+        this.router.get(   "/get_by_name/:query", passport.authenticate("jwt", {session: false}), this.projectController.getProjectsByName);
+        this.router.patch( "/update",             passport.authenticate("jwt", {session: false}), this.projectController.updateProjectConfig);
+        this.router.patch( "/save",               passport.authenticate("jwt", {session: false}), this.projectController.updateProject);
+        this.router.delete("/delete/:id",         passport.authenticate("jwt", {session: false}), this.projectController.deleteProject);
     }
 }
