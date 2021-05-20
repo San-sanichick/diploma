@@ -36,20 +36,20 @@
                 :push-other-panes="false">
                 <pane 
                     min-size="2"
-                    size="15"
+                    size="12"
                     >
                     <div class="project-tree panel">
                         <div class="panel-header">
                             <h3>Дерево проекта</h3>
                         </div>
-                        <ul>
+                        <ul class="tree-container">
                             <TreeItem 
                                 :item="shapesOnScene"
                                 @selected="selectElementHandler" />
                         </ul>
                     </div>
                 </pane>
-                <pane size="70">
+                <pane size="76">
                     <div class="viewport" 
                         ref="viewport" 
                         tabindex="1">
@@ -60,7 +60,7 @@
                 </pane>
                 <pane 
                     min-size="2"
-                    size="15"
+                    size="12"
                     >
                     <splitpanes horizontal>
                         <pane min-size="20">
@@ -181,17 +181,22 @@
                     this.engine.setCurLayer = val;
                 }
             },
-            selectedShape(): Drawable | null | Array<Drawable> {
-                if (this.engine.selectedElements) {
-                    if (this.engine.selectedElements.length === 1) {
-                        return this.engine.selectedElements[0];
-                    } else if (this.engine.selectedElements.length > 1) {
-                        return this.engine.selectedElements;
+            selectedShape: {
+                get(): Drawable | null | Array<Drawable> {
+                    if (this.engine.selectedElements) {
+                        if (this.engine.selectedElements.length === 1) {
+                            return this.engine.selectedElements[0];
+                        } else if (this.engine.selectedElements.length > 1) {
+                            return this.engine.selectedElements;
+                        }
+                    } else {
+                        return null;
                     }
-                } else {
                     return null;
+                },
+                set(val: Drawable) {
+                    this.engine.editSelected(0, val);
                 }
-                return null;
             },
             // first time I used this, this is very noice
             // toolSelected: {
@@ -517,8 +522,8 @@
                 // resize: horizontal;
                 overflow-x: auto;
 
-                ul {
-                    padding-left: 0px;
+                .tree-container {
+                    padding-left: 0;
                     // line-height: 1.5em;
                     // padding: 0;
                     // margin: 10px 0;

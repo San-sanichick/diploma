@@ -12,7 +12,12 @@
                     <td>Имя</td>
                     <td v-if="!edit" @dblclick="edit = true">{{ itemCastedToShape.name }}</td>
                     <td v-if="edit">
-                        <input type="text" :value="itemCastedToShape.name" size="3" @keyup.enter="updateItemName">
+                        <input 
+                            type="text" 
+                            v-focus
+                            v-model="itemCastedToShape.name" 
+                            :size="itemCastedToShape.name.length" 
+                            @keyup.enter="edit = false;">
                     </td>
                 </tr>
                 <tr>
@@ -27,7 +32,15 @@
             <tbody v-else-if="itemCastedToGroup !== null">
                 <tr>
                     <td>Имя</td>
-                    <td>{{ itemCastedToGroup.name }}</td>
+                    <td v-if="!edit" @dblclick="edit = true">{{ itemCastedToGroup.name }}</td>
+                    <td v-if="edit">
+                        <input 
+                            type="text" 
+                            v-focus
+                            v-model="itemCastedToGroup.name" 
+                            :size="itemCastedToGroup.name.length"
+                            @keyup.enter="edit = false;">
+                    </td>
                 </tr>
                 <tr>
                     <td>
@@ -88,29 +101,31 @@
             }
         },
         computed: {
-            itemCastedToGroup(): Group | null {
-                if (this.item !== null && this.item !== undefined 
-                    && !Array.isArray(this.item) && this.item.type === "Group") {
-                    return this.item as Group;
-                } else {
-                    return null;
+            itemCastedToGroup: {
+                get(): Group | null {
+                    if (this.item !== null && this.item !== undefined 
+                        && !Array.isArray(this.item) && this.item.type === "Group") {
+                        return this.item as Group;
+                    } else {
+                        return null;
+                    }
+                },
+                set(val: Group) {
+                    this.$emit("update:item", val);
                 }
             },
-            itemCastedToShape(): Shape | null {
-                if (this.item !== null && this.item !== undefined 
-                    && !Array.isArray(this.item) && this.item?.type !== "Group") {
-                    return this.item as Shape;
-                } else {
-                    return null;
+            itemCastedToShape: {
+                get(): Shape | null {
+                    if (this.item !== null && this.item !== undefined 
+                        && !Array.isArray(this.item) && this.item?.type !== "Group") {
+                        return this.item as Shape;
+                    } else {
+                        return null;
+                    }
+                },
+                set(val: Shape) {
+                    this.$emit("update:item", val);
                 }
-            }
-        },
-        methods: {
-            updateItemName(e: InputEvent) {
-                const target = e.target as HTMLInputElement;
-                const val = target.value;
-                this.edit = false;
-                this.$emit("update:item", val);
             }
         }
     })
@@ -125,6 +140,11 @@
 
         th, td {
             font-size: 1.6ch;
+
+            input {
+                width: 96%;
+                // margin-right: 15px;
+            }
         }
     }
 </style>

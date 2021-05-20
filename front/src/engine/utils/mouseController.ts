@@ -16,6 +16,7 @@ export default class MouseController {
 
     private mouseWheelStep                = 20;
 
+    private isOnCanvas                    = false;
     private isPressed                     = false;
     private isHeld                        = false;
     private isReleased                    = false;
@@ -62,6 +63,14 @@ export default class MouseController {
             this.isReleased = true;
         });
 
+        canvas.addEventListener("mouseover", () => {
+            this.isOnCanvas = true;
+        });
+
+        canvas.addEventListener("mouseleave", () => {
+            this.isOnCanvas = false;
+        })
+
         canvas.addEventListener("contextmenu", (e) => {
             e.preventDefault();
         })
@@ -76,6 +85,10 @@ export default class MouseController {
         this.oldDelta = this.delta;
         this.delta = 0;
         return clamp(temp, -100, 100);
+    }
+
+    get getIsOnCanvas() {
+        return this.isOnCanvas;
     }
 
     get getHeldButton() {

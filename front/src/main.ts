@@ -6,6 +6,7 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import moment from "moment";
 import FlashMessage, { FlashMessagePlugin } from "@smartweb/vue-flash-message";
 import mitt, { Emitter } from "mitt";
+import { debounce } from "./utils/debounce";
 
 import router from './router';
 import store from './store';
@@ -129,6 +130,14 @@ app.directive("focus", {
     mounted(el: HTMLInputElement) {
         el.focus();
     }
+});
+
+app.directive("debounce", (el: HTMLInputElement, binding) => {
+    const
+        delay = parseInt(binding.arg ?? "300"),
+        func = binding.value;
+
+    el.addEventListener("keyup", debounce<typeof func>(func, delay));
 });
 
 app.use(store).use(router).use(FlashMessage, {

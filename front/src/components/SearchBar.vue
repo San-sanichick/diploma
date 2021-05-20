@@ -10,7 +10,8 @@
             ref="search-bar-input"
             @focus="focusBar" 
             @blur="focused = false"
-            @keyup.enter="$emit('search')"
+            @keyup.esc="blurBar"
+            v-debounce:350="emitSearch"
             type="search" 
             name="search-bar" 
             v-model="searchQueryLocal"
@@ -58,6 +59,13 @@
         methods: {
             focusBar() {
                 this.focused = true;
+            },
+            blurBar() {
+                this.focused = false;
+                (this.$refs["search-bar-input"] as HTMLInputElement).blur();
+            },
+            emitSearch() {
+                this.$emit('search');
             },
             focusInput() {
                 this.focused = true;

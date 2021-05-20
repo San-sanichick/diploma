@@ -268,6 +268,10 @@ export default class Engine {
         return Array.from(this.selectedShapes);
     }
 
+    public editSelected(index: number, val: Drawable) {
+        this.selectedElements[index] = val;
+    }
+
     get mouseCoordinates() {
         return this.cursor;
     }
@@ -314,7 +318,7 @@ export default class Engine {
         return {
             offset: this.offset,
             scale: this.scale,
-            image: this.renderToImage(800, 400).toDataURL("image/jpeg", 0.4),
+            image: this.renderToImage(1200, 700).toDataURL("image/jpeg", 0.4),
             layers
         }
     }
@@ -363,6 +367,7 @@ export default class Engine {
 
     // this is quite silly, really
     private hotKeyHandler() {
+        if (!this.mouse.getIsOnCanvas) return;
         // console.log(this.keyboard.getPressedButton);
         if (!this.keyboard.isCtrlHeld) {
             switch(this.keyboard.getPressedButton) {
@@ -389,6 +394,9 @@ export default class Engine {
         // won't complain
         if (this.keyboard.isCtrlHeld && !this.keyboard.isAltHeld) {
             switch (this.keyboard.getPressedButton) {
+                case "KeyA":
+                    this.addToSelection(...this.layers[this.getLayerIndex].shapes); 
+                    break;
                 case "KeyB":
                     this.isSnap = !this.isSnap;
                     break;
@@ -738,9 +746,9 @@ export default class Engine {
     private gridThickness(): number {
         let gridWidth = 1;
 
-        // if (this.scale >= 1 && this.scale <= 4) gridWidth = 125;
-        if (this.scale > 1 && this.scale <= 8) gridWidth = 25;
-        if (this.scale > 8 && this.scale <= 12) gridWidth = 5;
+        if (this.scale >= 1 && this.scale <= 5) gridWidth = 25;
+        if (this.scale > 5 && this.scale <= 20) gridWidth = 5;
+        if (this.scale > 20) gridWidth = 1;
 
         return gridWidth
     }
@@ -1059,6 +1067,8 @@ export default class Engine {
 
             // horizontal lines
             this.ctxUI.strokeStyle = "#61C0C8";
+            this.ctxUI.fillStyle = "#75c6ce";
+            this.ctxUI.textAlign = "center";
             for (let i = 0; i < width; i++) {
                 const x = fastRounding(sx + offset * i);
                 if (worldX % 5 == 0) this.ctxUI.lineWidth = 2;
@@ -1074,10 +1084,8 @@ export default class Engine {
                 this.ctxUI.lineWidth = 1;
 
                 if (worldX % gridWidth === 0) {
-                    this.ctxUI.fillStyle = "white";
                     this.ctxUI.translate(x + gridOffset, this.canvasUI.height + gridOffset);
                     this.ctxUI.scale(1, -1);
-                    this.ctxUI.textAlign = "center";
                     this.ctxUI.fillText(worldX.toString(), 0, 16);
                     this.ctxUI.scale(1, -1);
                     this.ctxUI.translate(-(x + gridOffset), -(this.canvasUI.height + gridOffset));
@@ -1102,11 +1110,9 @@ export default class Engine {
                 this.ctxUI.lineWidth = 1;
 
                 if (worldY % gridWidth === 0) {
-                    this.ctxUI.fillStyle = "white";
                     this.ctxUI.translate(gridOffset, y);
                     this.ctxUI.scale(1, -1);
                     this.ctxUI.rotate(-Math.PI / 2);
-                    this.ctxUI.textAlign = "center";
                     this.ctxUI.fillText(worldY.toString(), 0, 16);
                     this.ctxUI.rotate(Math.PI / 2);
                     this.ctxUI.scale(1, -1);

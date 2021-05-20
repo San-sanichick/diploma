@@ -32,7 +32,10 @@ export default class KeyboardController {
     private keyPressHandler = (e: KeyboardEvent) => {
         // F12 is here so that I don't go insane
         if (e.code === "F12" || e.code === "F5" || e.code === "F11") return true;
-        e.preventDefault();
+        // e.preventDefault();
+        if (e.ctrlKey && (e.code === "KeyG" || e.code === "KeyS" || e.code === "KeyO")) {
+            e.preventDefault();
+        }
 
         // uhh, this is stupid
         if (e.code === "ControlLeft" || 
@@ -54,7 +57,7 @@ export default class KeyboardController {
     }
 
     private keyReleaseHandler = (e: KeyboardEvent) => {
-        e.preventDefault();
+        // e.preventDefault();
         this.releasedButton = e.code;
         this.heldButton = null;
         this.isHeld = false;

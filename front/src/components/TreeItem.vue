@@ -20,7 +20,7 @@
                 </span>
             </div>
         </div>
-        <ul v-show="isOpen">
+        <ul v-show="isOpen" class="item-container">
             <tree-item
                 v-for="(child, index) in item.objects"
                 :key="index"
@@ -139,10 +139,10 @@
         // line-height: 1.5em;
         margin: 0;
         list-style: none;
-        // padding-left: 20px;
+        padding-left: 10%;
 
         li {
-            padding-left: 20px;
+            padding-left: 10px;
         }
     }
 </style>

@@ -171,7 +171,7 @@ export default class ProjectController {
                     const projects = populated.projects;
                     const query = req.params.query as string;
 
-                    console.log(query);
+                    // console.log(query);
 
                     if (projects) {
                         if (isDocumentArray(projects)) {
