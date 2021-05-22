@@ -86,7 +86,7 @@
         align-self: center;
         position: relative;
         outline: none;
-        border: 2px solid $primary;
+        border: 2px solid $middlePrimary;
         border-radius: 8px;
         overflow: hidden;
         padding: 8px 10px;

@@ -134,6 +134,7 @@
 <style lang="scss" scoped>
     @import "../assets/scss/config.scss";
     @import "../assets/scss/tableMixins.scss";
+    @import "../assets/scss/editorMixins.scss";
 
     table {
         @include table-style;
@@ -143,7 +144,9 @@
 
             input {
                 width: 96%;
+                font-size: 1.5ch;
                 // margin-right: 15px;
+                @include editor-input-style
             }
         }
     }

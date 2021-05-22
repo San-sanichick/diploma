@@ -1,22 +1,11 @@
 <template>
     <div class="project-grid">
         <div class="project" v-for="project in projects" :key="project._id" tabindex="0">
-            <GridProject
-                :project="project"
-                @project-clicked="emitProject" />
-            <!-- <div
-                @dblclick="$emit('project-clicked', project._id)">
-                <div 
-                    v-if="project.thumbnail !== ''" 
-                    class="project-image" 
-                    :style="{ backgroundImage: 'url(' + `http://localhost:5000/${project.thumbnail}` + ')' }"
-                    ></div>
-                <div v-else class="project-image"></div>
-                <div class="project-info">
-                    <h3> {{project.name}} </h3>
-                    <p>Изменено: {{$filters.dateFilter(project.dateOfLastChange)}} </p>
-                </div>
-            </div> -->
+            <!-- <perfect-scrollbar> -->
+                <GridProject
+                    :project="project"
+                    @project-clicked="emitProject" />
+            <!-- </perfect-scrollbar> -->
         </div>
     </div>
 </template>

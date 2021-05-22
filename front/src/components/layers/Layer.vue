@@ -102,6 +102,7 @@
 <style lang="scss">
     @import "../../assets/scss/config.scss";
     @import "../../assets/scss/buttonMixins.scss";
+    @import "../../assets/scss/editorMixins.scss";
 
     .layer {
         position: relative;
@@ -126,15 +127,17 @@
             
             input {
                 display: inline;
+                width: 100%;
+                @include editor-input-style;
                 // width: 40%;
-                color: $whiteText;
+                // color: $whiteText;
                 
-                margin: 0;
-                padding: 2px 5px;
-                background-color: $darkPrimary;
-                border: 1px solid $lightSecondaryGreen;
-                border-radius: 2px;
-                outline: none;
+                // margin: 0;
+                // padding: 2px 5px;
+                // background-color: $darkPrimary;
+                // border: 1px solid $lightSecondaryGreen;
+                // border-radius: 2px;
+                // outline: none;
             }
         }
 

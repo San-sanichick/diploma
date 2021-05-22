@@ -136,13 +136,12 @@
         font-weight: bold;
     }
     ul {
-        // line-height: 1.5em;
         margin: 0;
         list-style: none;
-        padding-left: 10%;
+        padding-left: 15px;
 
         li {
-            padding-left: 10px;
+            padding-left: 15px;
         }
     }
 </style>

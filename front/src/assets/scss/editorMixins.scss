@@ -16,3 +16,14 @@
     background-size: cover;
     cursor: pointer;
 }
+
+@mixin editor-input-style {
+    outline: none;
+    border: none;
+    // width: 100%;
+    border: 2px solid $middlePrimary;
+    margin: 0;
+    padding: 2px;
+    border-radius: 8px;
+    overflow: hidden;
+}
