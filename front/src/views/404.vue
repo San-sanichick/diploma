@@ -3,7 +3,7 @@
         <div>
             <h1>404</h1>
             <p>Страница не найдена</p>
-            <button @click.prevent="$router.back()">Назад</button>
+            <button @click.prevent="$router.push('/')">Назад</button>
         </div>
     </div>
 </template>

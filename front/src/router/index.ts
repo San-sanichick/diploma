@@ -16,7 +16,6 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: "projects/:id",
                 component: () => import('../views/User/ProjectEditor.vue'),
-                // props: true
                 meta: {
                     title: "Редактор",
                     requiresAuth: true

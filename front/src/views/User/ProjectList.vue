@@ -178,13 +178,11 @@
                 }
             },
             async openProject(id: string) {
-                console.log(id);
                 this.$router.push({
                     path: `projects/${id}`
                 });
             },
             async deleteProject(id: number) {
-                console.log(id);
                 try {
                     const res = await this.$axios.delete(`/projects/delete/${id}`);
                     if (res.status !== 200) throw new Error(res.data.msg);

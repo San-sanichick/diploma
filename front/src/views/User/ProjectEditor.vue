@@ -355,7 +355,7 @@
                         text: res.data.msg
                     });
                 } catch (err) {
-                    this.$router.push("/");
+                    this.$router.push("/404");
                     this.$flashMessage.show({
                         type: 'error',
                         image: "/src/assets/flashMessage/fail.svg",

@@ -18,9 +18,9 @@ class App {
         this._app  = express();
         this._port = port;
 
-        // this._app.use(cors({
-        //     origin: config.frontOrigin
-        // }));
+        this._app.use(cors({
+            origin: config.frontOrigin
+        }));
         this._app.use(cors());
         this._app.use(express.static("public"));
 
@@ -48,9 +48,9 @@ class App {
         this._app.use("/api/projects",      new ProjectRoutes().router);
         this._app.use("/api/token/refresh", new TokenRoutes().router);
 
-        this._app.get("/", (req, res) => {
-            res.send("kek");
-        })
+        // this._app.get("/", (req, res) => {
+        //     res.send("kek");
+        // });
     }
 
     private setMiddlewares() {

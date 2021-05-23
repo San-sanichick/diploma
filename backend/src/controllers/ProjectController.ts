@@ -186,7 +186,7 @@ export default class ProjectController {
                 }
             } catch (err) {
                 console.error(err);
-                res.status(400).json({msg: `Произошла ошибка: ${err}`});
+                res.status(400).json({msg: `Произошла ошибка: ${err.message}`});
             }
         }
     }
@@ -203,17 +203,13 @@ export default class ProjectController {
                 
                 if (user) {
                     const project = await ProjectModel.findById(req.params.id);
-                    
-                    // console.log(project);
 
                     if (project) {
-                        // console.log("KKKK");
                         const userPath = path.join(__dirname, `../../UserProjects/${user._id}/${project._id}`);
                         try {
                             const projectData = await readFile(`${userPath}/save.json`);
                             const save = JSON.parse(projectData as unknown as string);
-                            // console.log(projectData);
-                            // console.log("HAHAHA", save);
+
                             res.status(200).json({
                                 msg: `Проект ${project.name} успешно загружен`,
                                 data: save
@@ -225,10 +221,10 @@ export default class ProjectController {
                 }
 
             } catch (err) {
-                res.status(400).json({msg: `Произошла ошибка: ${err}`});
+                res.status(400).json({msg: `Произошла ошибка: ${err.message}`});
             }
         } else {
-            res.status(401).json({msg: "Access denied"});
+            res.status(401).json({msg: "Нет доступа"});
         }
     }
 
@@ -249,10 +245,9 @@ export default class ProjectController {
                 }
             }
         } catch (err) {
-            res.status(400).json({msg: `Произошла ошибка: ${err}`});
+            res.status(400).json({msg: `Произошла ошибка: ${err.message}`});
         }
     }
-
 
     public async deleteProject(req: Request, res: Response) {
         try {
@@ -272,8 +267,7 @@ export default class ProjectController {
                             useFindAndModify: false
                         },
                         (err, res) => {
-                            if (err) console.error(err);
-                            console.log(res);
+                            if (err) throw new Error(err);
                         }
                     )
                     if (user !== null) {
@@ -287,15 +281,16 @@ export default class ProjectController {
 
                             res.status(200).json({msg: `Проект ${project!.name} был успешно удалён`, data: populated.projects});
                         } catch (err) {
-                            res.status(400).json({msg: "Ошибка при удалении проекта"});
+                            // res.status(400).json({msg: "Ошибка при удалении проекта"});
+                            throw new Error(err);
                         }
                     }
                 }
             } else  {
-                throw new Error("Unathorized");
+                throw new Error("Нет доступа");
             }
         } catch (err) {
-            res.status(400).json({msg: `Произошла ошибка: ${err}`});
+            res.status(400).json({msg: `Произошла ошибка: ${err.message}`});
         }
     }
 }

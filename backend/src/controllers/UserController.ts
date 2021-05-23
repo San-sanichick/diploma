@@ -6,6 +6,7 @@ import * as fs from "fs";
 import path    from "path";
 
 import { Request, Response } from "express";
+import { validationResult } from "express-validator";
 import { UserModel, User }   from "../db/models/UserModel";
 import config                from "../config/config";
 import { getToken }          from "../utils/utils";
@@ -41,7 +42,7 @@ export default class UserController {
             res.status(200).json({msg: `User ${newUser._id} Created`});
         } catch (err) {
             console.error(err);
-            res.status(400).json({msg: `User wasn't created`});
+            res.status(400).json({msg: `ошибка при создании пользователя`});
         }
     }
 
@@ -87,11 +88,12 @@ export default class UserController {
                     throw new Error("Ошибка при обновлении настроек пользователя");
                 }
             } else {
-                res.status(401).json({msg: "Unathorized"});
+                // res.status(401).json({msg: "Unathorized"});
+                throw new Error("Нет доступа");
             }
         } catch (err) {
             console.error(err);
-            res.status(400).json({msg: err});
+            res.status(400).json({msg: err.message});
         }
     }
 
@@ -108,7 +110,20 @@ export default class UserController {
     }
 
     public async loginUser(req: Request, res: Response): Promise<void> {
-        console.log(req.body);
+        // console.log(req.body);
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            const arr = errors.array();
+            let errMsg = "";
+            for (const err of arr) {
+                errMsg += `${err.param}: ${err.msg} ${err.value}`;
+            }
+
+            res.status(400).json({ msg: errMsg });
+            // console.error(arr);
+            return;
+        }
+
         const
             email    = req.body.email,
             password = req.body.password,
@@ -158,7 +173,7 @@ export default class UserController {
             }
         } catch (err) {
             console.error(err);
-            res.status(404).json({msg: err});
+            res.status(404).json({msg: err.message});
         }
     }
 }

@@ -68,9 +68,8 @@ export default createStore({
     actions: {
         async logIn(context, payload) {
             try {
-                // const dataToSend = JSON.stringify(payload);
                 const res = await axios.post(`/users/login`, payload);
-                // console.log(res);
+                // console.log(res.data);
                 if (res.status !== 200) throw new Error(res.data.msg);
                 const user = res.data.data.user;
                 if (user) {
