@@ -40,4 +40,4 @@ function fastRounding(val: number): number {
     return (val + (val > 0 ? 0.5 : -0.5)) << 0;
 }
 
-export { clamp, mapRange, fastRounding }
+export { clamp, mapRange, fastRounding, lerp }

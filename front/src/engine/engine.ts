@@ -458,7 +458,7 @@ export default class Engine {
      */
     // TODO: Split updating into subroutines, so that this function is not so bloody huge as hell
     private update(): void {
-        // const t1 = performance.now();
+        const t1 = performance.now();
         if (this.ctx === null || this.ctxUI === null) return;
 
         // updating
@@ -618,7 +618,8 @@ export default class Engine {
             if (this.mouse.getHeldButton === MouseButtons.LEFT && this.cursorPosPivot !== null) {
                 for (const shape of this.selectedShapes) {
                     if (this.cursor.equals(this.cursorOldPos)) break;
-                    shape.resize(this.cursor.subtract(this.cursorPosPivot), this.cursorPosPivot);
+                    const coeff = this.cursor.subtract(this.cursorPosPivot);
+                    shape.resize(coeff, this.cursorPosPivot);
                 }
             }
             this.cursorOldPos = Vec2.copyFrom(this.cursor);
@@ -641,7 +642,7 @@ export default class Engine {
 
 
                     // const angle = angle1 - angle2;
-                    shape.rotate(-this.cursor.subtract(this.cursorOldPos).x / 50, this.cursorPosPivot);
+                    shape.rotate(-this.cursor.subtract(this.cursorOldPos).x / 25, this.cursorPosPivot);
                     // shape.rotate(angle, this.cursorPosPivot);
                 }
             } else {
@@ -677,6 +678,7 @@ export default class Engine {
         // this.fpsMeasurements.push(t2);
         this.render();
         this.renderUI();
+        const updateTime = performance.now() - t1;
         
         // uhh, better fps measurment, I guess?
         // const msPassed = this.fpsMeasurements[this.fpsMeasurements.length - 1] - this.fpsMeasurements[0];
@@ -685,9 +687,8 @@ export default class Engine {
         //     this.fpsMeasurements = [];
         // }
 
-        // this.renderDebug({ text: "FPS", metric: fastRounding(this.fps) },
-        //                  { text: "Render time", metric: `${(performance.now() - t2).toFixed(3)}ms` },
-        //                  { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },);
+        this.renderDebug({ text: "FPS", metric: fastRounding(1000 / updateTime) },
+                         { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },);
     }
 
     public group() {
@@ -925,43 +926,7 @@ export default class Engine {
 
         this.ctx.restore();
 
-        // this.ctx.save();
-            const origin = this.WorldToScreen(new Vec2(0, 0));
-            
-            this.ctx.strokeStyle = "rgba(0, 150, 150, 1)";
-            this.ctx.beginPath();
-            this.ctx.rect(origin.x - 5, origin.y - 5, 10, 10);
-            this.ctx.closePath();
-            this.ctx.stroke();
-
-            this.ctx.strokeStyle = "rgba(255, 0, 0, 1)";
-            this.ctx.beginPath();
-            this.ctx.moveTo(origin.x, origin.y);
-            this.ctx.lineTo(origin.x, origin.y + 50);
-            this.ctx.closePath();
-            this.ctx.stroke();
-            
-            this.ctx.strokeStyle = "rgba(0, 0, 255, 1)";
-            this.ctx.beginPath();
-            this.ctx.moveTo(origin.x, origin.y);
-            this.ctx.lineTo(origin.x + 50, origin.y);
-            this.ctx.closePath();
-            this.ctx.stroke();
-
-            // this monstrosity, because otherwise the text is drawn upside-down,
-            // which is hillarious, and also undesirable
-            this.ctx.save();
-                this.ctx.font = "16px Open Sans";
-                this.ctx.fillStyle = "#ccc";
-                this.ctx.translate(origin.x + 50, origin.y);
-                this.ctx.scale(1, -1);
-                this.ctx.fillText("X", 0, 0);
-                this.ctx.scale(1, -1);
-                this.ctx.translate(-(origin.x + 50), -origin.y);
-                this.ctx.translate(origin.x, origin.y + 50);
-                this.ctx.scale(1, -1);
-                this.ctx.fillText("Y", 0, 0);
-            this.ctx.restore();
+        
 
         Shape.worldOffset = this.offset;
         Shape.worldScale  = this.scale;
@@ -1016,6 +981,54 @@ export default class Engine {
         // draw cursor
         this.ctxUI.transform(1, 0, 0, -1, 0, this.canvasUI.height);
         const curV = this.WorldToScreen(this.cursor);
+        const origin = this.WorldToScreen(new Vec2(0, 0));
+
+        origin.x = origin.x < 30 ? 30 : origin.x;
+        origin.y = origin.y < 10 ? 10 : origin.y;
+
+        origin.x = origin.x > this.canvasUI.width ? 30 : origin.x;
+        origin.y = origin.y > this.canvasUI.height ? 10 : origin.y;
+
+        this.ctxUI.save();
+            this.ctxUI.strokeStyle = "rgba(0, 150, 150, 1)";
+            this.ctxUI.beginPath();
+            this.ctxUI.rect(origin.x - 5, origin.y - 5, 10, 10);
+            this.ctxUI.closePath();
+            this.ctxUI.stroke();
+        this.ctxUI.restore();
+
+        this.ctxUI.save();
+            this.ctxUI.strokeStyle = "rgba(255, 0, 0, 1)";
+            this.ctxUI.beginPath();
+            this.ctxUI.moveTo(origin.x, origin.y);
+            this.ctxUI.lineTo(origin.x, origin.y + 50);
+            this.ctxUI.closePath();
+            this.ctxUI.stroke();
+        this.ctxUI.restore();
+            
+        this.ctxUI.save();
+            this.ctxUI.strokeStyle = "rgba(0, 0, 255, 1)";
+            this.ctxUI.beginPath();
+            this.ctxUI.moveTo(origin.x, origin.y);
+            this.ctxUI.lineTo(origin.x + 50, origin.y);
+            this.ctxUI.closePath();
+            this.ctxUI.stroke();
+        this.ctxUI.restore();
+
+        // this monstrosity, because otherwise the text is drawn upside-down,
+        // which is hillarious, and also undesirable
+        this.ctxUI.save();
+            this.ctxUI.font = "16px Open Sans";
+            this.ctxUI.fillStyle = "#ccc";
+            this.ctxUI.translate(origin.x + 50, origin.y);
+            this.ctxUI.scale(1, -1);
+            this.ctxUI.fillText("X", 0, 0);
+            this.ctxUI.scale(1, -1);
+            this.ctxUI.translate(-(origin.x + 50), -origin.y);
+            this.ctxUI.translate(origin.x, origin.y + 50);
+            this.ctxUI.scale(1, -1);
+            this.ctxUI.fillText("Y", 0, 0);
+        this.ctxUI.restore();
 
         this.ctxUI.save();
             this.ctxUI.setLineDash([10, 5]);

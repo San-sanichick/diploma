@@ -289,30 +289,32 @@ export default abstract class Shape implements Drawable {
      * @param pos pivot point
      */
     resize(sizeCoeff: Vec2, pos: Vec2): void {
-        console.log(sizeCoeff);
+        let c = 0;
         if (sizeCoeff.x < 0) {
-            sizeCoeff.x = mapRange(sizeCoeff.x, 0, -100000, 0, 1);
+            c = 0.97;
+        } else {
+            c = 1.03;
         }
 
         // translate to origin
         const trMatrix = new Matrix([
             [1, 0, 0],
             [0, 1, 0],
-            [-this.centerOfShape.x, -this.centerOfShape.y, 1]
+            [-pos.x, -pos.y, 1]
         ]);
 
         // scale matrix
         const scMatrix = new Matrix([
-            [sizeCoeff.x, 0          , 0],
-            [0          , sizeCoeff.x, 0],
-            [0          , 0          , 1]
+            [c, 0, 0],
+            [0, c, 0],
+            [0, 0, 1]
         ]);
 
         // move it back to initial position
         const reTrMatrix = new Matrix([
             [1, 0, 0],
             [0, 1, 0],
-            [this.centerOfShape.x, this.centerOfShape.y, 1]
+            [pos.x, pos.y, 1]
         ]);
 
         // multiply all that stuff

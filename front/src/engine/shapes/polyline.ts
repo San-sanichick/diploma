@@ -38,7 +38,7 @@ export default class Polyline extends Shape {
                     //     ctx.strokeStyle = invertHex(color);
                     // }
                 }
-                // ctx.beginPath();
+                ctx.beginPath();
                 ctx.moveTo(sv.x, sv.y);
                 // ctx.lineTo(ev.x, ev.y);
                 for (const node of this.nodes) {
