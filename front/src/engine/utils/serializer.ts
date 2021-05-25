@@ -11,6 +11,7 @@ import Shape, { ShapeObject } from "../shapes/shape";
 import Drawable from "../shapes/drawable";
 import Polygon from "../shapes/polygon";
 import Polyline from "../shapes/polyline";
+import Spline from "../shapes/spline";
 
 /**
  * This is the dumbest class, because it only works with shapes,
@@ -85,6 +86,10 @@ export default class Serializer {
                 }
                 case "Polyline": {
                     arr.push(Shape.cloneFromObject<Polyline>(Polyline, obj as ShapeObject));
+                    break;
+                }
+                case "Spline": {
+                    arr.push(Shape.cloneFromObject<Spline>(Spline, obj as ShapeObject));
                     break;
                 }
                 default: {

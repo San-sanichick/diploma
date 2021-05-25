@@ -1099,7 +1099,7 @@ export default class Engine {
         let worldX = worldTopLeft.x,
             worldY = worldTopLeft.y;
 
-
+        let lineHeightOffset = 4;
         this.ctxUI.save();
             this.ctxUI.fillStyle = "#005A61";
             this.ctxUI.fillRect(0, this.canvasUI.height, this.canvasUI.width, -20);
@@ -1119,11 +1119,10 @@ export default class Engine {
                 if (worldX % 5 == 0) this.ctxUI.lineWidth = 2;
                 this.ctxUI.beginPath();
                 this.ctxUI.moveTo(x + gridOffset, this.canvasUI.height + gridOffset);
-                if (worldX % 5 == 0) {
-                    this.ctxUI.lineTo(x + gridOffset, this.canvasUI.height - 6 + gridOffset);
-                } else {
-                    this.ctxUI.lineTo(x + gridOffset, this.canvasUI.height - 4 + gridOffset);
-                }
+
+                lineHeightOffset = worldX % 5 === 0 ? 6 : 4;
+                this.ctxUI.lineTo(x + gridOffset, this.canvasUI.height - lineHeightOffset + gridOffset);
+                
                 this.ctxUI.closePath();
                 this.ctxUI.stroke();
                 this.ctxUI.lineWidth = 1;
@@ -1145,11 +1144,10 @@ export default class Engine {
                 if (worldY % 5 == 0) this.ctxUI.lineWidth = 2;
                 this.ctxUI.beginPath();
                 this.ctxUI.moveTo(gridOffset, y + gridOffset);
-                if (worldY % 5 == 0) {
-                    this.ctxUI.lineTo(6 + gridOffset, y + gridOffset);
-                } else {
-                    this.ctxUI.lineTo(4 + gridOffset, y + gridOffset);
-                }
+
+                lineHeightOffset = worldY % 5 === 0 ? 6 : 4;
+                this.ctxUI.lineTo(lineHeightOffset + gridOffset, y + gridOffset);
+
                 this.ctxUI.closePath();
                 this.ctxUI.stroke();
                 this.ctxUI.lineWidth = 1;
