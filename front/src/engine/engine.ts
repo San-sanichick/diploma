@@ -8,8 +8,9 @@ import Rectangle                         from "./shapes/rect";
 import Circle                            from "./shapes/circle";
 import Ellipse                           from "./shapes/ellipse";
 import Bezier                            from "./shapes/bezier";
-import Polygon from "./shapes/polygon";
-import Polyline from "./shapes/polyline";
+import Polygon                           from "./shapes/polygon";
+import Polyline                          from "./shapes/polyline";
+import Spline                            from "./shapes/spline";
 
 import Vec2                              from "./utils/vector2d";
 import MouseController, { MouseButtons } from "./utils/mouseController";
@@ -20,6 +21,7 @@ import Layer                             from "./types/Layer";
 import DXFSerializer from "./utils/DXFSerializer";
 import Arc from "./shapes/arc";
 import { Emitter } from "mitt";
+
 
 /**
  * Possible engine states
@@ -49,7 +51,8 @@ enum Shapes {
     BEZIER,
     ARC,
     POLYLINE,
-    POLYGON
+    POLYGON,
+    SPLINE
 }
 
 /**
@@ -84,7 +87,7 @@ export default class Engine {
     private offset:         Vec2          = new Vec2(0.0, 0.0);
     private cursor:         Vec2;
     private cursorOldPos:   Vec2          = new Vec2(0.0, 0.0);
-    private cursorPosPivot: Vec2 | null   = new Vec2(0, 0);
+    private cursorPosPivot: Vec2 | null   = null;
     public  isSnap                        = false;
     public engineState:     EngineState   = EngineState.SELECT;
     public curTypeToDraw:   Shapes        = Shapes.NONE;
@@ -522,6 +525,9 @@ export default class Engine {
                     case Shapes.POLYLINE:
                         this.tempShape = new Polyline();
                         break;
+                    case Shapes.SPLINE:
+                        this.tempShape = new Spline();
+                        break;
                     default:
                         break out;
                 }
@@ -538,6 +544,19 @@ export default class Engine {
         if (this.mouse.getReleasedButton === MouseButtons.RIGHT) {
             if (this.tempShape !== null) {
                 if (this.tempShape instanceof Polyline) {
+                    this.tempShape.setMaxNodeNumber = this.tempShape.numberOfNodes;
+                    this.tempShape.setNodeColor(NodeColors.INACTIVE);
+                    this.tempShape.color = "#fff";
+                    this.layers[this.getLayerIndex].shapes.push(this.tempShape)
+                    this.tempShape = null;
+                    this.selectedNode = null;
+                }
+            }
+        }
+
+        if (this.mouse.getReleasedButton === MouseButtons.RIGHT) {
+            if (this.tempShape !== null) {
+                if (this.tempShape instanceof Spline) {
                     this.tempShape.setMaxNodeNumber = this.tempShape.numberOfNodes;
                     this.tempShape.setNodeColor(NodeColors.INACTIVE);
                     this.tempShape.color = "#fff";
@@ -634,7 +653,7 @@ export default class Engine {
             if (this.mouse.getHeldButton === MouseButtons.LEFT && this.cursorPosPivot !== null) {
                 for (const shape of this.selectedShapes) {
                     if (this.cursor.equals(this.cursorOldPos)) break;
-                    // const a = new Vec2(this.cursorPosPivot.x + 2, this.cursorPosPivot.y).subtract(this.cursorPosPivot);
+                    // const a = new Vec2(this.cursorPosPivot.x, this.cursorPosPivot.y + 1).subtract(this.cursorPosPivot);
                     // const b = this.cursorPosPivot.subtract(this.cursor);
 
                     // const angle1 = Math.atan2(a.y, a.x);
@@ -643,7 +662,7 @@ export default class Engine {
 
                     // const angle = angle1 - angle2;
                     shape.rotate(-this.cursor.subtract(this.cursorOldPos).x / 25, this.cursorPosPivot);
-                    // shape.rotate(angle, this.cursorPosPivot);
+                    // shape.rotate(angle / 100, this.cursorPosPivot);
                 }
             } else {
                 this.cursorPosPivot = null;
@@ -678,7 +697,7 @@ export default class Engine {
         // this.fpsMeasurements.push(t2);
         this.render();
         this.renderUI();
-        const updateTime = performance.now() - t1;
+        // const updateTime = performance.now() - t1;
         
         // uhh, better fps measurment, I guess?
         // const msPassed = this.fpsMeasurements[this.fpsMeasurements.length - 1] - this.fpsMeasurements[0];
@@ -687,8 +706,8 @@ export default class Engine {
         //     this.fpsMeasurements = [];
         // }
 
-        this.renderDebug({ text: "FPS", metric: fastRounding(1000 / updateTime) },
-                         { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },);
+        // this.renderDebug({ text: "FPS", metric: fastRounding(1000 / updateTime) },
+        //                  { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },);
     }
 
     public group() {
@@ -1050,6 +1069,19 @@ export default class Engine {
             this.ctxUI.clearRect(curV.x - 25.5, curV.y - 25.5, 51, 51);
             this.ctxUI.drawImage(this.cursorIcon, curV.x - 25.5, curV.y - 25.5);
         this.ctxUI.restore();
+
+        if (this.cursorPosPivot) {
+            const pivotCoords = this.WorldToScreen(this.cursorPosPivot);
+            this.ctxUI.save();
+                this.ctxUI.strokeStyle = "red";
+                // this.ctxUI.beginPath();
+                // this.ctxUI.moveTo(pivotCoords.x, pivotCoords.y);
+                // this.ctxUI.lineTo(curV.x, curV.y);
+                // this.ctxUI.closePath();
+                // this.ctxUI.stroke();
+                this.ctxUI.strokeRect(pivotCoords.x - 4, pivotCoords.y - 4, 8, 8);       
+            this.ctxUI.restore();
+        }
 
         const worldTopLeft: Vec2      = this.ScreenToWorld(new Vec2(0, 0));
         const worldBottomRight: Vec2  = this.ScreenToWorld(new Vec2(this.canvasUI.width, this.canvasUI.height));

@@ -141,6 +141,7 @@
             },
             async setUpProject(project: never) {
                 try {
+                    console.log(project)
                     const res = await this.$axios.patch("/projects/update", project);
                     if (res.status !== 200) throw new Error(res.data.msg);
                     const updated = res.data.data;

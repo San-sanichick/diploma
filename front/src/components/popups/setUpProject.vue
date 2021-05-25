@@ -39,10 +39,10 @@
         methods: {
             submitHandler() {
                 this.$emit("setup-project", {
-                    id: "0", 
+                    id: this.project._id, 
                     name: this.form.name,
                     access: this.form.access
-                    });
+                });
             }
         }
     })

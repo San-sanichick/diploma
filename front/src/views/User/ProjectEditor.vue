@@ -151,6 +151,7 @@
                     { id: 5, name: "Дуга",          img: "/shapeIcons/arc.svg",       action: Shapes.ARC,         hotkey: "" },
                     { id: 6, name: "Полилиния",     img: "/shapeIcons/polyline.svg",  action: Shapes.POLYLINE,    hotkey: "" },
                     { id: 7, name: "Многоугольник", img: "/shapeIcons/polygon.svg",   action: Shapes.POLYGON,     hotkey: "" },
+                    { id: 8, name: "Сплайн",        img: "/shapeIcons/polyline.svg",  action: Shapes.SPLINE,    hotkey: "" },
                 ],
                 shapeSelectedTool: { id: 0, name: "Линия", img: "/shapeIcons/line.svg", action: Shapes.LINE, hotkey: "" },
                 toolSelected: { id: 0, name: "Выделение",       img: "/toolIcons/select.svg",     action: EngineState.SELECT,    hotkey: "A" },
