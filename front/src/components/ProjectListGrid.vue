@@ -28,12 +28,19 @@
         mounted() {
             this.contextMenuHandler();
         },
+        watch: {
+            projects() {
+                this.contextMenuHandler();
+            }
+        },
         methods: {
             contextMenuHandler() {
                 const pr = this.$el.querySelectorAll(".project") as NodeList;
                 if (this.projects) {
                     for (let i = 0; i < this.projects.length; i++) {
-                        pr[i].addEventListener("contextmenu", (e: Event) => {
+                        if (!pr[i]) return;
+
+                        const ctxMenuHandler = (e: Event) => {
                             e.preventDefault();
                             e.stopPropagation();
                             const data = [
@@ -42,7 +49,6 @@
                                     type: "",
                                     handler: () => {
                                         if(this.projects) {
-                                            console.log(this.projects[i]);
                                             this.$emit("open-project", this.projects[i]._id);
                                         }
                                     }
@@ -67,7 +73,10 @@
                                 },
                             ];
                             this.$emitter.emit("context-menu", {event: e, options: data});
-                        })
+                        }
+
+                        pr[i].removeEventListener("contextmenu", ctxMenuHandler);
+                        pr[i].addEventListener("contextmenu", ctxMenuHandler);
                     }
                 }
             },

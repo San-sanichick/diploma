@@ -141,7 +141,6 @@
             },
             async setUpProject(project: never) {
                 try {
-                    console.log(project)
                     const res = await this.$axios.patch("/projects/update", project);
                     if (res.status !== 200) throw new Error(res.data.msg);
                     const updated = res.data.data;
@@ -151,7 +150,7 @@
 
                     this.$flashMessage.show({
                         type: 'success',
-                        image: "../../assets/flashMessage/success.svg",
+                        image: "/src/assets/flashMessage/success.svg",
                         text: res.data.msg
                     });
                 } catch (err) {
