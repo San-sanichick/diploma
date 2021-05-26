@@ -12,6 +12,7 @@
     "axios": "^0.21.1",
     "core-js": "^3.12.1",
     "cors": "^2.8.5",
+    "curve-interpolator": "^2.0.8",
     "js-file-download": "^0.4.12",
     "mitt": "^2.1.0",
     "moment": "^2.29.1",

@@ -2,13 +2,29 @@ import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
 // import Drawing, { Point2D } from "dxf-writer";
 import DXFWriter from "@tarikjabiri/dxf";
+import Node from "./node";
+import { CurveInterpolator } from "curve-interpolator";
 import { invertHex } from "../utils/util";
 
 export default class Spline extends Shape {
+    private interpVertecies: Array<Array<number>>;
+
     constructor(name = "Spline") {
         // the polyline can have any number of nodes, and we can't define it,
         // we have to learn it at runtime
         super(name, Number.MAX_VALUE, "polyline.svg");
+        this.interpVertecies = [];
+    }
+
+    private interpolate() {
+        const points = [];
+        for (const node of this.nodes) {
+            points.push(node.getPosition.arrCoords);
+        }
+
+        const interp = new CurveInterpolator(points, { tension: 0.1 });
+        this.interpVertecies = interp.getPoints(100);
+        // console.log(this.interpVertecies.length);
     }
 
     toDXF(drw: DXFWriter): void {
@@ -42,6 +58,7 @@ export default class Spline extends Shape {
             ctx.restore();
         } else {
             const sv: Vec2 = this.WorldToScreen(this.nodes[0].getPosition);
+            this.interpolate();
 
             ctx.save();
                 ctx.fillStyle = "";
@@ -57,20 +74,13 @@ export default class Spline extends Shape {
                 }
                 ctx.beginPath();
                 ctx.moveTo(sv.x, sv.y);
-                // ctx.lineTo(ev.x, ev.y);
-                for (let i = 0; i < this.nodes.length - 1; i++) {
-                    const node = this.nodes[i];
-                    const nodeNext = this.nodes[i + 1];
-                    const v1: Vec2 = this.WorldToScreen(node.getPosition);
-                    const v2: Vec2 = this.WorldToScreen(nodeNext.getPosition);
-                    const mid = new Vec2((v1.x + v2.x) / 2, (v1.y + v2.y) / 2);
-                    const cpx1 = (mid.x + v1.x) / 2;
-                    const cpx2 = (mid.x + v2.x) / 2;
-                    
-                    ctx.quadraticCurveTo(cpx1, v1.y, mid.x, mid.y);
-                    ctx.quadraticCurveTo(cpx2, v2.y, v2.x, v2.y)
+                for (let i = 1; i < this.interpVertecies.length; i++) {
+                    const vert = this.interpVertecies[i];
+                    const mult = Shape.worldScale * Shape.worldGrid;
+                    const x = (vert[0] - Shape.worldOffset.x) * mult;
+                    const y = (vert[1] - Shape.worldOffset.y) * mult;
+                    ctx.lineTo(x, y);
                 }
-                // ctx.closePath();
                 ctx.stroke();
                 ctx.strokeStyle = "";
             ctx.restore();

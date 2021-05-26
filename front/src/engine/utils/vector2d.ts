@@ -9,6 +9,10 @@ export default class Vec2 {
         this.y = y;
     }
 
+    get arrCoords() {
+        return [this.x, this.y];
+    }
+
     /**
      * Calculates magnitude
      * @returns magnitude, duh

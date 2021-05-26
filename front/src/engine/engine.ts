@@ -558,9 +558,10 @@ export default class Engine {
             if (this.tempShape !== null) {
                 if (this.tempShape instanceof Spline) {
                     this.tempShape.setMaxNodeNumber = this.tempShape.numberOfNodes;
+                    // this.tempShape.finalize();
                     this.tempShape.setNodeColor(NodeColors.INACTIVE);
                     this.tempShape.color = "#fff";
-                    this.layers[this.getLayerIndex].shapes.push(this.tempShape)
+                    this.layers[this.getLayerIndex].shapes.push(this.tempShape);
                     this.tempShape = null;
                     this.selectedNode = null;
                 }
@@ -697,7 +698,7 @@ export default class Engine {
         // this.fpsMeasurements.push(t2);
         this.render();
         this.renderUI();
-        // const updateTime = performance.now() - t1;
+        const updateTime = performance.now() - t1;
         
         // uhh, better fps measurment, I guess?
         // const msPassed = this.fpsMeasurements[this.fpsMeasurements.length - 1] - this.fpsMeasurements[0];
@@ -706,8 +707,8 @@ export default class Engine {
         //     this.fpsMeasurements = [];
         // }
 
-        // this.renderDebug({ text: "FPS", metric: fastRounding(1000 / updateTime) },
-        //                  { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },);
+        this.renderDebug({ text: "FPS", metric: fastRounding(1000 / updateTime) },
+                         { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },);
     }
 
     public group() {
