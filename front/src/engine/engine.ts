@@ -809,13 +809,9 @@ export default class Engine {
             ctx.setTransform(1, 0, 0, -1, 0, this.canvas.height);
 
             ctx.save();
-            // this.currentLayer.forEach(shape => {
-            //     shape.renderSelf(ctx);
-            //     // shape.renderNodes(ctx);
-            // });
             this.layers.forEach(layer => {
                 layer.shapes.forEach(shape => {
-                    shape.renderSelf(ctx);
+                    shape.renderSelf(ctx, "white");
                 })
             })
             ctx.restore();

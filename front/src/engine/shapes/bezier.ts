@@ -84,7 +84,7 @@ export default class Bezier extends Shape {
 
             ctx.save();
                 // ctx.strokeStyle = this.color;
-                // ctx.beginPath();
+                ctx.beginPath();
                 ctx.moveTo(sv.x, sv.y);
                 ctx.bezierCurveTo(mv.x, mv.y, mv2.x, mv2.y, ev.x, ev.y);
                 // ctx.closePath();

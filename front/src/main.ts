@@ -2,7 +2,7 @@ import { createApp } from "vue";
 import { Router } from "vue-router";
 import { Store } from "vuex";
 import App from './App.vue';
-import axios, { AxiosError, AxiosResponse } from "axios";
+import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import moment from "moment";
 import FlashMessage, { FlashMessagePlugin } from "@smartweb/vue-flash-message";
 import mitt, { Emitter } from "mitt";
@@ -73,7 +73,7 @@ router.beforeEach(async (to, from, next) => {
 
 // so that axios doesn't eat my 4XX and 5XX errors
 axios.defaults.validateStatus = (status): boolean => {
-    return true;
+    return status === 401 ? false : true;
 }
 
 // uhh, maybe this works
@@ -81,13 +81,13 @@ axios.interceptors.response.use((res: AxiosResponse) => {
         return res;
     },
     async (err: AxiosError) => {
-
         const originalReq = err.config;
         const refreshToken = localStorage.getItem("refreshToken");
-        if (refreshToken !== "undefined" && err.response?.status === 401) {
-            const newToken = await axios.post("/token/refresh", { refreshToken });
-            originalReq.headers["Authorization"] = `Bearer ${newToken}`;
-            console.log("refreshed", newToken);
+        if (refreshToken !== "undefined" && err && err.response && err.response?.status === 401) {
+            const res = await axios.post("/token/refresh", { refreshToken });
+            const newToken = res.data.token;
+            store.commit("setToken", { token: newToken });
+            originalReq.headers["Authorization"] = newToken;
             return Axios.request(originalReq);
         }
 
@@ -95,6 +95,14 @@ axios.interceptors.response.use((res: AxiosResponse) => {
             router.push("/auth/login/");
             return Promise.reject(err);
         }
+    }
+);
+
+axios.interceptors.request.use((req: AxiosRequestConfig) => {
+        return req;
+    },
+    async (err: AxiosError) => {
+        console.error(err.config)
     }
 )
 
