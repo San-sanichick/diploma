@@ -171,7 +171,6 @@ export default class Engine {
         this.cursorIcon.src = "/src/assets/cursor.svg";
         Shape.worldGrid = this.grid;
         this.ctx.lineWidth = 1;
-        // this.ctx.translate(0.5, 0.5);
 
         return true;
     }
@@ -237,11 +236,13 @@ export default class Engine {
     }
 
     private deleteSelectedShapes() {
+        if (this.selectedShapes.size === 0) return;
+
         this.layers[this.getLayerIndex].shapes = this.layers[this.getLayerIndex].shapes.filter(shape => {
             return !this.selectedShapes.has(shape);
         });
 
-        this.selectedShapes.clear();
+        this.clearSelection();
     }
     
     /**
@@ -328,7 +329,6 @@ export default class Engine {
 
     // eslint-disable-next-line
     public load(data: { offset: {x: number; y: number}; scale: number; layers: any[] }) {
-        // this.selectedShapes.clear();
         this.clearSelection();
         if (data.layers.length !== 0) {
             this.layers = [];
@@ -389,6 +389,8 @@ export default class Engine {
                 case "KeyS":
                     this.engineState = EngineState.SCALE;
                     break;
+                case "Delete":
+                    this.deleteSelectedShapes();
                 default: return;
             }
         }
@@ -411,6 +413,9 @@ export default class Engine {
                     this.clearSelection();
                     break;
                 }
+                case "KeyG": 
+                    this.engineState = EngineState.GROUP;
+                    break;
                 case "KeyX": {
                     this.copyBuffer = [];
                     this.copyBuffer = this.selectedElements;
@@ -443,14 +448,13 @@ export default class Engine {
         }
 
         if (this.keyboard.isCtrlHeld && this.keyboard.isAltHeld) {
-            // switch (this.keyboard.getPressedButton) {
-            //     case "KeyB":
-            //         this.isSnap = false;
-            //         break;
-            
-            //     default:
-            //         return;
-            // }
+            switch (this.keyboard.getPressedButton) {
+                case "KeyG":
+                    this.engineState = EngineState.UNGROUP;
+                    break;
+                default:
+                    return;
+            }
         }
 
         this.emitter?.emit("statechange", this.engineState);
@@ -488,7 +492,7 @@ export default class Engine {
         this.offset = this.offset.add(mouseBeforeZoom.subtract(mouseAfterZoom));
         
         this.cursor = mouseAfterZoom.add(new Vec2(0, 0).multiply(this.grid));
-        // this.cursor.floor();
+
         if (this.isSnap) this.cursor.floor();
 
         // TODO: Change cursor icon based on engine state
@@ -543,25 +547,11 @@ export default class Engine {
         // this works
         if (this.mouse.getReleasedButton === MouseButtons.RIGHT) {
             if (this.tempShape !== null) {
-                if (this.tempShape instanceof Polyline) {
+                if (this.tempShape instanceof Polyline || this.tempShape instanceof Spline) {
                     this.tempShape.setMaxNodeNumber = this.tempShape.numberOfNodes;
                     this.tempShape.setNodeColor(NodeColors.INACTIVE);
                     this.tempShape.color = "#fff";
                     this.layers[this.getLayerIndex].shapes.push(this.tempShape)
-                    this.tempShape = null;
-                    this.selectedNode = null;
-                }
-            }
-        }
-
-        if (this.mouse.getReleasedButton === MouseButtons.RIGHT) {
-            if (this.tempShape !== null) {
-                if (this.tempShape instanceof Spline) {
-                    this.tempShape.setMaxNodeNumber = this.tempShape.numberOfNodes;
-                    // this.tempShape.finalize();
-                    this.tempShape.setNodeColor(NodeColors.INACTIVE);
-                    this.tempShape.color = "#fff";
-                    this.layers[this.getLayerIndex].shapes.push(this.tempShape);
                     this.tempShape = null;
                     this.selectedNode = null;
                 }
@@ -671,24 +661,14 @@ export default class Engine {
             this.cursorOldPos = Vec2.copyFrom(this.cursor);
         }
 
-        if (this.selectedShapes.size != 0) {
-            if (this.keyboard.getPressedButton === "Delete") {
-                this.deleteSelectedShapes();
-            }
-        }
-
-        if (this.keyboard.isCtrlHeld && !this.keyboard.isAltHeld && this.keyboard.getPressedButton === "KeyG") {
-            this.engineState = EngineState.GROUP;
-        } else if (this.keyboard.isCtrlHeld && this.keyboard.isAltHeld && this.keyboard.getPressedButton === "KeyG") {
-            this.engineState = EngineState.UNGROUP;
-        }
-
         if (this.engineState === EngineState.GROUP) {
             this.group();
+            this.engineState = EngineState.SELECT;
         }
 
         if (this.engineState === EngineState.UNGROUP) {
             this.ungroup();
+            this.engineState = EngineState.SELECT;
         }
 
         // const updateTime = performance.now() - t1;
@@ -707,8 +687,8 @@ export default class Engine {
         //     this.fpsMeasurements = [];
         // }
 
-        this.renderDebug({ text: "FPS", metric: fastRounding(1000 / updateTime) },
-                         { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },);
+        // this.renderDebug({ text: "FPS", metric: fastRounding(1000 / updateTime) },
+        //                  { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },);
     }
 
     public group() {
@@ -720,7 +700,6 @@ export default class Engine {
             });
 
             this.clearSelection();
-            this.engineState = EngineState.SELECT;
         }
     }
 
@@ -738,7 +717,6 @@ export default class Engine {
                 // this.selectedShapes.clear();
                 this.clearSelection();
                 this.layers[this.getLayerIndex].shapes.splice(this.layers[this.getLayerIndex].shapes.indexOf(group), 1);
-                this.engineState = EngineState.SELECT;
             }
         }
     }
@@ -999,11 +977,11 @@ export default class Engine {
         const curV = this.WorldToScreen(this.cursor);
         const origin = this.WorldToScreen(new Vec2(0, 0));
 
-        origin.x = origin.x < 30 ? 30 : origin.x;
-        origin.y = origin.y < 10 ? 10 : origin.y;
-
-        origin.x = origin.x > this.canvasUI.width ? 30 : origin.x;
-        origin.y = origin.y > this.canvasUI.height ? 10 : origin.y;
+        if (origin.x < 30 || origin.x > this.canvasUI.width ||
+            origin.y < 10 || origin.y > this.canvasUI.height) {
+            origin.x = 30;
+            origin.y = 10;
+        }
 
         this.ctxUI.save();
             this.ctxUI.strokeStyle = "rgba(0, 150, 150, 1)";

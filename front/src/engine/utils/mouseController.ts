@@ -27,6 +27,7 @@ export default class MouseController {
     constructor(canvas: HTMLCanvasElement) {
         this.curPos = new Vec2(0, 0);
         this.oldPos = new Vec2(0, 0);
+
         canvas.addEventListener("mousemove", (e) => {
             const boundingRect = canvas.getBoundingClientRect();
             this.curPos.x = e.clientX - boundingRect.x;

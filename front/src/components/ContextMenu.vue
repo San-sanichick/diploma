@@ -5,7 +5,11 @@
                 :key="index" 
                 @click="invokeHandler(value)"
                 :ref="'ctx_' + index"
-                > {{value.text}} </li>
+                >
+                    <div v-if="value.type !== 'separator'"> {{value.text}} </div>
+                    <hr v-else>
+                </li>
+            <!-- <li v-else></li> -->
         </ul>
     </div>
 </template>
@@ -28,6 +32,7 @@
         },
         mounted() {
             this.$emitter.on("context-menu", (e: any) => {
+                // console.log(e)
                 if (e.options === null) this.closeMenu();
                 this.openMenu(e.event, e.options);
             })
@@ -66,6 +71,7 @@
     .context-menu {
         position: fixed;
         width: 200px;
+        z-index: 3000;
 
         ul {
             list-style: none;
@@ -78,14 +84,26 @@
 
             li {
                 // margin-left: 10px;
-                padding: 2px 20px;
+                
                 cursor: pointer;
                 font-size: 1.6ch;
 
-                &:hover {
-                    background-color: $primary;
+                div {
+                    padding: 2px 20px;
                     
+                    &:hover {
+                        background-color: $primary;
+                    }
                 }
+
+                hr {
+                    // padding: px 20px;
+                    margin: 5px 20px;
+                    border: 1px solid $primary;
+                    background-color: $primary;
+                    color: $primary;
+                }
+                border: none;
             }
         }
     }

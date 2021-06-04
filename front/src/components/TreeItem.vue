@@ -161,9 +161,5 @@
         list-style: none;
         // padding-left: 15px;
         padding-left: 0;
-
-        li {
-            // padding-left: 15px;
-        }
     }
 </style>
