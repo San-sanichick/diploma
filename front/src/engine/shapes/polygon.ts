@@ -5,7 +5,7 @@ import DXFWriter from "@tarikjabiri/dxf";
 import { invertHex } from "../utils/util";
 
 export default class Polygon extends Shape {
-    public vertices: number;
+    public vertices: number | undefined;
 
     constructor(name = "Polygon", verticies: number) {
         super(name, 2, "polygon.svg");
@@ -38,11 +38,13 @@ export default class Polygon extends Shape {
 
             const angle = angle1 - angle2;
             
-            for (let i = 1; i < this.vertices; i++) {
-                this.nodes.push(new Node(new Vec2(
-                    x + radius * Math.cos(angle + 2 * Math.PI * i / this.vertices), 
-                    y + radius * Math.sin(angle + 2 * Math.PI * i / this.vertices)), 
-                    this));
+            if (this.vertices) {
+                for (let i = 1; i < this.vertices; i++) {
+                    this.nodes.push(new Node(new Vec2(
+                        x + radius * Math.cos(angle + 2 * Math.PI * i / this.vertices), 
+                        y + radius * Math.sin(angle + 2 * Math.PI * i / this.vertices)), 
+                        this));
+                }
             }
 
             this.nodes.shift();
@@ -87,11 +89,13 @@ export default class Polygon extends Shape {
                 ctx.beginPath();
                 ctx.moveTo(ev.x, ev.y);
                 // fuck if I know why it has to be this way
-                for (let i = 1; i < this.vertices; i++) {
-                    ctx.lineTo(
-                        sv.x - radius * Math.cos(angle + 2 * Math.PI * i / this.vertices), 
-                        sv.y - radius * Math.sin(angle + 2 * Math.PI * i / this.vertices)
-                    );
+                if (this.vertices) {
+                    for (let i = 1; i < this.vertices; i++) {
+                        ctx.lineTo(
+                            sv.x - radius * Math.cos(angle + 2 * Math.PI * i / this.vertices), 
+                            sv.y - radius * Math.sin(angle + 2 * Math.PI * i / this.vertices)
+                        );
+                    }
                 }
 
                 ctx.closePath();

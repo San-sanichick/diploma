@@ -99,7 +99,7 @@
     })
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
     @import "../../assets/scss/config.scss";
     @import "../../assets/scss/buttonMixins.scss";
     @import "../../assets/scss/editorMixins.scss";

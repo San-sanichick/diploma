@@ -55,7 +55,7 @@ export default abstract class Shape implements Drawable {
     public static worldGrid: number;
     public static magnitude = 0.5;
     // hacks
-    public vertices?: number;
+    public vertices?: number | undefined;
 
     constructor(name = "shape", maxNodes: number, icon: string) {
         this.maxNodes = maxNodes;

@@ -1,6 +1,9 @@
 <template>
     <li>
-        <div class="item">
+        <div class="item" 
+            :class="{ selected: item.isSelected }"
+            :style="{ paddingLeft: `${15 * +depth}px` }"
+            >
             <button
                 @click="toggle"
                 v-if="isCollapsable"
@@ -10,7 +13,6 @@
             </button>
             <div 
                 class="item-content"
-                :class="{ selected: item.isSelected }"
                 @click="select"
                 >
                 <div v-if="item.icon" class="item-image"
@@ -22,6 +24,7 @@
         </div>
         <ul v-show="isOpen" class="item-container">
             <tree-item
+                :depth="depth + 1"
                 v-for="(child, index) in item.objects"
                 :key="index"
                 :item="child"
@@ -40,6 +43,10 @@
             item: {
                 type: Object,
                 required: true
+            },
+            depth: {
+                type: Number,
+                default: 0
             }
         },
         data() {
@@ -75,7 +82,12 @@
         display: flex;
         flex-flow: row;
         height: 30px;
-        
+        box-sizing: border-box;
+        border: 1px solid $background;
+
+        &:hover {
+            border: 1px dashed $primary;
+        }
 
         .arrow {
             @include button-destyle;
@@ -94,12 +106,9 @@
         }
 
         .opened {
-            border-top-color: black;
-            border-left-color: transparent;
-            border-right-color: transparent;
-            border-bottom-color: transparent;
             top: 0px;
             left: 2px;
+            transform: rotateZ(90deg);
         }
         
         .item-content {
@@ -107,7 +116,7 @@
             display: flex;
             flex-flow: row;
             align-items: center;
-            padding-right: 10px;
+            // padding-right: 10px;
 
             .item-image {
                 width: 30px;
@@ -120,16 +129,28 @@
             }
         }
 
-        .selected {
-            background-color: $primaryTransparent;
-            color: $whiteText;
+    }
 
+    .selected {
+        background-color: $primaryTransparent;
+        // background-color: rgba();
+        color: $whiteText;
+        border: 1px solid $background;
+
+        .arrow {
+            border-color: white;
+            border-top-color: transparent;
+            border-right-color: transparent;
+            border-bottom-color: transparent;
+        }
+
+        .item-content {
             .item-image {
                 filter: brightness(100) saturate(100%);
             }
         }
-    }
 
+    }
     
 
     .bold {
@@ -138,10 +159,11 @@
     ul {
         margin: 0;
         list-style: none;
-        padding-left: 15px;
+        // padding-left: 15px;
+        padding-left: 0;
 
         li {
-            padding-left: 15px;
+            // padding-left: 15px;
         }
     }
 </style>
