@@ -241,7 +241,7 @@ export default class ProjectController {
                     const populated = await user.populate("projects").execPopulate();
                     res.status(200).json({msg: "Успешно получен список проектов", data: populated.projects});
                 } else {
-                    throw new Error("Пользователь не найден");
+                    throw new Error("пользователь не найден");
                 }
             }
         } catch (err) {

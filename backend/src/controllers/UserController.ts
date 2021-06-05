@@ -29,11 +29,17 @@ export default class UserController {
                 username: data.email,
                 password: hashedPassword
             };
+
+            // const found = await UserModel.findOne({email: user.email});
+
+            if (await UserModel.exists({ email: user.email })) throw new Error(`пользователь с таким email уже существует`);
+            
             const newUser = await UserModel.create(user);
             const p = path.join(__dirname, `../../UserProjects/${newUser._id}/`)
             fs.mkdir(p, (err)=> {
                 if (err) {
-                    console.error(err);
+                    // console.error(err);
+                    throw new Error("не удалось создать директорию пользователя")
                 } else {
                     console.log(`Created new user folder ${newUser._id}`);
                 }
@@ -42,7 +48,7 @@ export default class UserController {
             res.status(200).json({msg: `User ${newUser._id} Created`});
         } catch (err) {
             console.error(err);
-            res.status(400).json({msg: `ошибка при создании пользователя`});
+            res.status(400).json({msg: `Произошла ошибка: ${err.message}`});
         }
     }
 
@@ -63,7 +69,7 @@ export default class UserController {
 
                 const user = await UserModel.findById(decoded.id);
 
-                console.log(user);
+                // console.log(user);
                 if (user) {
 
                     user.username = data.username;
@@ -85,15 +91,14 @@ export default class UserController {
                         }
                     });
                 } else {
-                    throw new Error("Ошибка при обновлении настроек пользователя");
+                    throw new Error("пользователь не найден");
                 }
             } else {
-                // res.status(401).json({msg: "Unathorized"});
-                throw new Error("Нет доступа");
+                throw new Error("нет доступа");
             }
         } catch (err) {
             console.error(err);
-            res.status(400).json({msg: err.message});
+            res.status(404).json({msg: `Произошла ошибка: ${err.message}`});
         }
     }
 

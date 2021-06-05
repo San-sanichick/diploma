@@ -33,7 +33,7 @@ export default class KeyboardController {
         // F12 is here so that I don't go insane
         if (e.code === "F12" || e.code === "F5" || e.code === "F11") return true;
         // e.preventDefault();
-        if (e.ctrlKey && (e.code === "KeyG" || e.code === "KeyS" || e.code === "KeyO")) {
+        if (e.ctrlKey && (e.code === "KeyG" || e.code === "KeyF" || e.code === "KeyS" || e.code === "KeyO")) {
             e.preventDefault();
         }
 

@@ -2,7 +2,7 @@ import Serializer                        from "./utils/serializer";
 import Drawable                          from "./shapes/drawable";
 import Group                             from "./shapes/group";
 import Shape                             from "./shapes/shape";
-import Node, { NodeColors }                              from "./shapes/node";
+import Node, { NodeColors }              from "./shapes/node";
 import Line                              from "./shapes/line";
 import Rectangle                         from "./shapes/rect";
 import Circle                            from "./shapes/circle";
@@ -11,6 +11,7 @@ import Bezier                            from "./shapes/bezier";
 import Polygon                           from "./shapes/polygon";
 import Polyline                          from "./shapes/polyline";
 import Spline                            from "./shapes/spline";
+import Arc                               from "./shapes/arc";
 
 import Vec2                              from "./utils/vector2d";
 import MouseController, { MouseButtons } from "./utils/mouseController";
@@ -18,9 +19,8 @@ import KeyboardController                from "./utils/keyboardController";
 import { clamp, fastRounding }           from "./utils/math";
 import colors                            from "./config/colors";
 import Layer                             from "./types/Layer";
-import DXFSerializer from "./utils/DXFSerializer";
-import Arc from "./shapes/arc";
-import { Emitter } from "mitt";
+import DXFSerializer                     from "./utils/DXFSerializer";
+import { Emitter }                       from "mitt";
 
 
 /**
@@ -96,6 +96,7 @@ export default class Engine {
     private emitter: Emitter | undefined;
     private fps                           = 0;
     private fpsMeasurements: number[]     = [];
+    private showDebug                     = false;
 
     /**
      * Engine constructor. Requires a viewport with two canvases: the UI canvas (class: 'canvas-ui') and
@@ -413,6 +414,9 @@ export default class Engine {
                     this.clearSelection();
                     break;
                 }
+                case "KeyF":
+                    this.showDebug = !this.showDebug;
+                    break;
                 case "KeyG": 
                     this.engineState = EngineState.GROUP;
                     break;
@@ -687,8 +691,10 @@ export default class Engine {
         //     this.fpsMeasurements = [];
         // }
 
-        // this.renderDebug({ text: "FPS", metric: fastRounding(1000 / updateTime) },
-        //                  { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },);
+        if (this.showDebug) {
+            this.renderDebug({ text: "FPS", metric: fastRounding(1000 / updateTime) },
+                             { text: "Update time", metric: `${updateTime.toFixed(3)}ms` },);
+        }
     }
 
     public group() {

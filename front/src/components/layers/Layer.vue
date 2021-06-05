@@ -145,7 +145,7 @@
         button {
             width: 25px;
             height: 25px;
-            color: $whiteText;
+            color: $text;
             @include button-destyle;
 
             &:hover {
@@ -156,11 +156,19 @@
         &:hover {
             color: $whiteText;
             background-color: $primaryTransparent;
+
+            button {
+                color: $whiteText;
+            }
         }
     }
 
     .selected {
         color: $whiteText;
         background-color: $lightPrimary;
+
+        button {
+            color: $whiteText;
+        }
     }
 </style>
