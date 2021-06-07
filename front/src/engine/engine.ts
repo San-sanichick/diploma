@@ -629,12 +629,18 @@ export default class Engine {
                 this.cursorPosPivot = Vec2.copyFrom(this.cursor);
             }
 
+            // console.log(this.cursor.subtract(this.cursorOldPos).x)
+
             if (this.mouse.getHeldButton === MouseButtons.LEFT && this.cursorPosPivot !== null) {
-                for (const shape of this.selectedShapes) {
-                    if (this.cursor.equals(this.cursorOldPos)) break;
-                    const coeff = this.cursor.subtract(this.cursorPosPivot);
-                    shape.resize(coeff, this.cursorPosPivot);
+                for (const shape of this.selectedShapes) {  
+                    // can anyone PLEASE tell me, for the love of GOD
+                    // why THE FUCK do I have to check it against ZERO
+                    // here, but not when I do rotation
+                    if (this.cursor.subtract(this.cursorOldPos).x == 0) break;                  
+                    shape.resize(this.cursor.subtract(this.cursorOldPos).x / 12.5, this.cursorPosPivot);
                 }
+            } else {
+                this.cursorPosPivot = null;
             }
             this.cursorOldPos = Vec2.copyFrom(this.cursor);
         }
@@ -645,19 +651,10 @@ export default class Engine {
                 this.cursorPosPivot = Vec2.copyFrom(this.cursor);
             }
 
-            if (this.mouse.getHeldButton === MouseButtons.LEFT && this.cursorPosPivot !== null) {
+            if (this.mouse.getHeldButton === MouseButtons.LEFT && this.cursorPosPivot !== null &&
+                !this.cursor.equals(this.cursorOldPos)) {
                 for (const shape of this.selectedShapes) {
-                    if (this.cursor.equals(this.cursorOldPos)) break;
-                    // const a = new Vec2(this.cursorPosPivot.x, this.cursorPosPivot.y + 1).subtract(this.cursorPosPivot);
-                    // const b = this.cursorPosPivot.subtract(this.cursor);
-
-                    // const angle1 = Math.atan2(a.y, a.x);
-                    // const angle2 = Math.atan2(b.y, b.x);
-
-
-                    // const angle = angle1 - angle2;
-                    shape.rotate(-this.cursor.subtract(this.cursorOldPos).x / 25, this.cursorPosPivot);
-                    // shape.rotate(angle / 100, this.cursorPosPivot);
+                    shape.rotate(-this.cursor.subtract(this.cursorOldPos).x / 12.5, this.cursorPosPivot);
                 }
             } else {
                 this.cursorPosPivot = null;
@@ -675,21 +672,10 @@ export default class Engine {
             this.engineState = EngineState.SELECT;
         }
 
-        // const updateTime = performance.now() - t1;
-        
-        // rendering
-        // const t2 = performance.now();
-        // this.fpsMeasurements.push(t2);
         this.render();
         this.renderUI();
         const updateTime = performance.now() - t1;
         
-        // uhh, better fps measurment, I guess?
-        // const msPassed = this.fpsMeasurements[this.fpsMeasurements.length - 1] - this.fpsMeasurements[0];
-        // if (msPassed >= 500) {
-        //     this.fps = 1000 / (performance.now() - t2);
-        //     this.fpsMeasurements = [];
-        // }
 
         if (this.showDebug) {
             this.renderDebug({ text: "FPS", metric: fastRounding(1000 / updateTime) },

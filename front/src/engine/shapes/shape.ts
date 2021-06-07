@@ -241,24 +241,23 @@ export default abstract class Shape implements Drawable {
      */
     rotate(angle: number, pos: Vec2): void {
         // translate to origin
-        // angle = angle * (Math.PI / 180);
-
         const trMatrix = new Matrix([
-            [1, 0, 0],
-            [0, 1, 0],
+            [     1,      0, 0],
+            [     0,      1, 0],
             [-pos.x, -pos.y, 1]
         ]);
         
+        // rotation matrix
         const rtMatrix = new Matrix([
             [ Math.cos(angle), Math.sin(angle), 0],
             [-Math.sin(angle), Math.cos(angle), 0],
-            [0               , 0              , 1]
+            [               0,               0, 1]
         ]);
 
         // move it back to initial position
         const reTrMatrix = new Matrix([
-            [1, 0, 0],
-            [0, 1, 0],
+            [    1,     0, 0],
+            [    0,     1, 0],
             [pos.x, pos.y, 1]
         ]);
 
@@ -288,9 +287,9 @@ export default abstract class Shape implements Drawable {
      * @param sizeCoeff resize coefficient
      * @param pos pivot point
      */
-    resize(sizeCoeff: Vec2, pos: Vec2): void {
+    resize(sizeCoeff: number, pos: Vec2): void {
         let c = 0;
-        if (sizeCoeff.x < 0) {
+        if (sizeCoeff < 0) {
             c = 0.97;
         } else {
             c = 1.03;

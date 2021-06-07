@@ -147,6 +147,7 @@
             height: 25px;
             color: $text;
             @include button-destyle;
+            cursor: pointer;
 
             &:hover {
                 background-color: $lightPrimary;
