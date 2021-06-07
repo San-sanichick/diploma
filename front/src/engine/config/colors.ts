@@ -26,5 +26,15 @@ colors.set(7, "rgba(255, 255, 255, 1)");
 colors.set(8, "rgba(128, 128, 128, 1)");
 colors.set(9, "rgba(192, 192, 192, 1)");
 
+export enum EngineColors {
+    DARKPRIMARY = "#005A61",
+    MIDDLEPRIMARY = "#43949A",
+    PRMARYTRANSPARENT = "rgba(97, 192, 200, 0.5)",
+    PRIMARY = "#61C0C8",
+    LIGHTPRIMARY = "#75c6ce",
+    DARKSECONDARY = "#003236",
+    LIGHTSECONDARY = "#173f42"
+}
+
 export default colors;
 

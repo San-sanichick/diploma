@@ -17,7 +17,7 @@ import Vec2                              from "./utils/vector2d";
 import MouseController, { MouseButtons } from "./utils/mouseController";
 import KeyboardController                from "./utils/keyboardController";
 import { clamp, fastRounding }           from "./utils/math";
-import colors                            from "./config/colors";
+import colors, { EngineColors }          from "./config/colors";
 import Layer                             from "./types/Layer";
 import DXFSerializer                     from "./utils/DXFSerializer";
 import { Emitter }                       from "mitt";
@@ -813,7 +813,7 @@ export default class Engine {
         this.ctx.setTransform(1, 0, 0, -1, 0, this.canvas.height);
 
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        this.ctx.fillStyle = "#003236";
+        this.ctx.fillStyle = EngineColors.DARKSECONDARY;
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
         const worldTopLeft: Vec2      = this.ScreenToWorld(new Vec2(0, 0));
@@ -868,7 +868,7 @@ export default class Engine {
          * ONE. PIXEL. WIDTH.
          */
         this.ctx.save();
-        this.ctx.strokeStyle = "#173f42";
+        this.ctx.strokeStyle = EngineColors.LIGHTSECONDARY;
         // this.ctx.strokeStyle = "rgba(255, 255, 255, 0.5)";
 
         let worldX = worldTopLeft.x,
@@ -935,29 +935,6 @@ export default class Engine {
                 this.ctx.restore();
             }
         }
-        
-
-        this.ctx.save();
-        if (this.engineState === EngineState.SELECT) {
-            if (this.mouse.getHeldButton === MouseButtons.LEFT) {
-                const sx = (this.cursorOldPos.x - this.offset.x) * offset;
-                const sy = (this.cursorOldPos.y - this.offset.y) * offset;
-                const ex = (this.cursor.x       - this.offset.x) * offset;
-                const ey = (this.cursor.y       - this.offset.y) * offset;
-
-                // this.ctx.lineWidth = 5;
-                this.ctx.beginPath();
-                this.ctx.strokeStyle = "#fff";
-                this.ctx.fillStyle = "rgba(186, 255, 205, 0.2)";
-                this.ctx.rect(sx, sy, ex - sx, ey - sy);
-                this.ctx.fill();
-                this.ctx.closePath();
-                this.ctx.stroke();
-                this.ctx.strokeStyle = "";
-                this.ctx.fillStyle = "";
-            }
-        }
-        this.ctx.restore();
     }
 
     private renderUI() {
@@ -1041,11 +1018,6 @@ export default class Engine {
             const pivotCoords = this.WorldToScreen(this.cursorPosPivot);
             this.ctxUI.save();
                 this.ctxUI.strokeStyle = "red";
-                // this.ctxUI.beginPath();
-                // this.ctxUI.moveTo(pivotCoords.x, pivotCoords.y);
-                // this.ctxUI.lineTo(curV.x, curV.y);
-                // this.ctxUI.closePath();
-                // this.ctxUI.stroke();
                 this.ctxUI.strokeRect(pivotCoords.x - 4, pivotCoords.y - 4, 8, 8);       
             this.ctxUI.restore();
         }
@@ -1068,7 +1040,7 @@ export default class Engine {
 
         let lineHeightOffset = 4;
         this.ctxUI.save();
-            this.ctxUI.fillStyle = "#005A61";
+            this.ctxUI.fillStyle = EngineColors.DARKPRIMARY;
             this.ctxUI.fillRect(0, this.canvasUI.height, this.canvasUI.width, -20);
             this.ctxUI.fillRect(0, 0, 20, this.canvasUI.height);
 
@@ -1078,8 +1050,8 @@ export default class Engine {
             this.ctxUI.font = "10px Open Sans";
 
             // horizontal lines
-            this.ctxUI.strokeStyle = "#61C0C8";
-            this.ctxUI.fillStyle = "#75c6ce";
+            this.ctxUI.strokeStyle = EngineColors.PRIMARY;
+            this.ctxUI.fillStyle = EngineColors.LIGHTPRIMARY;
             this.ctxUI.textAlign = "center";
             for (let i = 0; i < width; i++) {
                 const x = fastRounding(sx + offset * i);
@@ -1132,12 +1104,33 @@ export default class Engine {
                 worldY++;
             }
 
-            this.ctxUI.fillStyle = "#005A61";
+            this.ctxUI.fillStyle = EngineColors.DARKPRIMARY;
             this.ctxUI.fillRect(0, this.canvasUI.height, 20, -20);
         this.ctxUI.restore();
 
+        this.ctxUI.save();
+        if (this.engineState === EngineState.SELECT) {
+            if (this.mouse.getHeldButton === MouseButtons.LEFT) {
+                const sx = (this.cursorOldPos.x - this.offset.x) * offset;
+                const sy = (this.cursorOldPos.y - this.offset.y) * offset;
+                const ex = (this.cursor.x       - this.offset.x) * offset;
+                const ey = (this.cursor.y       - this.offset.y) * offset;
+
+                this.ctxUI.beginPath();
+                this.ctxUI.strokeStyle = "#fff";
+                this.ctxUI.fillStyle = EngineColors.PRMARYTRANSPARENT;
+                this.ctxUI.fillStyle = "";
+                this.ctxUI.rect(sx, sy, ex - sx, ey - sy);
+                this.ctxUI.fill();
+                this.ctxUI.closePath();
+                this.ctxUI.stroke();
+                this.ctxUI.strokeStyle = "";
+                this.ctxUI.fillStyle = "";
+            }
+        }
+        this.ctxUI.restore();
+
         this.ctxUI.transform(1, 0, 0, -1, 0, this.canvasUI.height);
-        
     }
 
     private renderDebug(...performance: { text: string; metric: number | string }[]) {

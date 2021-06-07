@@ -235,7 +235,7 @@ export default abstract class Shape implements Drawable {
     }
 
     /**
-     * Rotates the shape relative to given pivot point
+     * Rotates the shape relative to a given pivot point
      * @param angle Angle to rotate by
      * @param pos pivot point
      */
@@ -281,7 +281,7 @@ export default abstract class Shape implements Drawable {
     }
 
     /**
-     * Resizes the shape relative to pivot point
+     * Resizes the shape relative to a given pivot point
      * 
      * Also it doesn't bloody work
      * @param sizeCoeff resize coefficient
@@ -327,9 +327,7 @@ export default abstract class Shape implements Drawable {
         const coordMatrix = new Matrix(coords);
 
         const newCoord = Matrix.multMatrixByMatrix(coordMatrix, m);
-        
-        // console.log(newCoord.value);
-        // get some bullshit result
+
         for (let i = 0; i < this.nodes.length; i++) {
             for (let i = 0; i < this.nodes.length; i++) {
                 const temp = new Vec2(newCoord.value[i][0], newCoord.value[i][1]);
