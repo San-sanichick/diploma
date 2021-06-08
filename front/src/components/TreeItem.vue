@@ -83,6 +83,9 @@
         flex-flow: row;
         height: 30px;
         box-sizing: border-box;
+        // -moz-background-clip: padding;
+        // -webkit-background-clip: padding;
+        background-clip: padding-box;
         border: 1px solid $background;
 
         &:hover {
@@ -135,7 +138,7 @@
         background-color: $primaryTransparent;
         // background-color: rgba();
         color: $whiteText;
-        border: 1px solid $background;
+        border: 1px solid $primaryTransparent;
 
         .arrow {
             border-color: white;

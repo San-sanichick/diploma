@@ -184,7 +184,7 @@ export default class ProjectController {
                         }
                     }
                 }
-            } catch (err) {
+            } catch (err: any) {
                 console.error(err);
                 res.status(400).json({msg: `Произошла ошибка: ${err.message}`});
             }
@@ -220,7 +220,7 @@ export default class ProjectController {
                     }
                 }
 
-            } catch (err) {
+            } catch (err: any) {
                 res.status(400).json({msg: `Произошла ошибка: ${err.message}`});
             }
         } else {
@@ -244,7 +244,7 @@ export default class ProjectController {
                     throw new Error("пользователь не найден");
                 }
             }
-        } catch (err) {
+        } catch (err: any) {
             res.status(400).json({msg: `Произошла ошибка: ${err.message}`});
         }
     }
@@ -280,7 +280,7 @@ export default class ProjectController {
                             // console.log(dir);
 
                             res.status(200).json({msg: `Проект ${project!.name} был успешно удалён`, data: populated.projects});
-                        } catch (err) {
+                        } catch (err: any) {
                             // res.status(400).json({msg: "Ошибка при удалении проекта"});
                             throw new Error(err);
                         }
@@ -289,7 +289,7 @@ export default class ProjectController {
             } else  {
                 throw new Error("Нет доступа");
             }
-        } catch (err) {
+        } catch (err: any) {
             res.status(400).json({msg: `Произошла ошибка: ${err.message}`});
         }
     }

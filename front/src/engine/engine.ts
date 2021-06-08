@@ -21,6 +21,7 @@ import colors, { EngineColors }          from "./config/colors";
 import Layer                             from "./types/Layer";
 import DXFSerializer                     from "./utils/DXFSerializer";
 import { Emitter }                       from "mitt";
+import { debounce } from "@/utils/debounce";
 
 
 /**
@@ -97,6 +98,8 @@ export default class Engine {
     private fps                           = 0;
     private fpsMeasurements: number[]     = [];
     private showDebug                     = false;
+    // hacks
+    private hotkeyFlag                    = true;
 
     /**
      * Engine constructor. Requires a viewport with two canvases: the UI canvas (class: 'canvas-ui') and
@@ -372,7 +375,8 @@ export default class Engine {
     // this is quite silly, really
     private hotKeyHandler() {
         if (!this.mouse.getIsOnCanvas) return;
-        // console.log(this.keyboard.getPressedButton);
+        if (!this.hotkeyFlag) return;
+
         if (!this.keyboard.isCtrlHeld) {
             switch(this.keyboard.getPressedButton) {
                 case "KeyA":
@@ -407,11 +411,7 @@ export default class Engine {
                     this.isSnap = !this.isSnap;
                     break;
                 case "KeyC":{
-                    this.copyBuffer = [];
-                    // hacks
-                    this.copyBuffer = Serializer.deserialize(Serializer.serialize(this.selectedElements));
-                    this.copyBuffer.forEach(el => el.name += "_copy");
-                    this.clearSelection();
+                    this.copyElements();
                     break;
                 }
                 case "KeyF":
@@ -421,23 +421,23 @@ export default class Engine {
                     this.engineState = EngineState.GROUP;
                     break;
                 case "KeyX": {
-                    this.copyBuffer = [];
-                    this.copyBuffer = this.selectedElements;
-                    this.deleteSelectedShapes();
+                    this.cutElements();
                     break;
                 }
                 case "KeyV": {
-                    this.layers[this.getLayerIndex].shapes.push(...this.copyBuffer);
-                    this.addToSelection(...this.copyBuffer);
-                    this.copyBuffer = [];
+                    this.pasteElements();
                     break;
                 }
                 case "KeyS": {
                     this.emitter?.emit("save");
+                    this.hotkeyFlag = false;
+                    setTimeout(() => this.hotkeyFlag = true, 300);
                     break;
                 }
                 case "KeyO": {
                     this.emitter?.emit("load");
+                    this.hotkeyFlag = false;
+                    setTimeout(() => this.hotkeyFlag = true, 300);
                     break;
                 }
                 case "Equal":
@@ -462,6 +462,7 @@ export default class Engine {
         }
 
         this.emitter?.emit("statechange", this.engineState);
+        // if (this.hotkeyCooldown < 0) this.hotkeyCooldown = 300;
     }
 
     /**
@@ -683,7 +684,7 @@ export default class Engine {
         }
     }
 
-    public group() {
+    public group(): void {
         if (this.selectedElements.length !== 0) {
             this.layers[this.getLayerIndex].shapes.push(new Group("Group", Array.from(this.selectedShapes)));
 
@@ -695,7 +696,7 @@ export default class Engine {
         }
     }
 
-    public ungroup() {
+    public ungroup(): void {
         if (this.selectedShapes.size === 1) {
             const obj = Array.from(this.selectedShapes)[0];
 
@@ -713,15 +714,14 @@ export default class Engine {
         }
     }
 
-    public addToSelection(...items: Drawable[]) {
-        // this.selectedShapes.add(item);
+    public addToSelection(...items: Drawable[]): void {
         for (const item of items) {
             item.setIsSelected = true;
             this.selectedShapes.add(item);
         }
     }
 
-    public removeFromSelection(...items: Drawable[]) {
+    public removeFromSelection(...items: Drawable[]): void {
         // this.selectedShapes.delete(item);
         for (const item of items) {
             item.setIsSelected = false;
@@ -729,9 +729,29 @@ export default class Engine {
         }
     }
 
-    public clearSelection() {
+    public clearSelection(): void {
         this.selectedShapes.forEach(shape => shape.setIsSelected = false);
         this.selectedShapes.clear();
+    }
+
+    public cutElements(): void {
+        this.copyBuffer = [];
+        this.copyBuffer = this.selectedElements;
+        this.deleteSelectedShapes();
+    }
+
+    public copyElements(): void {
+        this.copyBuffer = [];
+        // hacks
+        this.copyBuffer = Serializer.deserialize(Serializer.serialize(this.selectedElements));
+        this.copyBuffer.forEach(el => el.name += "_copy");
+        this.clearSelection();
+    }
+
+    public pasteElements(): void {
+        this.layers[this.getLayerIndex].shapes.push(...this.copyBuffer);
+        this.addToSelection(...this.copyBuffer);
+        this.copyBuffer = [];
     }
 
     private gridThickness(): number {

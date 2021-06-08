@@ -46,7 +46,7 @@ export default class UserController {
             });
 
             res.status(200).json({msg: `User ${newUser._id} Created`});
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
             res.status(400).json({msg: `Произошла ошибка: ${err.message}`});
         }
@@ -96,7 +96,7 @@ export default class UserController {
             } else {
                 throw new Error("нет доступа");
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
             res.status(404).json({msg: `Произошла ошибка: ${err.message}`});
         }
@@ -176,7 +176,7 @@ export default class UserController {
             } else {
                 throw new Error("Пользователь не найден");
             }
-        } catch (err) {
+        } catch (err: any) {
             console.error(err);
             res.status(404).json({msg: err.message});
         }

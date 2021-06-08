@@ -282,6 +282,7 @@
                     this.handleFocused(0);
                 })
             } catch (err) {
+                console.error(err);
                 this.$flashMessage.show({
                     type: 'error',
                     image: "/src/assets/flashMessage/fail.svg",
@@ -357,6 +358,7 @@
                         text: res.data.msg
                     });
                 } catch (err) {
+                    console.error(err);
                     this.$router.push("/404");
                     this.$flashMessage.show({
                         type: 'error',
