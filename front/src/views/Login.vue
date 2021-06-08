@@ -122,6 +122,10 @@
                 a {
                     text-decoration: none;
                     color: $gray;
+
+                    &:hover {
+                        text-decoration: underline;
+                    }
                 }
 
                 label {
