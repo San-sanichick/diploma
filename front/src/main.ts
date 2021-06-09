@@ -83,6 +83,7 @@ axios.interceptors.response.use((res: AxiosResponse) => {
     async (err: AxiosError) => {
         const originalReq = err.config;
         const refreshToken = localStorage.getItem("refreshToken");
+        
         if (refreshToken !== "undefined" && err && err.response && err.response?.status === 401) {
             const res = await axios.post("/token/refresh", { refreshToken });
             const newToken = res.data.token;

@@ -30,15 +30,12 @@ export default class UserController {
                 password: hashedPassword
             };
 
-            // const found = await UserModel.findOne({email: user.email});
-
             if (await UserModel.exists({ email: user.email })) throw new Error(`пользователь с таким email уже существует`);
             
             const newUser = await UserModel.create(user);
             const p = path.join(__dirname, `../../UserProjects/${newUser._id}/`)
             fs.mkdir(p, (err)=> {
                 if (err) {
-                    // console.error(err);
                     throw new Error("не удалось создать директорию пользователя")
                 } else {
                     console.log(`Created new user folder ${newUser._id}`);

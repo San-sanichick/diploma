@@ -78,7 +78,7 @@ export default createStore({
                 } else {
                     console.log(res.data.data.msg);
                 }
-            } catch (err) {
+            } catch (err: any) {
                 console.error(err);
                 throw new Error(err);
             }
