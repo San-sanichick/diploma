@@ -78,7 +78,6 @@ export default class Engine {
     private currentLayer:         number;
     private layers:         Array<Layer>;
     private copyBuffer:     Array<Drawable> = [];
-    // private currentLayer:   number;
 
     private selectedShapes: Set<Drawable> = new Set<Drawable>();
     private tempShape:      Shape | null  = null;
@@ -90,15 +89,13 @@ export default class Engine {
     private cursorOldPos:   Vec2          = new Vec2(0.0, 0.0);
     private cursorPosPivot: Vec2 | null   = null;
     public  isSnap                        = false;
-    public engineState:     EngineState   = EngineState.SELECT;
-    public curTypeToDraw:   Shapes        = Shapes.NONE;
+    public  engineState:    EngineState   = EngineState.SELECT;
+    public  curTypeToDraw:  Shapes        = Shapes.NONE;
     // eslint-disable-next-line
-    private cursorIcon: any;
-    private emitter: Emitter | undefined;
-    private fps                           = 0;
-    private fpsMeasurements: number[]     = [];
+    private cursorIcon:     any;
+    private emitter:        Emitter | undefined;
     private showDebug                     = false;
-    // hacks
+    // incredible hacks
     private hotkeyFlag                    = true;
 
     /**
@@ -126,12 +123,13 @@ export default class Engine {
         
         this.layers = new Array<Layer>();
 
-        this.layers.push({
-            id: 0,
-            layerColor: 7,
-            name: "Layer 0",
-            shapes: new Array<Drawable>()
-        });
+        // this.layers.push({
+        //     id: 0,
+        //     layerColor: 7,
+        //     name: "Layer 0",
+        //     shapes: new Array<Drawable>()
+        // });
+        this.addLayer();
         this.currentLayer = 0;
 
         this.mouse         = new MouseController(this.canvasUI);
@@ -218,9 +216,17 @@ export default class Engine {
     }
 
     public addLayer() {
+        const lastLayer = this.layers[this.layers.length - 1];
+
+        let id = 0;
+        
+        if (lastLayer) {
+            id = lastLayer.id + 1;
+        }
+
         this.layers.push({
-            id: this.layers[this.layers.length - 1].id + 1,
-            name: "Layer " + (this.layers[this.layers.length - 1].id + 1),
+            id,
+            name: "Слой " + id,
             layerColor: 7,
             shapes: []
         })
@@ -375,7 +381,6 @@ export default class Engine {
     // this is quite silly, really
     private hotKeyHandler() {
         if (!this.mouse.getIsOnCanvas) return;
-        if (!this.hotkeyFlag) return;
 
         if (!this.keyboard.isCtrlHeld) {
             switch(this.keyboard.getPressedButton) {
@@ -429,15 +434,17 @@ export default class Engine {
                     break;
                 }
                 case "KeyS": {
+                    if (!this.hotkeyFlag) return;
                     this.emitter?.emit("save");
                     this.hotkeyFlag = false;
-                    setTimeout(() => this.hotkeyFlag = true, 300);
+                    setTimeout(() => this.hotkeyFlag = true, 2000);
                     break;
                 }
                 case "KeyO": {
+                    if (!this.hotkeyFlag) return;
                     this.emitter?.emit("load");
                     this.hotkeyFlag = false;
-                    setTimeout(() => this.hotkeyFlag = true, 300);
+                    setTimeout(() => this.hotkeyFlag = true, 2000);
                     break;
                 }
                 case "Equal":
