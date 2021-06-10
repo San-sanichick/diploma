@@ -258,7 +258,7 @@ export default abstract class Shape implements Drawable {
         const coordMatrix = new Matrix(coords);
 
         const newCoord = Matrix.multMatrixByMatrix(coordMatrix, rtMatrix);
-    
+
 
         for (let i = 0; i < this.nodes.length; i++) {
             const temp = new Vec2(newCoord.value[i][0], newCoord.value[i][1]);
@@ -290,9 +290,9 @@ export default abstract class Shape implements Drawable {
 
         // scale matrix
         const scMatrix = new Matrix([
-            [1, 0, 0],
-            [0, 1, 0],
-            [0, 0, c]
+            [c, 0, 0],
+            [0, c, 0],
+            [0, 0, 1]
         ]);
 
         // move it back to initial position
