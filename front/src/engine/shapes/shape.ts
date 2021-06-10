@@ -240,29 +240,15 @@ export default abstract class Shape implements Drawable {
      * @param pos pivot point
      */
     rotate(angle: number, pos: Vec2): void {
-        // translate to origin
-        const trMatrix = new Matrix([
-            [     1,      0, 0],
-            [     0,      1, 0],
-            [-pos.x, -pos.y, 1]
-        ]);
-        
-        // rotation matrix
+        // no need to multiply matricies, we 
+        // can use the multiplication result directly
+        const m = -pos.x * (Math.cos(angle) - 1) + pos.y * Math.sin(angle);
+        const n = -pos.y * (Math.cos(angle) - 1) - pos.x * Math.sin(angle);
         const rtMatrix = new Matrix([
             [ Math.cos(angle), Math.sin(angle), 0],
             [-Math.sin(angle), Math.cos(angle), 0],
-            [               0,               0, 1]
+            [               m,               n, 1]
         ]);
-
-        // move it back to initial position
-        const reTrMatrix = new Matrix([
-            [    1,     0, 0],
-            [    0,     1, 0],
-            [pos.x, pos.y, 1]
-        ]);
-
-        // multiply all that stuff
-        const m = Matrix.multMatrixByMatrix(Matrix.multMatrixByMatrix(trMatrix, rtMatrix), reTrMatrix);
 
         const coords = [];
         for (const node of this.nodes) {
@@ -271,7 +257,7 @@ export default abstract class Shape implements Drawable {
 
         const coordMatrix = new Matrix(coords);
 
-        const newCoord = Matrix.multMatrixByMatrix(coordMatrix, m);
+        const newCoord = Matrix.multMatrixByMatrix(coordMatrix, rtMatrix);
     
 
         for (let i = 0; i < this.nodes.length; i++) {
@@ -304,9 +290,9 @@ export default abstract class Shape implements Drawable {
 
         // scale matrix
         const scMatrix = new Matrix([
-            [c, 0, 0],
-            [0, c, 0],
-            [0, 0, 1]
+            [1, 0, 0],
+            [0, 1, 0],
+            [0, 0, c]
         ]);
 
         // move it back to initial position

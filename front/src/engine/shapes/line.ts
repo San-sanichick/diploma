@@ -23,12 +23,6 @@ export default class Line extends Shape {
 
             // Contrary to my assumption, checking if shape is off screen slows everything
             // significantly down, so don't do it
-            // if ((sv.x < 0 || sv.y < 0) && (ev.x < 0 || ev.y < 0)) {
-            //     console.log("NOT DRAWN");
-            //     return;
-            // }
-            // console.log(sv);
-            // console.log(this.color);
             ctx.save();
                 ctx.fillStyle = "";
                 ctx.strokeStyle = color ? color : this.color;
@@ -36,10 +30,6 @@ export default class Line extends Shape {
                     ctx.setLineDash([5, 5]);
                     ctx.strokeStyle = ShapeColor.ACTIVE;
                     ctx.lineWidth = 3;
-                    // ctx.strokeStyle = invertHex(this.color);
-                    // if (color) {
-                    //     ctx.strokeStyle = invertHex(color);
-                    // }
                 }
                 ctx.beginPath();
                 ctx.moveTo(sv.x, sv.y);

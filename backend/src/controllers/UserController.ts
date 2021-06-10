@@ -100,7 +100,7 @@ export default class UserController {
     }
 
 
-    public async getAllUsers(req: Request, res: Response): Promise<void> {
+    public async getAllUsers(_req: Request, res: Response): Promise<void> {
         try {
             const users = await UserModel.find();
             res.status(200).json({msg: "List of users", data: users});

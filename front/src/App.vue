@@ -11,12 +11,6 @@
     export default defineComponent({
         components: {
             ContextMenu
-        },
-        created() {
-            // document.body.addEventListener("contextmenu", (e: MouseEvent) => {
-                // e.preventDefault();
-                // e.stopPropagation();
-            // });
         }
     })
 </script>

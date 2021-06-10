@@ -9,7 +9,6 @@
                     <div v-if="value.type !== 'separator'"> {{value.text}} </div>
                     <hr v-else>
                 </li>
-            <!-- <li v-else></li> -->
         </ul>
     </div>
 </template>

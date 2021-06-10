@@ -106,7 +106,6 @@
 
     .layer {
         position: relative;
-        // width: 180px;
         margin: 0;
         display: grid;
         grid-template-columns: max-content auto max-content;
@@ -129,15 +128,6 @@
                 display: inline;
                 width: 100%;
                 @include editor-input-style;
-                // width: 40%;
-                // color: $whiteText;
-                
-                // margin: 0;
-                // padding: 2px 5px;
-                // background-color: $darkPrimary;
-                // border: 1px solid $lightSecondaryGreen;
-                // border-radius: 2px;
-                // outline: none;
             }
         }
 

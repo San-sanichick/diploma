@@ -53,7 +53,6 @@
     @import "../../assets/scss/buttonMixins.scss";
 
     .layer-list-wrapper {
-        // height: 100%;
         display: grid;
         grid-template-rows: auto auto max-content;
         overflow: hidden;
@@ -74,7 +73,6 @@
         }
 
         .project-layers-buttons {
-            // flex: 1;
             background-color: $middlePrimary;
             padding: 5px;
             z-index: 100;
