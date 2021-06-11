@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from "vue";
+    import { defineComponent, PropType } from "vue";
     import { directive } from "vue3-click-away";
 
     export default defineComponent({
@@ -45,8 +45,11 @@
         props: {
             id: Number,
             focused: Boolean,
-            options: Array,
-            selected: Object
+            options: Object as PropType<Array<{id: number; name: string; img: string; action: any; hotkey: string}>>,
+            selected: {
+                type: Object,
+                required: true
+            }
         },
         data() {
             return {

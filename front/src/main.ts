@@ -108,7 +108,7 @@ axios.interceptors.request.use((req: AxiosRequestConfig) => {
 )
 
 const filters = {
-    dateFilter: (date: string) => {
+    dateFilter: (date: Date) => {
         return moment(date).format("HH:mm:ss, DD/MM/YYYY");
     }
 }

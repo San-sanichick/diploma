@@ -59,8 +59,12 @@ class App {
     }
 
     private async connectToDB() {
-        await mongoose.connect(config.db.address, { useNewUrlParser: true, useUnifiedTopology: true, dbName: config.db.name });
-        console.log("connected to db");
+        try {
+            await mongoose.connect(config.db.address, { useNewUrlParser: true, useUnifiedTopology: true });
+            console.log("connected to db");
+        } catch (err) {
+            console.error(err);
+        }
     }
 
     private logErrors(err: Error, req: Request, res: Response, next: NextFunction) {
@@ -73,6 +77,7 @@ class App {
         res.send({error: err});
     }
 }
+console.log(process.env.PORT)
+// const app = App.Instance;
+// app.init();
 
-const app = App.Instance;
-app.init();

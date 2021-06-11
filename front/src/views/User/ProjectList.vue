@@ -163,8 +163,8 @@
 
                 this.showPopUp = !this.showPopUp;
             },
-            openPopUp(id: number) {
-                this.selectedProject = id;
+            openPopUp(id?: number) {
+                if (id) this.selectedProject = id;
                 this.showPopUp = !this.showPopUp;
                 document.body.style.overflowY = document.body.style.overflowY === "" ? "hidden" : "";
             },

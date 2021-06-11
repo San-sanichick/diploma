@@ -14,7 +14,8 @@
  * 
  * TL;DR: 9 colors, that's it, have a nice day
  */
-const colors = new Map<number, string>();
+
+const colors = new Map<number, any>();
 
 colors.set(1, "rgba(255, 0, 0, 1)");
 colors.set(2, "rgba(255, 255, 0, 1)");

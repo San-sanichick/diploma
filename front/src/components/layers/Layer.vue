@@ -1,7 +1,7 @@
 <template>
     <li class="layer" 
         @click.stop="$emit('update', layer.id)"
-        :class="{'selected': layer.id === layerSelected}">
+        :class="{'selected': layer.id === layerselected}">
         <div 
             class="layer-color" 
             :style="{ backgroundColor: colors.get(layer.layerColor) }"
@@ -19,7 +19,7 @@
                 v-focus
                 v-if="edit" 
                 type="text" 
-                size="3"
+                :size="3"
                 :value="layer.name" 
                 @keyup.enter="updateLayerName">
         </div>
@@ -29,7 +29,7 @@
                 v-model:show="show"
                 :color="layer.layerColor" 
                 :coord="coord"
-                @update:color="updateLayer"/>
+                @update-color="updateLayer"/>
         </teleport>
     </li>
 </template>
@@ -47,8 +47,8 @@
         components: {
             ColorPicker
         },
-        props: ["layer", "disable", "layer-selected"],
-        emits: ["remove", "update", "update:layer"],
+        props: ["layer", "disable", "layerselected"],
+        emits: ["remove", "update", "update-layer"],
         data() {
             return {
                 colors,
@@ -63,25 +63,23 @@
         methods: {
             toggleMenu(e: MouseEvent) {
                 this.show = !this.show;
-                // [this.coord.x, this.coord.y] = [e.clientX, e.clientY];
                 this.coord.x = e.pageX;
                 this.coord.y = e.pageY;
             },
             updateLayer(color: number) {
-                this.$emit("update:layer", { 
+                this.$emit("update-layer", { 
                     id: this.layer.id,
                     layerColor: color,
                     name: this.layer.name,
                     size: this.layer.size
                 });
             },
-            updateLayerName(e: InputEvent) {
-                // console.log(e.target?);
+            updateLayerName(e: KeyboardEvent) {
                 const target = e.target as HTMLInputElement;
                 const name = target.value;
                 this.edit = false;
 
-                this.$emit("update:layer", { 
+                this.$emit("update-layer", { 
                     id: this.layer.id,
                     layerColor: this.layer.layerColor,
                     name,

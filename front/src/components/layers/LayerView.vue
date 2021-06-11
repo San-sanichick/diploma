@@ -1,12 +1,12 @@
 <template>
     <div class="layer-list-wrapper">
-        <ul class="layer-list">
+        <ul class="layer-list" v-if="layers">
             <Layer v-for="layer of layers" 
                 :key="layer.id"
                 :layer="layer"
-                @update:layer="updateLayer"
+                @update-layer="updateLayer"
                 :disable="layers.length === 1"
-                :layer-selected="layerSelected"
+                :layerselected="layerSelected"
                 @remove="remove"
                 @update="update" />
         </ul>
@@ -18,7 +18,7 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from "vue";
+    import { defineComponent, PropType } from "vue";
     import Layer from "./Layer.vue";
     import colors from "@/engine/config/colors";
 
@@ -26,8 +26,16 @@
         components: {
             Layer
         },
-        props: ["layers", "layerSelected"],
-        emits: ["update:layer-selected", "update:layer", "remove", "add"],
+        props: {
+            layers: {
+                type: Object as PropType<Array<{ id: number; name: string; layerColor: number; size: number }>>,
+                required: true
+            },
+            layerSelected: {
+                type: Number
+            }
+        },
+        emits: ["update:layer-selected", "update-layer", "remove", "add"],
         data() {
             return {
                 colors
@@ -42,7 +50,7 @@
             },
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             updateLayer(layer: any) {
-                this.$emit("update:layer", layer);
+                this.$emit("update-layer", layer);
             }
         }
     })

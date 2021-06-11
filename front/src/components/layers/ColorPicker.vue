@@ -11,9 +11,9 @@
         <div class="color-picker-color-container">
             <div 
                 class="color-option"
-                v-for="(c, index) of Array.from(colors)" 
+                v-for="(value, index) of Array.from(colors)" 
                 :key="index"
-                :style="{ backgroundColor: c }"
+                :style="{ backgroundColor: value[1] }"
                 @click="colorClicked(index + 1)"
                 ></div>
         </div>
@@ -30,7 +30,7 @@
             ClickAway: directive
         },
         props: ["color", "coord", "show"],
-        emits: ["update:color", "update:show"],
+        emits: ["update-color", "update:show"],
         data() {
             return {
                 colors,
@@ -38,7 +38,7 @@
         },
         methods: {
             colorClicked: function(color: number) {
-                this.$emit("update:color", color);
+                this.$emit("update-color", color);
                 this.$emit("update:show", false);
             },
             clickAway(e: MouseEvent) {

@@ -79,7 +79,7 @@
                                 </div>
                                 <LayerView 
                                     :layers="layers" 
-                                    @update:layer="updateLayers"
+                                    @update-layer="updateLayers"
                                     v-model:layer-selected="currentLayer"
                                     @add="addLayer"
                                     @remove="removeLayer" />
@@ -231,12 +231,13 @@
                 }
             },
             scale: {
-                get(): number | undefined {
-                    if (this.engine && this.engine.scaleValue) {
-                        return this.engine.scaleValue();
-                    } else {
-                        return 0;
+                get(): number {
+                    // const scale = this.engine.scaleValue()
+                    let scale: number | undefined = 0;
+                    if (this.engine !== ({} as Engine) && this.engine.scaleValue) {
+                        scale = this.engine.scaleValue();
                     }
+                    return scale !== undefined ? scale : 0;
                 },
                 set(val: string) {
                     // this is silly, why the fuck does range element return a STRING

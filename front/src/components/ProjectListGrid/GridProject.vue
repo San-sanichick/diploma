@@ -1,5 +1,5 @@
 <template>
-    <div
+    <div v-if="project !== undefined"
         @dblclick="$emit('project-clicked', project._id)">
         <div 
             v-if="project.thumbnail !== ''" 
@@ -21,7 +21,8 @@
     export default defineComponent({
         props: {
             project: {
-                type: Object as PropType<Project>
+                type: Object as PropType<Project>,
+                required: true
             }
         },
         emits: ["project-clicked"]
