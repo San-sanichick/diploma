@@ -18,9 +18,9 @@ class App {
         this._app  = express();
         this._port = port;
 
-        this._app.use(cors({
+        this._app.use(cors(/*{
             origin: config.frontOrigin
-        }));
+        }*/));
         this._app.use(cors());
         this._app.use(express.static("public"));
 
