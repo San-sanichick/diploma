@@ -27,7 +27,7 @@ export default class Serializer {
     // eslint-disable-next-line
     public static serialize(array: Serializable[]): any[] {
         for (const obj of array) {
-            obj.type = obj.constructor.name;
+            // obj.type = obj.constructor.name;
 
             if (obj instanceof Group) {
                 Serializer.serialize((obj as Group).getObjects);
@@ -47,7 +47,7 @@ export default class Serializer {
      */
     public static deserialize(array: any[]): Array<Drawable> {
         const arr = new Array<Drawable>();
-        console.log(arr);
+        console.log(array);
         for (const obj of array) {
             const type = obj.type;
 
