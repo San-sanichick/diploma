@@ -328,7 +328,6 @@ export default class Engine {
                 shapes: Serializer.serialize(layer.shapes)
             })
         }
-        console.log(layers)
         return {
             offset: this.offset,
             scale: this.scale,
@@ -339,7 +338,6 @@ export default class Engine {
 
     // eslint-disable-next-line
     public load(data: { offset: {x: number; y: number}; scale: number; layers: any[] }) {
-        console.log(data.layers)
         this.clearSelection();
         if (data.layers.length !== 0) {
             this.layers = [];
