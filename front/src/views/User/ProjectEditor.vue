@@ -286,7 +286,7 @@
                 console.error(err);
                 this.$flashMessage.show({
                     type: 'error',
-                    image: "/src/assets/flashMessage/fail.svg",
+                    image: "../../assets/flashMessage/fail.svg",
                     text: err
                 });
             }
@@ -333,13 +333,13 @@
 
                     this.$flashMessage.show({
                         type: 'success',
-                        image: "/src/assets/flashMessage/success.svg",
+                        image: "../../assets/flashMessage/success.svg",
                         text: res.data.msg
                     });
                 } catch(err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "/src/assets/flashMessage/fail.svg",
+                        image: "../../assets/flashMessage/fail.svg",
                         text: err
                     });
                 }
@@ -355,7 +355,7 @@
 
                     this.$flashMessage.show({
                         type: 'success',
-                        image: "/src/assets/flashMessage/success.svg",
+                        image: "../../assets/flashMessage/success.svg",
                         text: res.data.msg
                     });
                 } catch (err) {
@@ -363,7 +363,7 @@
                     this.$router.push("/404");
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "/src/assets/flashMessage/fail.svg",
+                        image: "../../assets/flashMessage/fail.svg",
                         text: err
                     });
                 }
@@ -372,7 +372,7 @@
                 fileDownload(this.engine.saveToDXF(), "file.dxf");
                 this.$flashMessage.show({
                     type: 'success',
-                    image:"/src/assets/flashMessage/success.svg",
+                    image:"../../assets/flashMessage/success.svg",
                     text: "Успешно сохранено в файл"
                 });
             },
