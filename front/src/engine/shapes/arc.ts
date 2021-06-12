@@ -1,11 +1,11 @@
 import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
 import DXFWriter from "@tarikjabiri/dxf";
-import { invertHex } from "../utils/util";
+import { ShapeIcons } from "@/utils/images";
 
 export default class Arc extends Shape {
     constructor(name = "Arc") {
-        super(name, 3, "arc.svg");
+        super(name, 3, ShapeIcons.ArcIcon);
     }
 
     toDXF(drw: DXFWriter): void {

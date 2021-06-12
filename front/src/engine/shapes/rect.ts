@@ -2,11 +2,11 @@ import Shape, { ShapeColor } from "./shape";
 import Node from "./node";
 import Vec2 from "../utils/vector2d";
 import DXFWriter from "@tarikjabiri/dxf";
-import { invertHex } from "../utils/util";
+import { ShapeIcons } from "@/utils/images";
 
 export default class Rectangle extends Shape {
     constructor(name = "Rectangle") {
-        super(name, 2, "rect.svg");
+        super(name, 2, ShapeIcons.RectIcon);
     }
 
     toDXF(drw: DXFWriter): void {

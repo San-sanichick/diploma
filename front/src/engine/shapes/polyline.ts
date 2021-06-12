@@ -2,13 +2,13 @@ import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
 // import Drawing, { Point2D } from "dxf-writer";
 import DXFWriter from "@tarikjabiri/dxf";
-import { invertHex } from "../utils/util";
+import { ShapeIcons } from "@/utils/images";
 
 export default class Polyline extends Shape {
     constructor(name = "Polyline") {
         // the polyline can have any number of nodes, and we can't define it,
         // we have to learn it at runtime
-        super(name, Number.MAX_VALUE, "polyline.svg");
+        super(name, Number.MAX_VALUE, ShapeIcons.PolylineIcon);
     }
 
     toDXF(drw: DXFWriter): void {

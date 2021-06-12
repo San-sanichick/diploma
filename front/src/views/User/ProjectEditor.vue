@@ -374,7 +374,7 @@
                 fileDownload(this.engine.saveToDXF(), "file.dxf");
                 this.$flashMessage.show({
                     type: 'success',
-                    image:"/src/assets/flashMessage/success.svg",
+                    image: FlashIcons.Success,
                     text: "Успешно сохранено в файл"
                 });
             },

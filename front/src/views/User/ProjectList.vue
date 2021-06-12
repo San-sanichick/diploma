@@ -192,13 +192,13 @@ import { FlashIcons } from "@/utils/images";
 
                     this.$flashMessage.show({
                         type: 'success',
-                        image: "/src/assets/flashMessage/success.svg",
+                        image: FlashIcons.Success,
                         text: res.data.msg
                     });
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "/src/assets/flashMessage/fail.svg",
+                        image: FlashIcons.Fail,
                         text: err
                     });
                 }

@@ -1,12 +1,11 @@
 import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
-import Node from "./node";
 import DXFWriter from "@tarikjabiri/dxf";
-import { invertHex } from "../utils/util";
+import { ShapeIcons } from "@/utils/images";
 
 export default class Ellipse extends Shape {
     constructor(name = "Ellipse") {
-        super(name, 3, "ellipse.svg");
+        super(name, 3, ShapeIcons.EllipseIcon);
     }
 
     // doesn't work right

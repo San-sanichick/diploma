@@ -43,14 +43,14 @@
 
                         this.$flashMessage.show({
                             type: 'success',
-                            image: "/src/assets/flashMessage/success.svg",
+                            image: "/flashMessage/success.svg",
                             text: res.data.msg
                         });
                     } catch (err) {
                         console.error(err);
                         this.$flashMessage.show({
                             type: 'error',
-                            image: "/src/assets/flashMessage/fail.svg",
+                            image: "/flashMessage/fail.svg",
                             text: err
                         });
                     } finally {

@@ -1,11 +1,11 @@
 import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
 import DXFWriter from "@tarikjabiri/dxf";
-import { invertHex } from "../utils/util";
+import { ShapeIcons } from "@/utils/images";
 
 export default class Line extends Shape {
     constructor(name = "Line") {
-        super(name, 2, "line.svg");
+        super(name, 2, ShapeIcons.LineIcon);
     }
 
     toDXF(drw: DXFWriter) {

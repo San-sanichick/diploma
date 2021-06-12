@@ -1,11 +1,11 @@
 import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
 import DXFWriter from "@tarikjabiri/dxf";
-import { invertHex } from "../utils/util";
+import { ShapeIcons } from "@/utils/images";
 
 export default class Bezier extends Shape {
     constructor(name = "Bezier") {
-        super(name, 4, "bezier.svg");
+        super(name, 4, ShapeIcons.BezierIcon);
     }
 
     toDXF(drw: DXFWriter): void {

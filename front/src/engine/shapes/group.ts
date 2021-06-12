@@ -2,6 +2,7 @@ import DXFWriter from "@tarikjabiri/dxf";
 import { fastRounding } from "../utils/math";
 import Vec2 from "../utils/vector2d";
 import Drawable from "./drawable";
+import { ShapeIcons } from "@/utils/images";
 
 /**
  * Group class, represents a collection of shapes.
@@ -23,7 +24,7 @@ export default class Group implements Drawable {
 
     constructor(name: string, objects: Array<Drawable>) {
         this.name = name;
-        this.icon = "group.svg";
+        this.icon = ShapeIcons.GroupIcon;
         this.isSelected = false;
         this.type = this.constructor.name;
         this.topLeftCorner = new Vec2(0, 0);

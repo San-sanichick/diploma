@@ -1,11 +1,11 @@
 import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
 import DXFWriter from "@tarikjabiri/dxf";
-import { invertHex } from "../utils/util";
+import { ShapeIcons } from "@/utils/images";
 
 export default class Circle extends Shape {
     constructor(name = "Circle") {
-        super(name, 2, "circle.svg");
+        super(name, 2, ShapeIcons.CircleIcon);
     }
 
     toDXF(drw: DXFWriter): void {

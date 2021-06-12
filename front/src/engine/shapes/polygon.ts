@@ -2,13 +2,13 @@ import Shape, { ShapeColor } from "./shape";
 import Vec2 from "../utils/vector2d";
 import Node from "./node";
 import DXFWriter from "@tarikjabiri/dxf";
-import { invertHex } from "../utils/util";
+import { ShapeIcons } from "@/utils/images";
 
 export default class Polygon extends Shape {
     public vertices: number | undefined;
 
     constructor(name = "Polygon", verticies: number) {
-        super(name, 2, "polygon.svg");
+        super(name, 2, ShapeIcons.PolygonIcon);
         this.vertices = verticies;
     }
 
