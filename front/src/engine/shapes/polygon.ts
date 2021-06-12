@@ -7,7 +7,7 @@ import { ShapeIcons } from "@/utils/images";
 export default class Polygon extends Shape {
     public vertices: number | undefined;
 
-    constructor(name = "Polygon", verticies: number) {
+    constructor(name = "Polygon", verticies = 4) {
         super(name, 2, ShapeIcons.PolygonIcon, "Polygon");
         this.vertices = verticies;
     }

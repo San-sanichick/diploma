@@ -53,43 +53,43 @@ export default class Serializer {
             const type = obj.type;
 
             switch(type) {
-                case Line.constructor.name: {
+                case new Line().constructor.name: {
                     arr.push(Shape.cloneFromObject<Line>(Line, obj as ShapeObject));
                     break;
                 }
-                case Rectangle.constructor.name: {
+                case new Rectangle().constructor.name: {
                     arr.push(Shape.cloneFromObject<Rectangle>(Rectangle, obj as ShapeObject));
                     break;
                 }
-                case Circle.constructor.name: {
+                case new Circle().constructor.name: {
                     arr.push(Shape.cloneFromObject<Circle>(Circle, obj as ShapeObject));
                     break;
                 }
-                case Ellipse.constructor.name: {
+                case new Ellipse().constructor.name: {
                     arr.push(Shape.cloneFromObject<Ellipse>(Ellipse, obj as ShapeObject));
                     break;
                 }
-                case Bezier.constructor.name: {
+                case new Bezier().constructor.name: {
                     arr.push(Shape.cloneFromObject<Bezier>(Bezier, obj as ShapeObject));
                     break;
                 }
-                case Arc.constructor.name: {
+                case new Arc().constructor.name: {
                     arr.push(Shape.cloneFromObject<Arc>(Arc, obj as ShapeObject));
                     break;
                 }
-                case Group.constructor.name: {
+                case new Group("", []).constructor.name: {
                     arr.push(new Group(obj.name, Serializer.deserialize(obj.objects)));
                     break;
                 }
-                case Polygon.constructor.name: {
+                case new Polygon().constructor.name: {
                     arr.push(Shape.cloneFromObject<Polygon>(Polygon, obj as ShapeObject));
                     break;
                 }
-                case Polyline.constructor.name: {
+                case new Polyline().constructor.name: {
                     arr.push(Shape.cloneFromObject<Polyline>(Polyline, obj as ShapeObject));
                     break;
                 }
-                case Spline.constructor.name: {
+                case new Spline().constructor.name: {
                     arr.push(Shape.cloneFromObject<Spline>(Spline, obj as ShapeObject));
                     break;
                 }
