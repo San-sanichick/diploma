@@ -8,7 +8,7 @@ export default class Polygon extends Shape {
     public vertices: number | undefined;
 
     constructor(name = "Polygon", verticies: number) {
-        super(name, 2, ShapeIcons.PolygonIcon);
+        super(name, 2, ShapeIcons.PolygonIcon, "Polygon");
         this.vertices = verticies;
     }
 

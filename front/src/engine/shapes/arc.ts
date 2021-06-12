@@ -5,7 +5,7 @@ import { ShapeIcons } from "@/utils/images";
 
 export default class Arc extends Shape {
     constructor(name = "Arc") {
-        super(name, 3, ShapeIcons.ArcIcon);
+        super(name, 3, ShapeIcons.ArcIcon, "Arc");
     }
 
     toDXF(drw: DXFWriter): void {

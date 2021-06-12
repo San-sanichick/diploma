@@ -5,7 +5,7 @@ import { ShapeIcons } from "@/utils/images";
 
 export default class Circle extends Shape {
     constructor(name = "Circle") {
-        super(name, 2, ShapeIcons.CircleIcon);
+        super(name, 2, ShapeIcons.CircleIcon, "Circle");
     }
 
     toDXF(drw: DXFWriter): void {

@@ -12,7 +12,7 @@ export default class Spline extends Shape {
     constructor(name = "Spline") {
         // the polyline can have any number of nodes, and we can't define it,
         // we have to learn it at runtime
-        super(name, Number.MAX_VALUE, "polyline.svg");
+        super(name, Number.MAX_VALUE, "polyline.svg", "Spline");
         this.interpVertecies = [];
     }
 

@@ -5,7 +5,7 @@ import { ShapeIcons } from "@/utils/images";
 
 export default class Bezier extends Shape {
     constructor(name = "Bezier") {
-        super(name, 4, ShapeIcons.BezierIcon);
+        super(name, 4, ShapeIcons.BezierIcon, "Bezier");
     }
 
     toDXF(drw: DXFWriter): void {

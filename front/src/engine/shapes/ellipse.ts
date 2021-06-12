@@ -5,7 +5,7 @@ import { ShapeIcons } from "@/utils/images";
 
 export default class Ellipse extends Shape {
     constructor(name = "Ellipse") {
-        super(name, 3, ShapeIcons.EllipseIcon);
+        super(name, 3, ShapeIcons.EllipseIcon, "Ellipse");
     }
 
     // doesn't work right

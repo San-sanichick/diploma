@@ -26,7 +26,7 @@ export default class Group implements Drawable {
         this.name = name;
         this.icon = ShapeIcons.GroupIcon;
         this.isSelected = false;
-        this.type = this.constructor.name;
+        this.type = "Group";
         this.topLeftCorner = new Vec2(0, 0);
         this.bottomRightCorner = new Vec2(20, 20);
         this.objects = new Array<Drawable>();

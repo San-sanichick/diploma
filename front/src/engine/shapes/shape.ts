@@ -57,14 +57,14 @@ export default abstract class Shape implements Drawable {
     // hacks
     public vertices?: number | undefined;
 
-    constructor(name = "shape", maxNodes: number, icon: string) {
+    constructor(name = "shape", maxNodes: number, icon: string, type: string) {
         this.maxNodes = maxNodes;
         this.name = name;
         this.nodes = new Array<Node>();
         this.color = "#888";
         this.icon = icon;
         this.isSelected = false;
-        this.type = this.constructor.name;
+        this.type = type;
         this.topLeftCorner = new Vec2(0, 0);
         this.bottomRightCorner = new Vec2(20, 20);
     }

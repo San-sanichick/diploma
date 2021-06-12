@@ -5,7 +5,7 @@ import { ShapeIcons } from "@/utils/images";
 
 export default class Line extends Shape {
     constructor(name = "Line") {
-        super(name, 2, ShapeIcons.LineIcon);
+        super(name, 2, ShapeIcons.LineIcon, "Line");
     }
 
     toDXF(drw: DXFWriter) {

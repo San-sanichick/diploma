@@ -6,7 +6,7 @@ import { ShapeIcons } from "@/utils/images";
 
 export default class Rectangle extends Shape {
     constructor(name = "Rectangle") {
-        super(name, 2, ShapeIcons.RectIcon);
+        super(name, 2, ShapeIcons.RectIcon, "Rectangle");
     }
 
     toDXF(drw: DXFWriter): void {

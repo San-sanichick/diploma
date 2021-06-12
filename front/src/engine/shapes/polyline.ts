@@ -8,7 +8,7 @@ export default class Polyline extends Shape {
     constructor(name = "Polyline") {
         // the polyline can have any number of nodes, and we can't define it,
         // we have to learn it at runtime
-        super(name, Number.MAX_VALUE, ShapeIcons.PolylineIcon);
+        super(name, Number.MAX_VALUE, ShapeIcons.PolylineIcon, "Polyline");
     }
 
     toDXF(drw: DXFWriter): void {
