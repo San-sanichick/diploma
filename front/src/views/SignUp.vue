@@ -27,6 +27,7 @@
 <script lang="ts">
     import { defineComponent } from "vue";
     import axios from "axios";
+import { FlashIcons } from "@/utils/images";
     // import { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
 
     export default defineComponent({
@@ -59,7 +60,7 @@
                     console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "/src/assets/flashMessage/fail.svg",
+                        image: FlashIcons.Fail,
                         text: err
                     });
                 }

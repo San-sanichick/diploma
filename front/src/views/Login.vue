@@ -31,7 +31,8 @@
 </template>
 
 <script lang="ts">
-    import { defineComponent } from "vue";
+    import { FlashIcons } from "@/utils/images";
+import { defineComponent } from "vue";
     import { useRouter } from 'vue-router';
 
     export default defineComponent({
@@ -54,7 +55,7 @@
                     console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "/src/assets/flashMessage/fail.svg",
+                        image: FlashIcons.Fail,
                         text: err
                     });
                 }

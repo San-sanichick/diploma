@@ -50,6 +50,7 @@
 
     import createProject from "@/components/popups/createProject.vue";
     import setUpProject  from "@/components/popups/setUpProject.vue";
+import { FlashIcons } from "@/utils/images";
 
     export default defineComponent({
         components: {
@@ -90,7 +91,7 @@
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "/src/assets/flashMessage/fail.svg",
+                        image: FlashIcons.Fail,
                         text: err
                     });
                 }
@@ -108,7 +109,7 @@
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "/src/assets/flashMessage/fail.svg",
+                        image: FlashIcons.Fail,
                         text: err
                     });
                 }
@@ -126,13 +127,13 @@
                     this.list.push(res.data.data);
                     this.$flashMessage.show({
                         type: 'success',
-                        image: "/src/assets/flashMessage/success.svg",
+                        image: FlashIcons.Success,
                         text: res.data.msg
                     });
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "/src/assets/flashMessage/fail.svg",
+                        image: FlashIcons.Fail,
                         text: err
                     });
                 }
@@ -150,13 +151,13 @@
 
                     this.$flashMessage.show({
                         type: 'success',
-                        image: "/src/assets/flashMessage/success.svg",
+                        image: FlashIcons.Success,
                         text: res.data.msg
                     });
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "/src/assets/flashMessage/fail.svg",
+                        image: FlashIcons.Fail,
                         text: err
                     });
                 }
