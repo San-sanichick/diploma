@@ -18,11 +18,12 @@ class App {
         this._app  = express();
         this._port = port;
 
-        this._app.use(cors(/*{
-            origin: config.frontOrigin
-        }*/));
+        // this._app.use(cors(/*{
+        //     origin: config.frontOrigin
+        // }*/));
         this._app.use(cors());
-        this._app.use(express.static("public"));
+        this._app.use("/public/", express.static("public"));
+        this._app.use("/", express.static("front"));
 
         this._app.disable('x-powered-by');
         
@@ -60,7 +61,7 @@ class App {
 
     private async connectToDB() {
         try {
-            await mongoose.connect(config.db.address, { useNewUrlParser: true, useUnifiedTopology: true });
+            await mongoose.connect(config.db.address, { useNewUrlParser: true, useUnifiedTopology: true, dbName: config.db.name });
             console.log("connected to db");
         } catch (err) {
             console.error(err);
@@ -77,7 +78,6 @@ class App {
         res.send({error: err});
     }
 }
-console.log(process.env.PORT)
-// const app = App.Instance;
-// app.init();
+const app = App.Instance;
+app.init();
 

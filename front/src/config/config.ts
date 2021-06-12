@@ -1,5 +1,5 @@
 const config = {
-    API_URI: "http://localhost:5000/api"
+    API_URI: "https://cad-app-api.herokuapp.com/api"
 }
 
 export default config;

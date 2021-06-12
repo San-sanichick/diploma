@@ -9,7 +9,7 @@ export default defineConfig({
         port: 8080,
         proxy: {
             "/static": {
-                target: "http://localhost:5000",
+                target: "https://cad-app-api.herokuapp.com/public/",
                 changeOrigin: true,
                 secure: false,
                 rewrite: (path) => path.replace(/^\/static/, '')
