@@ -90,7 +90,7 @@
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "../../assets/flashMessage/fail.svg",
+                        image"/assets/flashMessage/fail.svg",
                         text: err
                     });
                 }
@@ -108,7 +108,7 @@
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "../../assets/flashMessage/fail.svg",
+                        image"/assets/flashMessage/fail.svg",
                         text: err
                     });
                 }
@@ -126,13 +126,13 @@
                     this.list.push(res.data.data);
                     this.$flashMessage.show({
                         type: 'success',
-                        image: "../../assets/flashMessage/success.svg",
+                        image"/assets/flashMessage/success.svg",
                         text: res.data.msg
                     });
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "../../assets/flashMessage/fail.svg",
+                        image"/assets/flashMessage/fail.svg",
                         text: err
                     });
                 }
@@ -150,13 +150,13 @@
 
                     this.$flashMessage.show({
                         type: 'success',
-                        image: "../../assets/flashMessage/success.svg",
+                        image"/assets/flashMessage/success.svg",
                         text: res.data.msg
                     });
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "../../assets/flashMessage/fail.svg",
+                        image"/assets/flashMessage/fail.svg",
                         text: err
                     });
                 }
@@ -191,13 +191,13 @@
 
                     this.$flashMessage.show({
                         type: 'success',
-                        image: "../../assets/flashMessage/success.svg",
+                        image"/assets/flashMessage/success.svg",
                         text: res.data.msg
                     });
                 } catch (err) {
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "../../assets/flashMessage/fail.svg",
+                        image"/assets/flashMessage/fail.svg",
                         text: err
                     });
                 }

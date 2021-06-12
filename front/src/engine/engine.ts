@@ -170,7 +170,7 @@ export default class Engine {
     public init(): boolean {
         if (this.ctx === null || this.ctxUI === null) return false;
         this.cursorIcon = new Image();
-        this.cursorIcon.src = "../../assets/cursor.svg";
+        this.cursorIcon.src = "/assets/cursor.svg";
         Shape.worldGrid = this.grid;
         this.ctx.lineWidth = 1;
 

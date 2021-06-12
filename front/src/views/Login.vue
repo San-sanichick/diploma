@@ -54,7 +54,7 @@
                     console.error(err);
                     this.$flashMessage.show({
                         type: 'error',
-                        image: "../../flashMessage/fail.svg",
+                        image"/flashMessage/fail.svg",
                         text: err
                     });
                 }
