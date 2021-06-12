@@ -32,7 +32,7 @@
 
 <script lang="ts">
     import { FlashIcons } from "@/utils/images";
-import { defineComponent } from "vue";
+    import { defineComponent } from "vue";
     import { useRouter } from 'vue-router';
 
     export default defineComponent({

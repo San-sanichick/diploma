@@ -27,8 +27,7 @@
 <script lang="ts">
     import { defineComponent } from "vue";
     import axios from "axios";
-import { FlashIcons } from "@/utils/images";
-    // import { AxiosAuthRefreshRequestConfig } from 'axios-auth-refresh';
+    import { FlashIcons } from "@/utils/images";
 
     export default defineComponent({
         data() {

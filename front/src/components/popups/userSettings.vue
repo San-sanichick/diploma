@@ -18,6 +18,7 @@
 <script lang="ts">
     import { defineComponent } from "vue";
     import axios from "axios";
+    import { FlashIcons } from "@/utils/images";
 
     export default defineComponent({
         props: ["user"],
@@ -43,14 +44,14 @@
 
                         this.$flashMessage.show({
                             type: 'success',
-                            image: "/flashMessage/success.svg",
+                            image: FlashIcons.Success,
                             text: res.data.msg
                         });
                     } catch (err) {
                         console.error(err);
                         this.$flashMessage.show({
                             type: 'error',
-                            image: "/flashMessage/fail.svg",
+                            image: FlashIcons.Fail,
                             text: err
                         });
                     } finally {

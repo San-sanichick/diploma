@@ -50,7 +50,7 @@
 
     import createProject from "@/components/popups/createProject.vue";
     import setUpProject  from "@/components/popups/setUpProject.vue";
-import { FlashIcons } from "@/utils/images";
+    import { FlashIcons } from "@/utils/images";
 
     export default defineComponent({
         components: {
