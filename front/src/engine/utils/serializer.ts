@@ -47,8 +47,6 @@ export default class Serializer {
      */
     public static deserialize(array: any[]): Array<Drawable> {
         const arr = new Array<Drawable>();
-        console.log(array);
-        console.log("Type:", Line.constructor.name);
         for (const obj of array) {
             const type = obj.type;
 

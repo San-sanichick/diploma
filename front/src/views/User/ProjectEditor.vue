@@ -330,7 +330,6 @@
             async saveProject() {
                 try {
                     const data = this.engine.save();
-                    console.log(data);
                     const id = this.$route.params.id;
                     const res = await this.$axios.patch(`projects/save`, { id, data });
 
