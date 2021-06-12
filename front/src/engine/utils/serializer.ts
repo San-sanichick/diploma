@@ -27,7 +27,7 @@ export default class Serializer {
     // eslint-disable-next-line
     public static serialize(array: Serializable[]): any[] {
         for (const obj of array) {
-            // obj.type = obj.constructor.name;
+            obj.type = obj.constructor.name;
 
             if (obj instanceof Group) {
                 Serializer.serialize((obj as Group).getObjects);
@@ -52,43 +52,43 @@ export default class Serializer {
             const type = obj.type;
 
             switch(type) {
-                case "Line": {
+                case Line.constructor.name: {
                     arr.push(Shape.cloneFromObject<Line>(Line, obj as ShapeObject));
                     break;
                 }
-                case "Rectangle": {
+                case Rectangle.constructor.name: {
                     arr.push(Shape.cloneFromObject<Rectangle>(Rectangle, obj as ShapeObject));
                     break;
                 }
-                case "Circle": {
+                case Circle.constructor.name: {
                     arr.push(Shape.cloneFromObject<Circle>(Circle, obj as ShapeObject));
                     break;
                 }
-                case "Ellipse": {
+                case Ellipse.constructor.name: {
                     arr.push(Shape.cloneFromObject<Ellipse>(Ellipse, obj as ShapeObject));
                     break;
                 }
-                case "Bezier": {
+                case Bezier.constructor.name: {
                     arr.push(Shape.cloneFromObject<Bezier>(Bezier, obj as ShapeObject));
                     break;
                 }
-                case "Arc": {
+                case Arc.constructor.name: {
                     arr.push(Shape.cloneFromObject<Arc>(Arc, obj as ShapeObject));
                     break;
                 }
-                case "Group": {
+                case Group.constructor.name: {
                     arr.push(new Group(obj.name, Serializer.deserialize(obj.objects)));
                     break;
                 }
-                case "Polygon": {
+                case Polygon.constructor.name: {
                     arr.push(Shape.cloneFromObject<Polygon>(Polygon, obj as ShapeObject));
                     break;
                 }
-                case "Polyline": {
+                case Polyline.constructor.name: {
                     arr.push(Shape.cloneFromObject<Polyline>(Polyline, obj as ShapeObject));
                     break;
                 }
-                case "Spline": {
+                case Spline.constructor.name: {
                     arr.push(Shape.cloneFromObject<Spline>(Spline, obj as ShapeObject));
                     break;
                 }
