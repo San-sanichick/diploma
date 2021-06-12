@@ -15,7 +15,7 @@
         mounted() {
             this.$flashMessage.show({
                 type: 'warning',
-                image: "/src/assets/flashMessage/warning.svg",
+                image: "../../flashMessage/warning.svg",
                 text: "Данное приложение разработано в обучающих целях, и не предназначенно для серьёзного использования. Приложение находится на стадии разработки."
             });
         }
