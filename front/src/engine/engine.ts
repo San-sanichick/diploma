@@ -22,7 +22,7 @@ import Layer                             from "./types/Layer";
 import DXFSerializer                     from "./utils/DXFSerializer";
 import { Emitter }                       from "mitt";
 import { debounce } from "@/utils/debounce";
-
+import { Cursor } from "@/utils/images";
 
 /**
  * Possible engine states
@@ -170,7 +170,7 @@ export default class Engine {
     public init(): boolean {
         if (this.ctx === null || this.ctxUI === null) return false;
         this.cursorIcon = new Image();
-        this.cursorIcon.src = "/src/assets/cursor.svg";
+        this.cursorIcon.src = Cursor;
         Shape.worldGrid = this.grid;
         this.ctx.lineWidth = 1;
 

@@ -9,7 +9,7 @@
             <div
                 class="dropdown-trigger"
                 :title="selected.name"
-                :style="{ backgroundImage: 'url(/src/assets' + selected.img + ')' }">
+                :style="{ backgroundImage: 'url(' + selected.img + ')' }">
             </div>
             <div class="dropdown-trigger-triangle"
                 @click="triggered"></div>
@@ -23,7 +23,7 @@
                     <div class="selected-option">
                         <div :class="{ 'checkmark': (selected.id === option.id && focused) }"></div>
                     </div>
-                    <div :style="{ backgroundImage: 'url(/src/assets' + option.img + ')' }"></div>
+                    <div :style="{ backgroundImage: 'url(' + option.img + ')' }"></div>
                     <span>{{ option.name }}</span>
                     <span class="dropdown-option-hotkey" v-if="option.hotkey !== ''"> {{ option.hotkey }} </span>
                 </li>

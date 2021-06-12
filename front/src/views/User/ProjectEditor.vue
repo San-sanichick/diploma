@@ -120,6 +120,8 @@
     import Drawable from '@/engine/shapes/drawable';
     import Shape from '@/engine/shapes/shape';
     import Group from '@/engine/shapes/group';
+    
+    import { ShapeIcons, ToolIcons } from "@/utils/images";
 
     export default defineComponent({
         components: {
@@ -137,25 +139,25 @@
                 id: this.$route.params.id,
                 engine: {} as Engine,
                 toolSelectOptions: [
-                    { id: 0, name: "Выделение",       img: "/toolIcons/select.svg",     action: EngineState.SELECT,    hotkey: "A" },
-                    { id: 1, name: "Перенос вершин",  img: "/toolIcons/point_edit.svg", action: EngineState.MOVEPOINT, hotkey: "V" },
-                    { id: 2, name: "Перенос",         img: "/toolIcons/move.svg",       action: EngineState.TRANSLATE, hotkey: "M" },
-                    { id: 3, name: "Поворот",         img: "/toolIcons/rotate.svg",     action: EngineState.ROTATE,    hotkey: "R" },
-                    { id: 4, name: "Масштабирование", img: "/toolIcons/resize.svg",     action: EngineState.SCALE,     hotkey: "S" }
+                    { id: 0, name: "Выделение",       img: ToolIcons.SelectIcon,     action: EngineState.SELECT,    hotkey: "A" },
+                    { id: 1, name: "Перенос вершин",  img: ToolIcons.PointIcon, action: EngineState.MOVEPOINT, hotkey: "V" },
+                    { id: 2, name: "Перенос",         img: ToolIcons.MoveIcon,       action: EngineState.TRANSLATE, hotkey: "M" },
+                    { id: 3, name: "Поворот",         img: ToolIcons.RotateIcon,     action: EngineState.ROTATE,    hotkey: "R" },
+                    { id: 4, name: "Масштабирование", img: ToolIcons.ResizeIcon,     action: EngineState.SCALE,     hotkey: "S" }
                 ],
                 shapeSelectOptions: [
-                    { id: 0, name: "Линия"        , img: "/shapeIcons/line.svg",      action: Shapes.LINE,        hotkey: "" },
-                    { id: 1, name: "Прямоугольник", img: "/shapeIcons/rect.svg",      action: Shapes.RECT,        hotkey: "" },
-                    { id: 2, name: "Окружность",    img: "/shapeIcons/circle.svg",    action: Shapes.CIRCLE,      hotkey: "" },
-                    { id: 3, name: "Эллипс",        img: "/shapeIcons/ellipse.svg",   action: Shapes.ELLIPSE,     hotkey: "" },
-                    { id: 4, name: "Кривая Безье",  img: "/shapeIcons/bezier.svg",    action: Shapes.BEZIER,      hotkey: "" },
-                    { id: 5, name: "Дуга",          img: "/shapeIcons/arc.svg",       action: Shapes.ARC,         hotkey: "" },
-                    { id: 6, name: "Полилиния",     img: "/shapeIcons/polyline.svg",  action: Shapes.POLYLINE,    hotkey: "" },
-                    { id: 7, name: "Многоугольник", img: "/shapeIcons/polygon.svg",   action: Shapes.POLYGON,     hotkey: "" },
+                    { id: 0, name: "Линия"        , img: ShapeIcons.LineIcon,      action: Shapes.LINE,        hotkey: "" },
+                    { id: 1, name: "Прямоугольник", img: ShapeIcons.RectIcon,      action: Shapes.RECT,        hotkey: "" },
+                    { id: 2, name: "Окружность",    img: ShapeIcons.CircleIcon,    action: Shapes.CIRCLE,      hotkey: "" },
+                    { id: 3, name: "Эллипс",        img: ShapeIcons.EllipseIcon,   action: Shapes.ELLIPSE,     hotkey: "" },
+                    { id: 4, name: "Кривая Безье",  img: ShapeIcons.BezierIcon,    action: Shapes.BEZIER,      hotkey: "" },
+                    { id: 5, name: "Дуга",          img: ShapeIcons.ArcIcon,       action: Shapes.ARC,         hotkey: "" },
+                    { id: 6, name: "Полилиния",     img: ShapeIcons.PolylineIcon,  action: Shapes.POLYLINE,    hotkey: "" },
+                    { id: 7, name: "Многоугольник", img: ShapeIcons.PolygonIcon,   action: Shapes.POLYGON,     hotkey: "" },
                     // { id: 8, name: "Сплайн",        img: "/shapeIcons/polyline.svg",  action: Shapes.SPLINE,      hotkey: "" },
                 ],
-                shapeSelectedTool: { id: 0, name: "Линия", img: "/shapeIcons/line.svg", action: Shapes.LINE, hotkey: "" },
-                toolSelected: { id: 0, name: "Выделение",       img: "/toolIcons/select.svg",     action: EngineState.SELECT,    hotkey: "A" },
+                shapeSelectedTool: { id: 0, name: "Линия", img: ShapeIcons.LineIcon, action: Shapes.LINE, hotkey: "" },
+                toolSelected: { id: 0, name: "Выделение", img: ToolIcons.SelectIcon, action: EngineState.SELECT,    hotkey: "A" },
                 toolId: 0,
                 focused: [ true, false ]
             }

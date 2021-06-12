@@ -7,6 +7,7 @@
 <script lang="ts">
     import { defineComponent } from "vue";
     import ContextMenu from "./components/ContextMenu.vue";
+    import { FlashIcons } from "@/utils/images";
 
     export default defineComponent({
         components: {
@@ -15,7 +16,7 @@
         mounted() {
             this.$flashMessage.show({
                 type: 'warning',
-                image: "/src/assets/flashMessage/warning.svg",
+                image: FlashIcons.Warn,
                 text: "Данное приложение разработано в обучающих целях, и не предназначенно для серьёзного использования. Приложение находится на стадии разработки."
             });
         }
