@@ -281,29 +281,39 @@ export default abstract class Shape implements Drawable {
             c = 1.03;
         }
 
-        // translate to origin
-        const trMatrix = new Matrix([
-            [1, 0, 0],
-            [0, 1, 0],
-            [-pos.x, -pos.y, 1]
-        ]);
+        const 
+            m = -pos.x * (c - 1),
+            n = -pos.y * (c - 1);
 
-        // scale matrix
         const scMatrix = new Matrix([
-            [c, 0, 0],
-            [0, c, 0],
-            [0, 0, 1]
+            [ c, 0, 0 ],
+            [ 0, c, 0 ],
+            [ m, n, 1 ]
         ]);
 
-        // move it back to initial position
-        const reTrMatrix = new Matrix([
-            [1, 0, 0],
-            [0, 1, 0],
-            [pos.x, pos.y, 1]
-        ]);
+        // // translate to origin
+        // const trMatrix = new Matrix([
+        //     [1, 0, 0],
+        //     [0, 1, 0],
+        //     [-pos.x, -pos.y, 1]
+        // ]);
 
-        // multiply all that stuff
-        const m = Matrix.multMatrixByMatrix(Matrix.multMatrixByMatrix(trMatrix, scMatrix), reTrMatrix);
+        // // scale matrix
+        // const scMatrix = new Matrix([
+        //     [c, 0, 0],
+        //     [0, c, 0],
+        //     [0, 0, 1]
+        // ]);
+
+        // // move it back to initial position
+        // const reTrMatrix = new Matrix([
+        //     [1, 0, 0],
+        //     [0, 1, 0],
+        //     [pos.x, pos.y, 1]
+        // ]);
+
+        // // multiply all that stuff
+        // const m = Matrix.multMatrixByMatrix(Matrix.multMatrixByMatrix(trMatrix, scMatrix), reTrMatrix);
 
         const coords = [];
         for (const node of this.nodes) {
@@ -312,7 +322,7 @@ export default abstract class Shape implements Drawable {
 
         const coordMatrix = new Matrix(coords);
 
-        const newCoord = Matrix.multMatrixByMatrix(coordMatrix, m);
+        const newCoord = Matrix.multMatrixByMatrix(coordMatrix, scMatrix);
 
         for (let i = 0; i < this.nodes.length; i++) {
             for (let i = 0; i < this.nodes.length; i++) {

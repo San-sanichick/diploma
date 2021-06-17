@@ -6,12 +6,12 @@
                 <label for="name">Название</label>
                 <input ref="text-input" type="text" name="name" id="name" v-model="form.name">
             </div>
-            <div class="form-row checkbox">
+            <!-- <div class="form-row checkbox">
                 <div>
                     <input type="checkbox" name="access" id="access" v-model="form.access">
                     <label for="access">Открыть внешний доступ к проекту</label>
                 </div>
-            </div>
+            </div> -->
             <input class="submit-button" type="submit" value="Сохранить">
         </form>
     </div>

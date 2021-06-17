@@ -123,12 +123,6 @@ export default class Engine {
         
         this.layers = new Array<Layer>();
 
-        // this.layers.push({
-        //     id: 0,
-        //     layerColor: 7,
-        //     name: "Layer 0",
-        //     shapes: new Array<Drawable>()
-        // });
         this.addLayer();
         this.currentLayer = 0;
 
