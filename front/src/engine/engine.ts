@@ -630,8 +630,6 @@ export default class Engine {
                 this.cursorPosPivot = Vec2.copyFrom(this.cursor);
             }
 
-            // console.log(this.cursor.subtract(this.cursorOldPos).x)
-
             if (this.mouse.getHeldButton === MouseButtons.LEFT && this.cursorPosPivot !== null) {
                 for (const shape of this.selectedShapes) {  
                     // can anyone PLEASE tell me, for the love of GOD
@@ -652,10 +650,10 @@ export default class Engine {
                 this.cursorPosPivot = Vec2.copyFrom(this.cursor);
             }
 
-            if (this.mouse.getHeldButton === MouseButtons.LEFT && this.cursorPosPivot !== null &&
-                !this.cursor.equals(this.cursorOldPos)) {
+            if (this.mouse.getHeldButton === MouseButtons.LEFT && this.cursorPosPivot !== null) {
                 for (const shape of this.selectedShapes) {
-                    shape.rotate(-this.cursor.subtract(this.cursorOldPos).x / 12.5, this.cursorPosPivot);
+                    if (this.cursor.subtract(this.cursorOldPos).x == 0) break;                  
+                    shape.rotate(this.cursor.subtract(this.cursorOldPos).x / 12.5, this.cursorPosPivot);
                 }
             } else {
                 this.cursorPosPivot = null;
