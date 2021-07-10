@@ -30,7 +30,7 @@ export default class DXFSerializer {
         const drw = new DXFWriter();
         drw.setUnit(DXFWriter.units.Millimeters);
         for (const layer of layers) {
-            drw.addLayer(layer.name, layer.layerColor, "CONTINUOS");
+            drw.addLayer(layer.name, layer.layerColor, "CONTINUOUS");
             drw.setCurrentLayer(layer.name);
 
             for (const d of layer.shapes) {
