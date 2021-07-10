@@ -33,9 +33,7 @@ export default class Spline extends Shape {
             points.push([n.getPosition.x, n.getPosition.y]);
         }
 
-        // addPolyline() method has nothing to do with spline !!
-        // Instead use addSpline() method
-        drw.addSpline(points, points, 3, 8, [], []);
+        drw.addPolyline(points, 0);
     }
 
     renderSelf(ctx: CanvasRenderingContext2D, color?: string): void {

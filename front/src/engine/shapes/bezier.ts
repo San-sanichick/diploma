@@ -29,12 +29,7 @@ export default class Bezier extends Shape {
         ])
         // document your bloody functions, i have no idea what any of these
         // parameters are for
-        /*
-         * Everything is documented in the specification of DXF.
-         * I create this library just for my app http:://mapper.ma
-         * and I make it public so you have to do some Effort to understand the DXF Format 
-        */
-        drw.addSpline(ctrlPoints, ctrlPoints, 3, 8, [], []);
+        drw.addSpline(ctrlPoints, fitPoints, 3, 0, [1, 1, 1, 1], [2, 2]);
     }
 
     renderSelf(ctx: CanvasRenderingContext2D, color?: string) {
