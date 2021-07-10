@@ -41,7 +41,7 @@ export default class Group implements Drawable {
 
     toDXF(drw: DXFWriter): void {
         // throw new Error("Method not implemented.");
-        drw.addLayer(this.name, DXFWriter.colors.White, "CONTINUOS");
+        drw.addLayer(this.name, DXFWriter.colors.White, "CONTINUOUS");
         drw.setCurrentLayer(this.name);
         this.objects.forEach(obj => obj.toDXF(drw));
     }
