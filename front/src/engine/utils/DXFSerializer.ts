@@ -1,6 +1,12 @@
 import Layer from "../types/Layer";
 import DXFWriter from "@tarikjabiri/dxf";
 
+// In the specification there is nothing about grouping entities.
+// The only way to group entities is by layers with (deferent or same) colors and linetypes.
+// I am trying to enhance my library but I found the specification hard to understand.
+// So good luck bro.
+
+
 // TODO: Write own dxf writer, current library doesn't support POLYGONS
 // TODO: and groups
 /**

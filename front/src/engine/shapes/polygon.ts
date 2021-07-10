@@ -18,9 +18,17 @@ export default class Polygon extends Shape {
             points.push([n.getPosition.x, n.getPosition.y]);
         }
 
-        points.push(points[0]);
 
-        drw.addPolyline(points, 0);
+        //points.push(points[0]); You don't need to add the first point.
+
+        // To create a polygon you need to pass the flag 1 to addPolyline() method.
+        // A polygon is just a polyline but closed so passing the flag 1 tell to the lib to create a closed polyline.
+        // 0 is the default value just create a polyline not closed
+        // http://help.autodesk.com/view/OARX/2018/ENU/?guid=GUID-ABF6B778-BE20-4B49-9B58-A94E64CEFFF3
+        // visit this url and see the Group code 70 (Polyline flag) in the specification.
+        // And there is no Entity called Polygon in the specification.
+        // if you noticed the addRectangle() implementation it just called the addPolyline with flag 1.
+        drw.addPolyline(points, 1);
     }
 
     getNextNode(pos: Vec2): Node | null {
